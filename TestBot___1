@@ -1,0 +1,87 @@
+from telegram.ext import Updater
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ConversationHandler, MessageHandler, CallbackQueryHandler
+from telegram.ext import Filters
+from telegram import Bot
+
+updater = Updater(token='497143382:AAEnGedITH37EbP0NCMEauG8s8DHT9jWpiY')
+bot = Bot(token='497143382:AAEnGedITH37EbP0NCMEauG8s8DHT9jWpiY')
+
+dispatcher = updater.dispatcher
+
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+def build_menu():
+    button_list = [
+    [
+    InlineKeyboardButton("Book",callback_data='book_search'),
+    InlineKeyboardButton("Article",callback_data='article_search')
+    ],
+    [
+    InlineKeyboardButton("A/V",callback_data='av_search')
+    ]]
+
+    reply = InlineKeyboardMarkup(button_list)
+    return reply
+
+def start(bot, update):bot.send_message(chat_id=update.message.chat_id,
+                                        text="You have a patron access. What do you want to find?",
+                                        reply_markup=build_menu())
+
+def book_search(bot, update):
+    query = update.callback_query
+    bot.send_message(chat_id=query.message.chat_id, text="Send me name of the book")
+    return BOOK_SEARCH
+
+def article_search(bot, update):
+    query = update.callback_query
+    bot.send_message(chat_id=query.message.chat_id, text="Send me name of the article")
+    return ARTICLE_SEARCH
+	
+def av_search(bot, update):
+    query = update.callback_query
+    bot.send_message(chat_id=query.message.chat_id, text="Send me name of the av")
+    return AV_SEARCH
+    
+def book_name(bot, update):
+        print("FI")
+        bot.send_message(chat_id=update.message.chat_id, text="kkk")
+        return update.message.text
+	
+def article_name(bot, update):
+	bot.send_message(chat_id=update.message.chat_id, text=update.message.text)
+	return update.message.text
+	
+def av_name(bot, update):
+	bot.send_message(chat_id=update.message.chat_id, text=update.message.text)
+	return update.message.text
+
+def search_functions(bot, update):
+    query = update.callback_query.data
+    if query == 'book_search':
+        book_search(bot, update)
+    elif query == 'article_search':
+        article_search(bot, update)
+    elif query == 'av_search':
+        av_search(bot, update)
+
+BOOK_SEARCH = range(1)
+ARTICLE_SEARCH = range(1)
+AV_SEARCH = range(1)
+    
+from telegram.ext import CommandHandler 
+search_handler = CommandHandler('search', start)
+search_query_handler = CallbackQueryHandler(search_functions, pass_groups=True)
+search_conversation = ConversationHandler(entry_points=[search_query_handler],
+                                          states={
+					    BOOK_SEARCH: [MessageHandler(Filters.text, book_name)],
+                                            ARTICLE_SEARCH: [MessageHandler(Filters.text, article_name)],
+					    AV_SEARCH: [MessageHandler(Filters.text, av_name)]
+										  },
+                                          fallbacks=[], per_message=False)
+dispatcher.add_handler(search_handler)
+dispatcher.add_handler(search_conversation)
+dispatcher.add_handler(search_query_handler)
+updater.start_polling()
