@@ -18,8 +18,19 @@ class Patron:
         self.__medias = jsonLine["medias"]
         self.__balance = jsonLine["balance"]
 
+    def setRequest(self, jsonLine):
+        self.__requestID = jsonLine["requestID"]
+        self.__telegramID = jsonLine["telegramID"]
+        self.__alias = jsonLine["alias"]
+        self.__name = jsonLine["name"]
+        self.__address = jsonLine["address"]
+        self.__phone = jsonLine["phone"]
+        self.__faculty = jsonLine["facultymember"]
+
 
     """ Getters """
+    def getRequestID(self):
+        return self.__requestID
     def getTelegramID(self):
         return self.__telegramID
     def getAlias(self):
@@ -65,7 +76,7 @@ class Patron:
 
     def insertInBase(self):
         try:
-            query = """INSERT INTO user VALUES (null, %s, '%s', '%s', '%s', %s, %s, '%s', %s);""" % ( self.__telegramID, self.__alias, self.__name, self.__address,self.__phone, self.__faculty, self.__medias, self.__balance)
+            query = """INSERT INTO user VALUES (null, %s, '%s', '%s', '%s', %s, %s, %s, '%s');""" % ( self.__telegramID, self.__alias, self.__name, self.__address,self.__phone, self.__faculty, self.__balance,  self.__medias)
             return query
         except:
             raise NameError('ERROR INSERTING IN DB')
