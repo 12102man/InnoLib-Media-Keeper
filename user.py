@@ -48,6 +48,7 @@ class Patron:
     def getStatus(self):
         return self.__faculty
 
+
     def initialize(self):
         self.__medias = []
         self.__balance = 0
@@ -89,7 +90,7 @@ class Patron:
             raise NameError('ERROR UPDATING')
 
     def addRequest(self):
-        query = """INSERT INTO request VALUES (null, %s, '%s', '%s', '%s', %s, %s, 0);""" % (self.__telegramID, self.__alias, self.__name, self.__address,self.__phone, self.__faculty)
+        query = """INSERT INTO request VALUES (null, %s, '%s', '%s', '%s', %s, %s);""" % (self.__telegramID, self.__alias, self.__name, self.__address,self.__phone, self.__faculty)
         return query
 
 
@@ -134,6 +135,20 @@ class ItemCard:
         self.__parentchild = jsonLine["parentchild"]
         self.__fine = jsonLine["fine"]
         self.__cost = jsonLine["cost"]
+
+
+    def getMediaID(self):
+        return self.__mediaID
+    def getType(self):
+        return self.__type
+    def getTitle(self):
+        return self.__title
+    def getAuthors(self):
+        return self.__authors
+    def getAvailability(self):
+        return self.__availability
+    def getBestseller(self):
+        return self.__bestseller
 
 
 
