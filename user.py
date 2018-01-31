@@ -1,154 +1,363 @@
-import json
+import pymysql
+import config
+
+"""
+Connection to database. Configuration values 
+are hidden in config.py 
+"""
+connection = pymysql.connect(host=config.db_host,
+                             user=config.db_username,
+                             password=config.db_password,
+                             db=config.db_name,
+                             charset='utf8',
+                             cursorclass=pymysql.cursors.DictCursor)
+cursor = connection.cursor()
+
+"""
+Class Patron:
+    - makes user interaction easier;
+    - holds user's values;
+    - allows to work with database (get/set values)
+"""
+
 
 class Patron:
-    def getLibID(self):
-        try:
-            return self.__libID
-        except:
-            return 0
-
-    def setUser(self, jsonLine):
-        self.__libID = jsonLine["libID"]
-        self.__telegramID = jsonLine["telegramID"]
-        self.__alias = jsonLine["alias"]
-        self.__name = jsonLine["name"]
-        self.__address = jsonLine["address"]
-        self.__phone = jsonLine["phone"]
-        self.__faculty = jsonLine["facultymember"]
-        self.__medias = jsonLine["medias"]
-        self.__balance = jsonLine["balance"]
-
-    def setRequest(self, jsonLine):
-        self.__requestID = jsonLine["requestID"]
-        self.__telegramID = jsonLine["telegramID"]
-        self.__alias = jsonLine["alias"]
-        self.__name = jsonLine["name"]
-        self.__address = jsonLine["address"]
-        self.__phone = jsonLine["phone"]
-        self.__faculty = jsonLine["facultymember"]
-
-
-    """ Getters """
-    def getRequestID(self):
-        return self.__requestID
-    def getTelegramID(self):
-        return self.__telegramID
-    def getAlias(self):
-        return self.__alias
-    def getName(self):
-        return self.__name
-    def getAddress(self):
-        return self.__address
-    def getPhone(self):
-        return self.__phone
-    def getMedias(self):
-        return self.__medias
-    def getBalance(self):
-        return self.__balance
-    def getStatus(self):
-        return self.__faculty
-
-
-    def initialize(self):
-        self.__medias = []
+    def __init__(self):
+        self.__requestid = 0
+        self.__libid = 0
+        self.__telegramid = 0
+        self.__alias = 0
+        self.__address = 0
+        self.__name = 0
+        self.__phone = 0
+        self.__faculty = 0
         self.__balance = 0
 
+    """
+    set_user(self, json_line)
+
+    Function parses the JSON-line record from MySQL
+    database into class attributes. All attributes
+    are private.
+    """
+
+    def set_user(self, json_line):
+        self.__libid = json_line["libID"]
+        self.__telegramid = json_line["telegramID"]
+        self.__alias = json_line["alias"]
+        self.__name = json_line["name"]
+        self.__address = json_line["address"]
+        self.__phone = json_line["phone"]
+        self.__faculty = json_line["facultymember"]
+        self.__balance = json_line["balance"]
+
+    """
+    set_request(self, json_line)
+
+    Function parses the JSON-line record from MySQL 
+    database into class attributes. Request has another
+    attributes, not like User. All attributes 
+    are private.
+    """
+
+    def set_request(self, json_line):
+        self.__requestid = json_line["requestID"]
+        self.__telegramid = json_line["telegramID"]
+        self.__alias = json_line["alias"]
+        self.__name = json_line["name"]
+        self.__address = json_line["address"]
+        self.__phone = json_line["phone"]
+        self.__faculty = json_line["facultymember"]
+
+    """ Getters """
+
+    def get_lib_id(self):
+        return self.__libid
+
+    def get_request_id(self):
+        return self.__requestid
+
+    def get_telegram_id(self):
+        return self.__telegramid
+
+    def get_alias(self):
+        return self.__alias
+
+    def get_name(self):
+        return self.__name
+
+    def get_address(self):
+        return self.__address
+
+    def get_phone(self):
+        return self.__phone
+
+    def get_balance(self):
+        return self.__balance
+
+    def get_status(self):
+        return self.__faculty
+
     """ Setters """
-    def setAlias(self, alias):
+
+    def set_alias(self, alias):
         self.__alias = alias
-    def setTelegramID(self, id):
-        self.__telegramID = id
-    def setLibraryID(self, id):
-        self.__libID = id
-    def setBalance(self, balance):
+
+    def set_telegram_id(self, tele_id):
+        self.__telegramid = tele_id
+
+    def set_library_id(self, lib_id):
+        self.__libid = lib_id
+
+    def set_balance(self, balance):
         self.__balance = balance
-    def setName(self, name):
+
+    def set_name(self, name):
         self.__name = name
-    def setAddress(self, address):
+
+    def set_address(self, address):
         self.__address = address
-    def setPhone(self, phone):
+
+    def set_phone(self, phone):
         self.__phone = phone
-    def setFaculty(self, faculty):
+
+    def set_faculty(self, faculty):
         self.__faculty = faculty
 
-
-    def payFine(self):
+    def pay_fine(self):
         self.__balance -= 100
 
-    def insertInBase(self):
-        try:
-            query = """INSERT INTO user VALUES (null, %s, '%s', '%s', '%s', %s, %s, %s, '%s');""" % ( self.__telegramID, self.__alias, self.__name, self.__address,self.__phone, self.__faculty, self.__balance,  self.__medias)
-            return query
-        except:
-            raise NameError('ERROR INSERTING IN DB')
+    """
+        Database functions.
+        They work with database
+    """
+
+    """
+    insert_in_base(self)
+    
+    Inserts user into database. 
+    Used for moving request to user
+    """
+
+    def insert_in_base(self):
+        query = """INSERT INTO user VALUES (null, %s, '%s', '%s', '%s', %s, %s, %s);""" % (self.__telegramid,
+                                                                                           self.__alias,
+                                                                                           self.__name,
+                                                                                           self.__address,
+                                                                                           self.__phone,
+                                                                                           self.__faculty,
+                                                                                           self.__balance)
+        cursor.execute(query)
+        connection.commit()
+
+    """
+    update(self)
+    
+    Updates user info. If user attributes are changed,
+    they need to be uploaded to the database.
+    """
 
     def update(self):
-        try:
-            query = """UPDATE user SET balance = %s, medias = '%s', address = '%s', phone = %s, name = '%s', facultymember = %s where telegramID = %s;""" % (self.__balance, self.__medias, self.__address, self.__phone, self.__name, self.__faculty, self.__telegramID)
-            return query
-        except:
-            raise NameError('ERROR UPDATING')
+        query = """UPDATE user SET balance = %s,  address = '%s', 
+phone = %s, name = '%s', facultymember = %s where telegramid = %s;""" % (self.__balance,
+                                                                         self.__address,
+                                                                         self.__phone,
+                                                                         self.__name,
+                                                                         self.__faculty,
+                                                                         self.__telegramid)
 
-    def addRequest(self):
-        query = """INSERT INTO request VALUES (null, %s, '%s', '%s', '%s', %s, %s);""" % (self.__telegramID, self.__alias, self.__name, self.__address,self.__phone, self.__faculty)
-        return query
+        cursor.execute(query)
+        connection.commit()
+
+    """
+    add_request(self)
+    
+    Adds formed request to a specific request table.
+    """
+
+    def add_request(self):
+        query = """INSERT INTO request VALUES (null, %s, '%s', '%s', '%s', %s, %s);""" % (self.__telegramid,
+                                                                                          self.__alias,
+                                                                                          self.__name,
+                                                                                          self.__address,
+                                                                                          self.__phone,
+                                                                                          self.__faculty)
+        cursor.execute(query)
+        connection.commit()
+
+    """
+    make_media_request(self, media_id)
+    
+    Adds request for taking media from library.
+    """
+
+    def make_media_request(self, media_id):
+        sql = "INSERT INTO mediarequest VALUES (%s, %s);" % (self.__libid, media_id)
+        cursor.execute(sql)
+        connection.commit()
+
+    """
+    find(self, telegram_id)
+      
+    Finds current user in table using telegram id and creates an object of this user.
+    """
+
+    def find(self, telegram_id):
+        sql = "SELECT * from user WHERE telegramID = %s;" % telegram_id
+        cursor.execute(sql)
+        self.set_user(cursor.fetchall()[0])
 
 
-    def deleteMedia(self, mediaID):
-        json_str = self.__medias
-        mediaID = str(mediaID)
-        data = json.loads(json_str)
-        if mediaID in data:
-            del data[data.index(mediaID)]
-            self.__medias = str(data).replace("'", "\"")
-        else:
-            raise NameError('MEDIA IS NOT FOUND')
-
-    def addMedia(self, mediaID):
-        json_str = self.__medias
-        data = json.loads(json_str)
-        mediaID = str(mediaID)
-        if not mediaID in data:
-            update = '%s' % (mediaID)
-            data.append(update)
-            print(data)
-            self.__medias = str(data).replace("'", "\"")
-        else:
-            raise NameError('MEDIA ALREADY EXISTS')
-
-
-
-
-
+"""
+Class ItemCard:
+    - makes media interaction easier;
+    - holds media's values;
+    - allows to work with database (get/set values)
+"""
 
 
 class ItemCard:
+    def __init__(self):
+        self.__mediaid = 0
+        self.__type = 0
+        self.__title = 0
+        self.__type = 0
+        self.__authors = 0
+        self.__availability = 0
+        self.__bestseller = 0
+        self.__copy = 0
+        self.__fine = 0
+        self.__cost = 0
 
-    def setItem(self, jsonLine):
-        self.__mediaID = jsonLine["mediaID"]
-        self.__type = jsonLine["type"]
-        self.__title = jsonLine["title"]
-        self.__authors = jsonLine["authors"]
-        self.__availability = jsonLine["availability"]
-        self.__bestseller = jsonLine["bestseller"]
-        self.__copy = jsonLine["copy"]
-        self.__parentchild = jsonLine["parentchild"]
-        self.__fine = jsonLine["fine"]
-        self.__cost = jsonLine["cost"]
+    """
+    set_item(self, json_line)
 
+    Function parses the JSON-line record from MySQL
+    database into class attributes. All attributes
+    are private.
+    """
 
-    def getMediaID(self):
-        return self.__mediaID
-    def getType(self):
+    def set_item(self, json_line):
+        self.__mediaid = json_line["mediaID"]
+        self.__type = json_line["type"]
+        self.__title = json_line["title"]
+        self.__authors = json_line["authors"]
+        self.__availability = json_line["availability"]
+        self.__bestseller = json_line["bestseller"]
+        self.__copy = json_line["copy"]
+        self.__fine = json_line["fine"]
+        self.__cost = json_line["cost"]
+
+    """ Getters """
+
+    def get_media_id(self):
+        return self.__mediaid
+
+    def get_type(self):
         return self.__type
-    def getTitle(self):
+
+    def get_title(self):
         return self.__title
-    def getAuthors(self):
+
+    def get_authors(self):
         return self.__authors
-    def getAvailability(self):
+
+    def get_availability(self):
         return self.__availability
-    def getBestseller(self):
+
+    def get_bestseller(self):
         return self.__bestseller
 
+    """ Setters """
+
+    def set_availability(self, state):
+        self.__availability = state
+
+    def set_type(self, type_of_doc):
+        self.__type = type_of_doc
+
+    def set_title(self, title):
+        self.__title = title
+
+    """
+    update(self)
+    
+    Updates media info. If user attributes are changed,
+    they need to be uploaded to the database.
+    """
+
+    def update(self):
+        query = """UPDATE media SET type = '%s', title = '%s', authors = '%s', 
+availability = %s, bestseller = %s where mediaid = %s;""" % (self.__type,
+                                                             self.__title,
+                                                             self.__authors,
+                                                             self.__availability,
+                                                             self.__bestseller,
+                                                             self.__mediaid)
+        cursor.execute(query)
+        connection.commit()
+
+    """
+    find(self, media_id)
+
+    Finds current media in table using media id and creates an object of this user.
+    """
+
+    def find(self, media_id):
+        sql = "SELECT * FROM media WHERE mediaID = %s;" % media_id
+        cursor.execute(sql)
+        self.set_item(cursor.fetchall()[0])
 
 
+"""
+Class BookingRequest:
+    - works with booking requests;
+    - allows to work with database (get/set values)
+"""
+
+
+class BookingRequest:
+    """
+    def __init__ (self)
+
+    Setting class attributes to 0
+    """
+
+    def __init__(self):
+        self.__username = 0
+        self.__lib_id = 0
+        self.__media_id = 0
+        self.__media_name = 0
+
+    """
+    set_request(self, json_line)
+    
+    Moves data from JSON-line database to values 
+    in class attributes. 
+    """
+
+    def set_request(self, json_line):
+        self.__lib_id = json_line["libID"]
+        self.__media_id = json_line["mediaID"]
+
+        cursor.execute("SELECT * FROM user WHERE libID = %s;" % self.__lib_id)
+        record = cursor.fetchall()[0]
+        self.__username = record["name"] + " (%s)" % record["alias"]
+
+        cursor.execute("SELECT * FROM media WHERE mediaID = %s;" % self.__media_id)
+        record = cursor.fetchall()[0]
+        self.__media_name = """\"%s\"""" % record["title"]
+
+    """ Getters """
+
+    def get_username(self):
+        return self.__username
+
+    def get_media_name(self):
+        return self.__media_name
+
+    def get_lib_id(self):
+        return self.__lib_id
+
+    def get_media_id(self):
+        return self.__media_id
