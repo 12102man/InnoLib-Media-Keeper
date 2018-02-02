@@ -1,6 +1,10 @@
 import pymysql
 import config
+<<<<<<< HEAD
 import logging
+=======
+
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 """
 Connection to database. Configuration values 
 are hidden in config.py 
@@ -13,8 +17,11 @@ connection = pymysql.connect(host=config.db_host,
                              cursorclass=pymysql.cursors.DictCursor)
 cursor = connection.cursor()
 
+<<<<<<< HEAD
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
+=======
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 """
 Class Patron:
     - makes user interaction easier;
@@ -207,6 +214,7 @@ phone = %s, name = '%s', facultymember = %s where telegramid = %s;""" % (self.__
     def find(self, telegram_id):
         sql = "SELECT * from user WHERE telegramID = %s;" % telegram_id
         cursor.execute(sql)
+<<<<<<< HEAD
         found_data = cursor.fetchall()
         if len(found_data) == 0:
             raise FileNotFoundError("User not found")
@@ -222,6 +230,9 @@ phone = %s, name = '%s', facultymember = %s where telegramid = %s;""" % (self.__
             return False
         else:
             return True
+=======
+        self.set_user(cursor.fetchall()[0])
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
 
 """
@@ -303,28 +314,42 @@ class ItemCard:
     """
 
     def update(self):
+<<<<<<< HEAD
         if self.exists(media_id=self.__mediaid):
             query = """UPDATE media SET type = '%s', title = '%s', authors = '%s', 
+=======
+        query = """UPDATE media SET type = '%s', title = '%s', authors = '%s', 
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 availability = %s, bestseller = %s where mediaid = %s;""" % (self.__type,
                                                              self.__title,
                                                              self.__authors,
                                                              self.__availability,
                                                              self.__bestseller,
                                                              self.__mediaid)
+<<<<<<< HEAD
             cursor.execute(query)
             connection.commit()
         else:
             raise ModuleNotFoundError
+=======
+        cursor.execute(query)
+        connection.commit()
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
     """
     find(self, media_id)
 
+<<<<<<< HEAD
     Finds current media in table using media id and creates an object of this media item.
+=======
+    Finds current media in table using media id and creates an object of this user.
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
     """
 
     def find(self, media_id):
         sql = "SELECT * FROM media WHERE mediaID = %s;" % media_id
         cursor.execute(sql)
+<<<<<<< HEAD
         found_data = cursor.fetchall()
         if len(found_data) == 0:
             raise FileNotFoundError("Media not found")
@@ -340,6 +365,9 @@ availability = %s, bestseller = %s where mediaid = %s;""" % (self.__type,
             return False
         else:
             return True
+=======
+        self.set_item(cursor.fetchall()[0])
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
 
 """
@@ -374,6 +402,7 @@ class BookingRequest:
         self.__media_id = json_line["mediaID"]
 
         cursor.execute("SELECT * FROM user WHERE libID = %s;" % self.__lib_id)
+<<<<<<< HEAD
         user_data = cursor.fetchall()
         if len(user_data) == 0:
             logging.error("User not found")
@@ -390,6 +419,14 @@ class BookingRequest:
         else:
             record = media_data[0]
             self.__media_name = """\"%s\"""" % record["title"]
+=======
+        record = cursor.fetchall()[0]
+        self.__username = record["name"] + " (%s)" % record["alias"]
+
+        cursor.execute("SELECT * FROM media WHERE mediaID = %s;" % self.__media_id)
+        record = cursor.fetchall()[0]
+        self.__media_name = """\"%s\"""" % record["title"]
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
     """ Getters """
 

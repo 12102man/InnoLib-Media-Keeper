@@ -4,6 +4,8 @@ import config
 import pymysql
 import datetime
 import logging
+=======
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
 
 """ MySQL connection """
@@ -14,7 +16,10 @@ connection = pymysql.connect(host=config.db_host,
                              charset='utf8',
                              cursorclass=pymysql.cursors.DictCursor)
 cursor = connection.cursor()
+<<<<<<< HEAD
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+=======
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
 
 class Scroller:
@@ -57,9 +62,12 @@ class Scroller:
     """
 
     def create_message(self):
+<<<<<<< HEAD
         if self.__cursor < 0 or self.__cursor >= self.__length:
             self.__cursor = 0
             raise UnboundLocalError("Cursor is not in bound")
+=======
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
         if len(self.list) == 0:
             message = "Nothing found"
             return message
@@ -138,9 +146,15 @@ class Scroller:
 
         """ If cursor is on the egde position (0 or length of list with records),
             then don't append one of arrows."""
+<<<<<<< HEAD
         if self.__cursor > 0:
             low_row.append(InlineKeyboardButton("⬅", callback_data=callback_prev))
         if self.__cursor < len(self.list) - 1:
+=======
+        if self.__cursor != 0:
+            low_row.append(InlineKeyboardButton("⬅", callback_data=callback_prev))
+        if self.__cursor != len(self.list) - 1:
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
             low_row.append(InlineKeyboardButton("➡", callback_data=callback_next))
 
         return InlineKeyboardMarkup([up_row, low_row])
@@ -163,8 +177,13 @@ class Scroller:
     """
 
     def approve_request(self, bot, update):
+<<<<<<< HEAD
         query = update.callback_query
         if isinstance(self.__type, Patron):
+=======
+        if isinstance(self.__type, Patron):
+            query = update.callback_query
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
             self.__type.insert_in_base()
 
             #   Deleting request from 'request' table
@@ -177,10 +196,13 @@ class Scroller:
                                   message_id=query.message.message_id)
             bot.send_message(text="Your request has been approved!", chat_id=self.__type.get_telegram_id())
             self.__cursor = 0
+<<<<<<< HEAD
         else:
             logging.error("Type of Object doesn't match")
             bot.edit_message_text(text="Object Type error has occured", chat_id=query.message.chat_id,
                                   message_id=query.message.message_id)
+=======
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
     """
         def reject_request(self)
@@ -188,8 +210,14 @@ class Scroller:
     """
 
     def reject_request(self, bot, update):
+<<<<<<< HEAD
         query = update.callback_query
         if isinstance(self.__type, Patron):
+=======
+        if isinstance(self.__type, Patron):
+            query = update.callback_query
+
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
             #   Deleting request from 'request' table
             delete_row = "DELETE FROM request WHERE requestID = %s;" % (self.__type.get_request_id())
             cursor.execute(delete_row)
@@ -201,10 +229,13 @@ class Scroller:
             bot.send_message(text="Your request has been rejected :( You can try again or contact librarian @librarian",
                              chat_id=self.__type.get_telegram_id())
             self.__cursor = 0
+<<<<<<< HEAD
         else:
             logging.error("Type doesn't match")
             bot.edit_message_text(text="Type error has occured", chat_id=query.message.chat_id,
                                   message_id=query.message.message_id)
+=======
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
     """
         def book_media(self)
@@ -212,6 +243,7 @@ class Scroller:
     """
 
     def book_media(self, bot, update):
+<<<<<<< HEAD
         patron = Patron()
         query = update.callback_query
 
@@ -240,6 +272,29 @@ class Scroller:
             bot.edit_message_text(text="🤦🏻‍♂️ You're not enrolled into the System. Shame on you! Enroll now! /enroll",
                                   chat_id=query.message.chat_id,
                                   message_id=query.message.message_id)
+=======
+        media = ItemCard()  # Creating an instance of Media
+        query = update.callback_query
+        media.set_item(self.list[self.__cursor])  # Setting media
+
+        # If media can't be booked, then reject booking
+        if media.get_availability() == 0:
+            bot.edit_message_text(text="🤦🏻‍♂️ Media can't be booked. This item is not available now",
+                                  chat_id=query.message.chat_id,
+                                  message_id=query.message.message_id)
+        # Else: book an item
+        else:
+            media.set_availability(0)
+            patron = Patron()
+            patron.find(query.message.chat_id)
+
+            media.update()
+            patron.make_media_request(media.get_media_id())
+            bot.edit_message_text(text="🤘 Media has been successfully booked. Please visit the library to get it.",
+                                  chat_id=query.message.chat_id,
+                                  message_id=query.message.message_id)
+        self.__cursor = 0
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
     """
     def accept_booking_request(self, bot, update)
@@ -248,6 +303,7 @@ class Scroller:
     """
 
     def accept_booking_request(self, bot, update):
+<<<<<<< HEAD
         try:
             media = ItemCard()  # Creating and filling with data Media instance
             te = self.list[self.__cursor]["mediaID"]
@@ -258,12 +314,24 @@ class Scroller:
             issue_date = datetime.datetime.utcnow()
             # Moving request to 'log' table
             sql = """INSERT INTO log (libID, mediaID, issuedate, expirydate, renewed, returned) 
+=======
+        media = ItemCard()  # Creating and filling with data Media instance
+        te = self.list[self.__cursor]["mediaID"]
+        media.find(te)
+
+        patron = Patron()  # Creating and filling with data Patron instance
+        patron.find(update.callback_query.message.chat_id)  # Finding patron by Telegram ID
+        issue_date = datetime.datetime.utcnow()
+        # Moving request to 'log' table
+        sql = """INSERT INTO log (libID, mediaID, issuedate, expirydate, renewed, returned) 
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 VALUES (%s, %s, '%s', '%s', 0,0);""" % (patron.get_lib_id(),
                                         media.get_media_id(),
                                         issue_date.strftime("%Y-%m-%d %H:%M:%S"),
                                         self.generate_expiry_date(media,
                                                                   patron,
                                                                   issue_date).strftime("%Y-%m-%d %H:%M:%S"))
+<<<<<<< HEAD
             print(sql)
             cursor.execute(sql)
             connection.commit()
@@ -280,12 +348,27 @@ Don't forget to return it on time!""" % media.get_media_id(),
 
     """
     def reject_booking_request(self, bot, update)
+=======
+        print(sql)
+        cursor.execute(sql)
+        connection.commit()
+
+        cursor.execute("DELETE FROM mediarequest WHERE mediaID = %s;" % media.get_media_id())
+        connection.commit()
+        bot.send_message(text="""🤘 Media #%s has been successfully issued. 
+Don't forget to return it on time!""" % media.get_media_id(),
+                         chat_id=patron.get_telegram_id())
+
+    """
+    def accept_booking_request(self, bot, update)
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
     This function rejects booking request. 
     """
 
     def reject_booking_request(self, bot, update):
         media = ItemCard()  # Creating and filling with data Media instance
+<<<<<<< HEAD
         try:
             te = self.list[self.__cursor]["mediaID"]
             media.find(te)
@@ -300,6 +383,17 @@ Don't forget to return it on time!""" % media.get_media_id(),
             logging.error("Can't insert into database: " + e.args[0])
             bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=update.callback_query.message.chat_id,
                                   message_id=update.callback_query.message.message_id)
+=======
+        te = self.list[self.__cursor]["mediaID"]
+        media.find(te)
+
+        # Deleting request from 'mediarequest' table
+        cursor.execute("DELETE FROM mediarequest WHERE mediaID = %s;" % media.get_media_id())
+        connection.commit()
+        bot.send_message(
+            text="🤦🏻‍♂️ Request for media #%s has been rejected :(" % media.get_media_id(),
+            chat_id=update.callback_query.message.chat_id)
+>>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
     """
     def generate_expiry_date(self, media, patron, issue_date)
