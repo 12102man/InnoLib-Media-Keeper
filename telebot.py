@@ -105,7 +105,6 @@ This handler starts registration process. It handles from
 def ask_name(bot, update):
     global temp_patron
     message = update.message
-<<<<<<< HEAD
     if temp_patron.exists(message.chat_id):
         bot.send_message(text="🎓 Sorry, you have already been registered", chat_id=message.chat_id)
         return register_conversation.END
@@ -120,18 +119,6 @@ Please, write your first and last name""")
         to another using ConversationHandler
         """
         return PHONE_NUMBER
-=======
-    temp_patron.set_telegram_id(message.chat_id)
-    temp_patron.set_alias(message.chat.username)
-    bot.send_message(chat_id=update.message.chat_id, text="""Let's start the enrolling process into Innopolis University Library!
-Please, write your first and last name""")
-
-    """
-    This statement is required for transferring from one handler 
-    to another using ConversationHandler
-    """
-    return PHONE_NUMBER
->>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
 
 """
@@ -229,10 +216,6 @@ requestCard = Scroller('request', get_list('request'))
 mediaCard = Scroller('media', get_list('media'))
 temp = Scroller('bookingRequest', get_list('mediarequest'))
 
-<<<<<<< HEAD
-=======
-
->>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 """
 These three functions are called when commands 
 are getting called at first time.
@@ -240,7 +223,6 @@ are getting called at first time.
 
 
 def create_request_card(bot, update):
-<<<<<<< HEAD
     requestCard.update(get_list('request'))  # Updating table
     try:
         bot.send_message(text=requestCard.create_message(), chat_id=update.message.chat_id,
@@ -265,22 +247,6 @@ def issue_media(bot, update):
                          reply_markup=temp.create_keyboard())
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
-=======
-    requestCard.update(get_list('request'))     # Updating table
-    bot.send_message(text=requestCard.create_message(), chat_id=update.message.chat_id,
-                     reply_markup=requestCard.create_keyboard())
-
-
-def create_media_card(bot, update):
-    mediaCard.update(get_list('media'))         # Updating table
-    bot.send_message(text=mediaCard.create_message(), chat_id=update.message.chat_id,
-                     reply_markup=mediaCard.create_keyboard())
-
-
-def issue_media(bot, update):
-    temp.update(get_list('mediarequest'))       # Updating table
-    bot.send_message(text=temp.create_message(), chat_id=update.message.chat_id, reply_markup=temp.create_keyboard())
->>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
 
 """
@@ -291,7 +257,6 @@ record.
 
 
 def edit_request_card(bot, update):
-<<<<<<< HEAD
     query = update.callback_query
     try:
         requestCard.update(get_list('request'))
@@ -313,24 +278,10 @@ def edit_media_card(bot, update):
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
-=======
-    requestCard.update(get_list('request'))
-    query = update.callback_query
-    bot.edit_message_text(text=requestCard.create_message(), chat_id=query.message.chat_id,
-                          message_id=query.message.message_id, reply_markup=requestCard.create_keyboard())
-
-
-def edit_media_card(bot, update):
-    mediaCard.update(get_list('media'))
-    query = update.callback_query
-    bot.edit_message_text(text=mediaCard.create_message(), chat_id=query.message.chat_id,
-                          message_id=query.message.message_id, reply_markup=mediaCard.create_keyboard())
->>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
 
 def edit_issue_media(bot, update):
     query = update.callback_query
-<<<<<<< HEAD
     try:
         temp.update(get_list('mediarequest'))
         bot.edit_message_text(text=temp.create_message(), chat_id=query.message.chat_id,
@@ -339,10 +290,6 @@ def edit_issue_media(bot, update):
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
-=======
-    bot.edit_message_text(text=temp.create_message(), chat_id=query.message.chat_id,
-                          message_id=query.message.message_id, reply_markup=temp.create_keyboard())
->>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
 
 """
@@ -363,7 +310,6 @@ def librarian_authentication(user_id):
     else:
         return True
 
-<<<<<<< HEAD
 """
 patron_authentication(user_id)
 
@@ -376,8 +322,6 @@ if yes - return true.
 def patron_authentication(user_id):
     return temp_patron.exists(user_id)
 
-=======
->>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
 """
 This is a conversation handler. It helps smoothly iterating 
@@ -404,12 +348,7 @@ dispatcher.add_handler(CommandHandler('issue', issue_media))
 dispatcher.add_handler(search_query_handler)
 dispatcher.add_handler(register_conversation)
 
-<<<<<<< HEAD
 updater.start_polling()  # Start asking for server about any incoming requests
-=======
-updater.start_polling()     # Start asking for server about any incoming requests
-
->>>>>>> d8119c0c8e5f088b91a18ddaa6c9dc3378c2550b
 
 """
 -------------   Menu for ordering (for later implementation)
