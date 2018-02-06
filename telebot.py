@@ -105,16 +105,20 @@ This handler starts registration process. It handles from
 def ask_name(bot, update):
     global temp_patron
     message = update.message
-    temp_patron.set_telegram_id(message.chat_id)
-    temp_patron.set_alias(message.chat.username)
-    bot.send_message(chat_id=update.message.chat_id, text="""Let's start the enrolling process into Innopolis University Library!
+    if temp_patron.exists(message.chat_id):
+        bot.send_message(text="🎓 Sorry, you have already been registered", chat_id=message.chat_id)
+        return register_conversation.END
+    else:
+        temp_patron.set_telegram_id(message.chat_id)
+        temp_patron.set_alias(message.chat.username)
+        bot.send_message(chat_id=update.message.chat_id, text="""Let's start the enrolling process into Innopolis University Library!
 Please, write your first and last name""")
 
-    """
-    This statement is required for transferring from one handler 
-    to another using ConversationHandler
-    """
-    return PHONE_NUMBER
+        """
+        This statement is required for transferring from one handler 
+        to another using ConversationHandler
+        """
+        return PHONE_NUMBER
 
 
 """
@@ -212,7 +216,6 @@ requestCard = Scroller('request', get_list('request'))
 mediaCard = Scroller('media', get_list('media'))
 temp = Scroller('bookingRequest', get_list('mediarequest'))
 
-
 """
 These three functions are called when commands 
 are getting called at first time.
@@ -220,20 +223,30 @@ are getting called at first time.
 
 
 def create_request_card(bot, update):
-    requestCard.update(get_list('request'))     # Updating table
-    bot.send_message(text=requestCard.create_message(), chat_id=update.message.chat_id,
-                     reply_markup=requestCard.create_keyboard())
+    requestCard.update(get_list('request'))  # Updating table
+    try:
+        bot.send_message(text=requestCard.create_message(), chat_id=update.message.chat_id,
+                         reply_markup=requestCard.create_keyboard())
+    except FileNotFoundError as e:
+        bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
 
 def create_media_card(bot, update):
-    mediaCard.update(get_list('media'))         # Updating table
-    bot.send_message(text=mediaCard.create_message(), chat_id=update.message.chat_id,
-                     reply_markup=mediaCard.create_keyboard())
+    mediaCard.update(get_list('media'))  # Updating table
+    try:
+        bot.send_message(text=mediaCard.create_message(), chat_id=update.message.chat_id,
+                         reply_markup=mediaCard.create_keyboard())
+    except FileNotFoundError as e:
+        bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
 
 def issue_media(bot, update):
-    temp.update(get_list('mediarequest'))       # Updating table
-    bot.send_message(text=temp.create_message(), chat_id=update.message.chat_id, reply_markup=temp.create_keyboard())
+    temp.update(get_list('mediarequest'))  # Updating table
+    try:
+        bot.send_message(text=temp.create_message(), chat_id=update.message.chat_id,
+                         reply_markup=temp.create_keyboard())
+    except FileNotFoundError as e:
+        bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
 
 """
@@ -244,23 +257,39 @@ record.
 
 
 def edit_request_card(bot, update):
-    requestCard.update(get_list('request'))
     query = update.callback_query
-    bot.edit_message_text(text=requestCard.create_message(), chat_id=query.message.chat_id,
-                          message_id=query.message.message_id, reply_markup=requestCard.create_keyboard())
+    try:
+        requestCard.update(get_list('request'))
+        bot.edit_message_text(text=requestCard.create_message(), chat_id=query.message.chat_id,
+                              message_id=query.message.message_id, reply_markup=requestCard.create_keyboard())
+    except UnboundLocalError as e:
+        logging.error("Error occured: " + e.args[0])
+        bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
+                              message_id=query.message.message_id)
 
 
 def edit_media_card(bot, update):
-    mediaCard.update(get_list('media'))
     query = update.callback_query
-    bot.edit_message_text(text=mediaCard.create_message(), chat_id=query.message.chat_id,
-                          message_id=query.message.message_id, reply_markup=mediaCard.create_keyboard())
+    try:
+        mediaCard.update(get_list('media'))
+        bot.edit_message_text(text=mediaCard.create_message(), chat_id=query.message.chat_id,
+                              message_id=query.message.message_id, reply_markup=mediaCard.create_keyboard())
+    except UnboundLocalError as e:
+        logging.error("Error occured: " + e.args[0])
+        bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
+                              message_id=query.message.message_id)
 
 
 def edit_issue_media(bot, update):
     query = update.callback_query
-    bot.edit_message_text(text=temp.create_message(), chat_id=query.message.chat_id,
-                          message_id=query.message.message_id, reply_markup=temp.create_keyboard())
+    try:
+        temp.update(get_list('mediarequest'))
+        bot.edit_message_text(text=temp.create_message(), chat_id=query.message.chat_id,
+                              message_id=query.message.message_id, reply_markup=temp.create_keyboard())
+    except UnboundLocalError as e:
+        logging.error("Error occured: " + e.args[0])
+        bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
+                              message_id=query.message.message_id)
 
 
 """
@@ -280,6 +309,18 @@ def librarian_authentication(user_id):
         return False
     else:
         return True
+
+"""
+patron_authentication(user_id)
+
+This function is responsible for checking if 
+user is a librarian or not. If not - return false,
+if yes - return true.
+"""
+
+
+def patron_authentication(user_id):
+    return temp_patron.exists(user_id)
 
 
 """
@@ -307,8 +348,7 @@ dispatcher.add_handler(CommandHandler('issue', issue_media))
 dispatcher.add_handler(search_query_handler)
 dispatcher.add_handler(register_conversation)
 
-updater.start_polling()     # Start asking for server about any incoming requests
-
+updater.start_polling()  # Start asking for server about any incoming requests
 
 """
 -------------   Menu for ordering (for later implementation)

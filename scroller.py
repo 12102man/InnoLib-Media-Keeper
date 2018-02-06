@@ -3,6 +3,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import config
 import pymysql
 import datetime
+import logging
 
 
 """ MySQL connection """
@@ -13,6 +14,7 @@ connection = pymysql.connect(host=config.db_host,
                              charset='utf8',
                              cursorclass=pymysql.cursors.DictCursor)
 cursor = connection.cursor()
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 
 class Scroller:
@@ -29,6 +31,7 @@ class Scroller:
 
     def update(self, list_update):
         self.list = list_update
+        self.__length = len(list_update)
 
     """
     This function converts states to emojis
@@ -55,6 +58,10 @@ class Scroller:
     """
 
     def create_message(self):
+
+        if self.__cursor < 0 or self.__cursor >= self.__length:
+            self.__cursor = 0
+            raise UnboundLocalError("Cursor is not in bound")
         if len(self.list) == 0:
             message = "Nothing found"
             return message
@@ -89,6 +96,7 @@ class Scroller:
             return message
 
         elif self.state == 'bookingRequest':
+            connection.connect()
             self.__type = BookingRequest()  # Initializing certain type of class with data
             self.__type.set_request(self.list[self.__cursor])
             message = """ Media booking request:
@@ -133,9 +141,9 @@ class Scroller:
 
         """ If cursor is on the egde position (0 or length of list with records),
             then don't append one of arrows."""
-        if self.__cursor != 0:
+        if self.__cursor > 0:
             low_row.append(InlineKeyboardButton("⬅", callback_data=callback_prev))
-        if self.__cursor != len(self.list) - 1:
+        if self.__cursor < len(self.list) - 1:
             low_row.append(InlineKeyboardButton("➡", callback_data=callback_next))
 
         return InlineKeyboardMarkup([up_row, low_row])
@@ -158,8 +166,8 @@ class Scroller:
     """
 
     def approve_request(self, bot, update):
+        query = update.callback_query
         if isinstance(self.__type, Patron):
-            query = update.callback_query
             self.__type.insert_in_base()
 
             #   Deleting request from 'request' table
@@ -172,6 +180,10 @@ class Scroller:
                                   message_id=query.message.message_id)
             bot.send_message(text="Your request has been approved!", chat_id=self.__type.get_telegram_id())
             self.__cursor = 0
+        else:
+            logging.error("Type of Object doesn't match")
+            bot.edit_message_text(text="Object Type error has occured", chat_id=query.message.chat_id,
+                                  message_id=query.message.message_id)
 
     """
         def reject_request(self)
@@ -179,9 +191,8 @@ class Scroller:
     """
 
     def reject_request(self, bot, update):
+        query = update.callback_query
         if isinstance(self.__type, Patron):
-            query = update.callback_query
-
             #   Deleting request from 'request' table
             delete_row = "DELETE FROM request WHERE requestID = %s;" % (self.__type.get_request_id())
             cursor.execute(delete_row)
@@ -193,6 +204,10 @@ class Scroller:
             bot.send_message(text="Your request has been rejected :( You can try again or contact librarian @librarian",
                              chat_id=self.__type.get_telegram_id())
             self.__cursor = 0
+        else:
+            logging.error("Type doesn't match")
+            bot.edit_message_text(text="Type error has occured", chat_id=query.message.chat_id,
+                                  message_id=query.message.message_id)
 
     """
         def book_media(self)
@@ -200,27 +215,34 @@ class Scroller:
     """
 
     def book_media(self, bot, update):
-        media = ItemCard()  # Creating an instance of Media
+        patron = Patron()
         query = update.callback_query
-        media.set_item(self.list[self.__cursor])  # Setting media
 
-        # If media can't be booked, then reject booking
-        if media.get_availability() == 0:
-            bot.edit_message_text(text="🤦🏻‍♂️ Media can't be booked. This item is not available now",
-                                  chat_id=query.message.chat_id,
-                                  message_id=query.message.message_id)
-        # Else: book an item
+        # If user is not enrolled, make him register now!
+        if patron.exists(update.callback_query.message.chat_id):
+            media = ItemCard()  # Creating an instance of Media
+            media.set_item(self.list[self.__cursor])  # Setting media
+
+            # If media can't be booked, then reject booking
+            if media.get_availability() == 0:
+                bot.edit_message_text(text="🤦🏻‍♂️ Media can't be booked. This item is not available now",
+                                      chat_id=query.message.chat_id,
+                                      message_id=query.message.message_id)
+            # Else: book an item
+            else:
+                media.set_availability()
+                patron.find(query.message.chat_id)
+
+                media.update()
+                patron.make_media_request(media.get_media_id())
+                bot.edit_message_text(text="🤘 Media has been successfully booked. Please visit the library to get it.",
+                                      chat_id=query.message.chat_id,
+                                      message_id=query.message.message_id)
+            self.__cursor = 0
         else:
-            media.set_availability(0)
-            patron = Patron()
-            patron.find(query.message.chat_id)
-
-            media.update()
-            patron.make_media_request(media.get_media_id())
-            bot.edit_message_text(text="🤘 Media has been successfully booked. Please visit the library to get it.",
+            bot.edit_message_text(text="🤦🏻‍♂️ You're not enrolled into the System. Shame on you! Enroll now! /enroll",
                                   chat_id=query.message.chat_id,
                                   message_id=query.message.message_id)
-        self.__cursor = 0
 
     """
     def accept_booking_request(self, bot, update)
@@ -229,48 +251,58 @@ class Scroller:
     """
 
     def accept_booking_request(self, bot, update):
-        media = ItemCard()  # Creating and filling with data Media instance
-        te = self.list[self.__cursor]["mediaID"]
-        media.find(te)
+        try:
+            media = ItemCard()  # Creating and filling with data Media instance
+            te = self.list[self.__cursor]["mediaID"]
+            media.find(te)
 
-        patron = Patron()  # Creating and filling with data Patron instance
-        patron.find(update.callback_query.message.chat_id)  # Finding patron by Telegram ID
-        issue_date = datetime.datetime.utcnow()
-        # Moving request to 'log' table
-        sql = """INSERT INTO log (libID, mediaID, issuedate, expirydate, renewed, returned) 
+            patron = Patron()  # Creating and filling with data Patron instance
+            patron.find(update.callback_query.message.chat_id)  # Finding patron by Telegram ID
+            issue_date = datetime.datetime.utcnow()
+            # Moving request to 'log' table
+            sql = """INSERT INTO log (libID, mediaID, issuedate, expirydate, renewed, returned) 
 VALUES (%s, %s, '%s', '%s', 0,0);""" % (patron.get_lib_id(),
                                         media.get_media_id(),
                                         issue_date.strftime("%Y-%m-%d %H:%M:%S"),
                                         self.generate_expiry_date(media,
                                                                   patron,
                                                                   issue_date).strftime("%Y-%m-%d %H:%M:%S"))
-        print(sql)
-        cursor.execute(sql)
-        connection.commit()
+            print(sql)
+            cursor.execute(sql)
+            connection.commit()
 
-        cursor.execute("DELETE FROM mediarequest WHERE mediaID = %s;" % media.get_media_id())
-        connection.commit()
-        bot.send_message(text="""🤘 Media #%s has been successfully issued. 
+            cursor.execute("DELETE FROM mediarequest WHERE mediaID = %s;" % media.get_media_id())
+            connection.commit()
+            bot.send_message(text="""🤘 Media #%s has been successfully issued. 
 Don't forget to return it on time!""" % media.get_media_id(),
-                         chat_id=patron.get_telegram_id())
+                             chat_id=patron.get_telegram_id())
+        except (pymysql.err.InternalError, IndexError, FileNotFoundError) as e:
+            logging.error("Can't insert into database: " + e.args[0])
+            bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=update.callback_query.message.chat_id,
+                                  message_id=update.callback_query.message.message_id)
 
     """
-    def accept_booking_request(self, bot, update)
+    def reject_booking_request(self, bot, update)
 
     This function rejects booking request. 
     """
 
     def reject_booking_request(self, bot, update):
         media = ItemCard()  # Creating and filling with data Media instance
-        te = self.list[self.__cursor]["mediaID"]
-        media.find(te)
+        try:
+            te = self.list[self.__cursor]["mediaID"]
+            media.find(te)
 
         # Deleting request from 'mediarequest' table
-        cursor.execute("DELETE FROM mediarequest WHERE mediaID = %s;" % media.get_media_id())
-        connection.commit()
-        bot.send_message(
-            text="🤦🏻‍♂️ Request for media #%s has been rejected :(" % media.get_media_id(),
-            chat_id=update.callback_query.message.chat_id)
+            cursor.execute("DELETE FROM mediarequest WHERE mediaID = %s;" % media.get_media_id())
+            connection.commit()
+            bot.send_message(
+                text="🤦🏻‍♂️ Request for media #%s has been rejected :(" % media.get_media_id(),
+                chat_id=update.callback_query.message.chat_id)
+        except (pymysql.err.InternalError, IndexError, FileNotFoundError) as e:
+            logging.error("Can't insert into database: " + e.args[0])
+            bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=update.callback_query.message.chat_id,
+                                  message_id=update.callback_query.message.message_id)
 
     """
     def generate_expiry_date(self, media, patron, issue_date)
@@ -289,7 +321,7 @@ Don't forget to return it on time!""" % media.get_media_id(),
             elif patron.get_status() == 1:
                 date += datetime.timedelta(weeks=4)
             else:
-                date += datetime.timedelta(weeks=4)
+                date += datetime.timedelta(weeks=3)
             return date
         elif type_of_media == 'AV' or type_of_media == 'Journals':
             date += datetime.timedelta(weeks=2)
