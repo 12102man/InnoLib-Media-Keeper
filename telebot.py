@@ -221,6 +221,7 @@ mediaCard = Scroller('media', get_list('media'))
 temp = Scroller('bookingRequest', get_list('mediarequest'))
 log = Scroller('log', get_list('log'))
 
+
 """
 These three functions are called when commands 
 are getting called at first time.
@@ -252,6 +253,7 @@ def issue_media(bot, update):
                          reply_markup=temp.create_keyboard())
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+
 
 def create_log_card(bot, update):
     log.update(get_list('log'))  # Updating table
@@ -304,6 +306,7 @@ def edit_issue_media(bot, update):
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
 
+
 def edit_log_card(bot, update):
     query = update.callback_query
     try:
@@ -314,6 +317,7 @@ def edit_log_card(bot, update):
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
+
 
 """
 librarian_authentication(user_id)

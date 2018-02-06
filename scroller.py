@@ -31,6 +31,7 @@ class Scroller:
 
     def update(self, list_update):
         self.list = list_update
+        self.__length = len(list_update)
 
     """
     This function converts states to emojis
@@ -94,6 +95,7 @@ class Scroller:
             return message
 
         elif self.state == 'bookingRequest':
+            connection.connect()
             self.__type = BookingRequest()  # Initializing certain type of class with data
             self.__type.set_request(self.list[self.__cursor])
             message = """ Media booking request:
@@ -242,7 +244,7 @@ class Scroller:
                                       message_id=query.message.message_id)
             # Else: book an item
             else:
-                media.set_availability(0)
+                media.set_availability()
                 patron.find(query.message.chat_id)
 
                 media.update()
@@ -333,7 +335,7 @@ Don't forget to return it on time!""" % media.get_media_id(),
             elif patron.get_status() == 1:
                 date += datetime.timedelta(weeks=4)
             else:
-                date += datetime.timedelta(weeks=4)
+                date += datetime.timedelta(weeks=3)
             return date
         elif type_of_media == 'AV' or type_of_media == 'Journals':
             date += datetime.timedelta(weeks=2)

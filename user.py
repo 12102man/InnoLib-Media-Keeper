@@ -205,6 +205,7 @@ phone = %s, name = '%s', facultymember = %s where telegramid = %s;""" % (self.__
     """
 
     def find(self, telegram_id):
+        connection.connect()
         sql = "SELECT * from user WHERE telegramID = %s;" % telegram_id
         cursor.execute(sql)
         found_data = cursor.fetchall()
@@ -286,8 +287,14 @@ class ItemCard:
 
     """ Setters """
 
-    def set_availability(self, state):
-        self.__availability = state
+    def set_availability(self):
+        sql = "SELECT * FROM mediarequest WHERE libID = %s;" % self.__mediaid
+        cursor.execute(sql)
+        selection = cursor.fetchall()
+        if len(selection) == 0:
+            self.__availability = 0
+        else:
+            self.__availability = 1
 
     def set_type(self, type_of_doc):
         self.__type = type_of_doc
@@ -323,6 +330,7 @@ availability = %s, bestseller = %s where mediaid = %s;""" % (self.__type,
     """
 
     def find(self, media_id):
+        connection.connect()
         sql = "SELECT * FROM media WHERE mediaID = %s;" % media_id
         cursor.execute(sql)
         found_data = cursor.fetchall()
@@ -330,6 +338,15 @@ availability = %s, bestseller = %s where mediaid = %s;""" % (self.__type,
             raise FileNotFoundError("Media not found")
         else:
             self.set_item(found_data[0])
+
+
+    def get_list(self, table):
+        connection.connect()
+        sql = "SELECT * FROM %s;" % table
+        cursor.execute(sql)
+        res = cursor.fetchall()
+        return res
+
 
     @staticmethod
     def exists(media_id):
@@ -370,6 +387,7 @@ class BookingRequest:
     """
 
     def set_request(self, json_line):
+        connection.connect()
         self.__lib_id = json_line["libID"]
         self.__media_id = json_line["mediaID"]
 
@@ -404,6 +422,7 @@ class BookingRequest:
 
     def get_media_id(self):
         return self.__media_id
+
 
 class log:
     """
@@ -440,3 +459,4 @@ class log:
 
     def is_renewed(self):
         return self.__renewed
+
