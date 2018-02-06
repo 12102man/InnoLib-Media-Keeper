@@ -1,4 +1,4 @@
-from user import Patron, ItemCard, BookingRequest
+from user import Patron, ItemCard, BookingRequest, log
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import config
 import pymysql
@@ -58,7 +58,6 @@ class Scroller:
     """
 
     def create_message(self):
-
         if self.__cursor < 0 or self.__cursor >= self.__length:
             self.__cursor = 0
             raise UnboundLocalError("Cursor is not in bound")
@@ -104,6 +103,18 @@ class Scroller:
             What: %s
             """ % (self.__type.get_username(), self.__type.get_media_name())
             return message
+        elif self.state == 'log':
+            self.__type = log()  # Initializing certain type of class with data
+            self.__type.set_log(self.list[self.__cursor])
+            message = """ Log:
+                        Customer: %s
+                        What: %s
+                        Issue date: %s
+                        Expiry date: %s
+                        Returned: %s
+                        Renewed: %s
+                        """ % (self.__type.get_lib_id(), self.__type.get_media_id(), self.__type.get_issue_date(), self.__type.get_expiry_date(), self.__type.is_returned(), self.__type.is_renewed())
+            return message
 
     """
     create_keyboard(self)
@@ -138,6 +149,9 @@ class Scroller:
             callback_next = 'nextBookingRequest'
             up_row.append(InlineKeyboardButton("✅", callback_data='approveBookingRequest'))
             up_row.append(InlineKeyboardButton("🚫", callback_data='rejectBookingRequest'))
+        elif self.state == 'log':
+            callback_prev = 'prevLogItem'
+            callback_next = 'nextLogItem'
 
         """ If cursor is on the egde position (0 or length of list with records),
             then don't append one of arrows."""
