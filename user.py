@@ -404,3 +404,39 @@ class BookingRequest:
 
     def get_media_id(self):
         return self.__media_id
+
+class log:
+    """
+    def __init__ (self)
+
+    Setting class attributes to 0
+    """
+
+    def __init__(self):
+        self.__lib_id = 0
+        self.__media_id = 0
+        self.__issue_date = 0
+        self.__expiry_date = 0
+        self.__returned = 0
+        self.__renewed = 0
+
+    def set_log(self, json_line):
+
+
+    def get_lib_id(self):
+        return self.__lib_id
+
+    def get_media_id(self):
+        return self.__media_id
+
+    def get_issue_date(self):
+        return self.__issue_date
+
+    def get_expiry_date(self):
+        return self.__expiry_date
+
+    def is_returned(self):
+        return self.__returned
+
+    def is_renewed(self):
+        return self.__renewed
