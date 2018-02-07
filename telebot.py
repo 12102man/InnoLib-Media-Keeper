@@ -83,6 +83,10 @@ def search_functions(bot, update):
         temp.accept_booking_request(bot, update)
     elif query == 'rejectBookingRequest':
         temp.reject_booking_request(bot, update)
+    elif query == 'prevLogItem':
+        log.decrease_cursor()
+    elif query == 'nextLogItem':
+        log.increase_cursor()
 
 
 # Filter for phone
@@ -215,6 +219,8 @@ and booking requests.
 requestCard = Scroller('request', get_list('request'))
 mediaCard = Scroller('media', get_list('media'))
 temp = Scroller('bookingRequest', get_list('mediarequest'))
+log = Scroller('log', get_list('log'))
+
 
 """
 These three functions are called when commands 
@@ -245,6 +251,15 @@ def issue_media(bot, update):
     try:
         bot.send_message(text=temp.create_message(), chat_id=update.message.chat_id,
                          reply_markup=temp.create_keyboard())
+    except FileNotFoundError as e:
+        bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+
+
+def create_log_card(bot, update):
+    log.update(get_list('log'))  # Updating table
+    try:
+        bot.send_message(text=log.create_message(), chat_id=update.message.chat_id,
+                         reply_markup=log.create_keyboard())
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
@@ -286,6 +301,18 @@ def edit_issue_media(bot, update):
         temp.update(get_list('mediarequest'))
         bot.edit_message_text(text=temp.create_message(), chat_id=query.message.chat_id,
                               message_id=query.message.message_id, reply_markup=temp.create_keyboard())
+    except UnboundLocalError as e:
+        logging.error("Error occured: " + e.args[0])
+        bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
+                              message_id=query.message.message_id)
+
+
+def edit_log_card(bot, update):
+    query = update.callback_query
+    try:
+        log.update(get_list('log'))
+        log.edit_message_text(text=log.create_message(), chat_id=query.message.chat_id,
+                              message_id=query.message.message_id, reply_markup=log.create_keyboard())
     except UnboundLocalError as e:
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
@@ -345,6 +372,7 @@ search_query_handler = CallbackQueryHandler(search_functions, pass_groups=True)
 dispatcher.add_handler(CommandHandler('requests', create_request_card))
 dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', issue_media))
+dispatcher.add_handler(CommandHandler('log', create_log_card))
 dispatcher.add_handler(search_query_handler)
 dispatcher.add_handler(register_conversation)
 

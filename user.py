@@ -205,6 +205,7 @@ phone = %s, name = '%s', facultymember = %s where telegramid = %s;""" % (self.__
     """
 
     def find(self, telegram_id):
+        connection.connect()
         sql = "SELECT * from user WHERE telegramID = %s;" % telegram_id
         cursor.execute(sql)
         found_data = cursor.fetchall()
@@ -212,7 +213,6 @@ phone = %s, name = '%s', facultymember = %s where telegramid = %s;""" % (self.__
             raise FileNotFoundError("User not found")
         else:
             self.set_user(found_data[0])
-
 
     def exists(self, tele_id):
         sql = "SELECT * from user WHERE telegramID = %s;" % tele_id
@@ -323,6 +323,7 @@ availability = %s, bestseller = %s where mediaid = %s;""" % (self.__type,
     """
 
     def find(self, media_id):
+        connection.connect()
         sql = "SELECT * FROM media WHERE mediaID = %s;" % media_id
         cursor.execute(sql)
         found_data = cursor.fetchall()
@@ -330,6 +331,15 @@ availability = %s, bestseller = %s where mediaid = %s;""" % (self.__type,
             raise FileNotFoundError("Media not found")
         else:
             self.set_item(found_data[0])
+
+
+    def get_list(self, table):
+        connection.connect()
+        sql = "SELECT * FROM %s;" % table
+        cursor.execute(sql)
+        res = cursor.fetchall()
+        return res
+
 
     @staticmethod
     def exists(media_id):
@@ -370,6 +380,7 @@ class BookingRequest:
     """
 
     def set_request(self, json_line):
+        connection.connect()
         self.__lib_id = json_line["libID"]
         self.__media_id = json_line["mediaID"]
 
@@ -404,3 +415,57 @@ class BookingRequest:
 
     def get_media_id(self):
         return self.__media_id
+
+
+class log:
+    """
+    def __init__ (self)
+
+    Setting class attributes to 0
+    """
+
+    def __init__(self):
+        self.__lib_id = 0
+        self.__media_id = 0
+        self.__issue_date = 0
+        self.__expiry_date = 0
+        self.__returned = 0
+        self.__renewed = 0
+
+    def set_log(self, json_line):
+<<<<<<< HEAD
+        customer_sql = "SELECT * FROM user WHERE libID = %s;" % json_line['libID']
+        cursor.execute(customer_sql)
+        self.__lib_id = cursor.fetchone()['name']
+
+        media_sql = "SELECT * FROM media WHERE mediaID = %s;" % json_line['mediaID']
+        cursor.execute(media_sql)
+        data = cursor.fetchone()
+        self.__media_id = """\"%s\" by %s""" % (data['title'], data['authors'])
+
+        self.__issue_date = json_line['issuedate']
+        self.__expiry_date = json_line['expirydate']
+        self.__returned = json_line['returned']
+        self.__renewed = json_line['renewed']
+=======
+
+>>>>>>> 8e84bb9c5df7be2f829931c2df78ea33c93ed48b
+
+    def get_lib_id(self):
+        return self.__lib_id
+
+    def get_media_id(self):
+        return self.__media_id
+
+    def get_issue_date(self):
+        return self.__issue_date
+
+    def get_expiry_date(self):
+        return self.__expiry_date
+
+    def is_returned(self):
+        return self.__returned
+
+    def is_renewed(self):
+        return self.__renewed
+
