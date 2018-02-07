@@ -1,4 +1,4 @@
-from user import Patron, ItemCard, BookingRequest
+from user import Patron, ItemCard, BookingRequest, log
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import config
 import pymysql
@@ -58,7 +58,6 @@ class Scroller:
     """
 
     def create_message(self):
-
         if self.__cursor < 0 or self.__cursor >= self.__length:
             self.__cursor = 0
             raise UnboundLocalError("Cursor is not in bound")
@@ -104,6 +103,18 @@ class Scroller:
             What: %s
             """ % (self.__type.get_username(), self.__type.get_media_name())
             return message
+        elif self.state == 'log':
+            self.__type = log()  # Initializing certain type of class with data
+            self.__type.set_log(self.list[self.__cursor])
+            message = """ Log:
+                        Customer: %s
+                        What: %s
+                        Issue date: %s
+                        Expiry date: %s
+                        Returned: %s
+                        Renewed: %s
+                        """ % (self.__type.get_lib_id(), self.__type.get_media_id(), self.__type.get_issue_date(), self.__type.get_expiry_date(), self.__type.is_returned(), self.__type.is_renewed())
+            return message
 
     """
     create_keyboard(self)
@@ -138,6 +149,9 @@ class Scroller:
             callback_next = 'nextBookingRequest'
             up_row.append(InlineKeyboardButton("✅", callback_data='approveBookingRequest'))
             up_row.append(InlineKeyboardButton("🚫", callback_data='rejectBookingRequest'))
+        elif self.state == 'log':
+            callback_prev = 'prevLogItem'
+            callback_next = 'nextLogItem'
 
         """ If cursor is on the egde position (0 or length of list with records),
             then don't append one of arrows."""
@@ -230,7 +244,7 @@ class Scroller:
                                       message_id=query.message.message_id)
             # Else: book an item
             else:
-                media.set_availability()
+                media.set_availability(0)
                 patron.find(query.message.chat_id)
 
                 media.update()
@@ -257,7 +271,10 @@ class Scroller:
             media.find(te)
 
             patron = Patron()  # Creating and filling with data Patron instance
-            patron.find(update.callback_query.message.chat_id)  # Finding patron by Telegram ID
+            libID = self.list[self.__cursor]["libID"]
+            cursor.execute("SELECT * FROM user WHERE libID = %s;" % libID)
+            telegramID = cursor.fetchone()['telegramID']
+            patron.find(telegramID)  # Finding patron by Telegram ID
             issue_date = datetime.datetime.utcnow()
             # Moving request to 'log' table
             sql = """INSERT INTO log (libID, mediaID, issuedate, expirydate, renewed, returned) 
@@ -294,11 +311,17 @@ Don't forget to return it on time!""" % media.get_media_id(),
             media.find(te)
 
         # Deleting request from 'mediarequest' table
+            libID = self.list[self.__cursor]["libID"]
+
+            patron = Patron()
+            cursor.execute("SELECT * FROM user WHERE libID = %s;" % libID)
+            telegramID = cursor.fetchone()['telegramID']
+            patron.find(telegramID)  # Finding patron by Telegram ID
             cursor.execute("DELETE FROM mediarequest WHERE mediaID = %s;" % media.get_media_id())
             connection.commit()
             bot.send_message(
                 text="🤦🏻‍♂️ Request for media #%s has been rejected :(" % media.get_media_id(),
-                chat_id=update.callback_query.message.chat_id)
+                chat_id=patron.get_telegram_id())
         except (pymysql.err.InternalError, IndexError, FileNotFoundError) as e:
             logging.error("Can't insert into database: " + e.args[0])
             bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=update.callback_query.message.chat_id,
