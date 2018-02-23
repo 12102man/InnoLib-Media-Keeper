@@ -1,0 +1,92 @@
+from pony.orm import *
+import datetime
+
+db = Database()
+# MySQL
+db.bind(provider='mysql', host='37.46.132.57', user='telebot', passwd='Malinka2017', db='testbase')
+
+
+class User(db.Entity):
+    name = Required(str)
+    address = Required(str)
+    medias = Set('MediaCopies')
+
+    telegramID = PrimaryKey(int)
+    alias = Required(str)
+    phone = Required(str)
+    faculty = Required(bool)
+
+
+class Media(db.Entity):
+    mediaID = PrimaryKey(int)
+    name = Required(str)  # title?
+
+    type = Required(str)
+    authors = Required(str)  # or [str]?
+    publisher = Required(str)
+    availability = Required(bool)
+    bestseller = Required(bool)
+    fine = Required(int)
+    cost = Required(int)
+    image = Set('Images')
+    copies = Set('MediaCopies')
+
+
+class Request(db.Entity):
+    telegramID = Required(int)
+    alias = Required(str)
+    name = Required(str)
+    address = Required(str)
+    phone = Required(str)
+    faculty = Required(bool)
+    status = Optional(bool, sql_default=False)
+
+
+class MediaRequest(db.Entity):
+    libID = Required(int)
+    mediaID = Required(str)
+
+
+class Librarian(db.Entity):
+    telegramID = Required(int)
+    name = Required(str)
+
+
+class Images(db.Entity):
+    mediaID = Required(Media)
+    image = Required(str)
+    imageID = Required(int)
+
+
+class Log(db.Entity):
+    libID = Required(int)
+    mediaID = Required(int)
+    issue_date = Required(datetime.datetime,
+                          default=datetime.datetime.utcnow)
+    expiry_date = Required(datetime.datetime,
+                           default=datetime.datetime.utcnow)
+    returned = Required(bool)
+    renewed = Required(bool)
+
+
+class MediaCopies(db.Entity):
+    mediaID = Required(Media)
+    copyID = Required(str)
+    available = Required(bool)
+    current_owner = Optional(User)
+
+
+class RegistrySession(db.Entity):
+    alias = Optional(str)
+    name = Optional(str)
+    phone = Optional(str)
+    address = Optional(str)
+    faculty = Optional(bool)
+    telegramID = PrimaryKey(int)
+    request_c = Optional(int)
+    media_c = Optional(int)
+    book_r_c = Optional(int)
+
+
+db.generate_mapping(create_tables=True)
+set_sql_debug(True)

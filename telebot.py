@@ -3,12 +3,19 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ConversationHandler, MessageHandler, CallbackQueryHandler
 from telegram.ext import Filters
 from telegram.ext import CommandHandler
-from user import Patron
+from pony.orm import *
+from new_user import User, Request, RegistrySession, Media, MediaRequest
 import logging
 import pymysql
 import config
 from scroller import Scroller
+import user
+from button_actions import *
 from telegram.ext.dispatcher import run_async
+
+db = Database()
+# MySQL
+db.bind(provider='mysql', host='37.46.132.57', user='telebot', passwd='Malinka2017', db='testbase')
 
 updater = Updater(token=config.token)
 
@@ -23,11 +30,12 @@ connection = pymysql.connect(host=config.db_host,
                              cursorclass=pymysql.cursors.DictCursor)
 cursor = connection.cursor()
 
-temp_patron = Patron()  # Temporary user (used in registration process)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 # States for switching between handlers
 NAME, FACULTY, PHONE_NUMBER, ADDRESS, END_OF_SIGNUP, BOOK_SEARCH, ARTICLE_SEARCH, AV_SEARCH = range(8)
+
+db.generate_mapping(create_tables=True)
 
 """
 search_functions(bot, update)
@@ -38,8 +46,8 @@ way to run further.
 """
 
 
+@db_session
 def search_functions(bot, update):
-    global temp_patron
     query = update.callback_query.data
     """
     if query == 'book_search':
@@ -50,39 +58,55 @@ def search_functions(bot, update):
         return av_search(bot, update)
     """
     if query == 'Faculty':
-        temp_patron.set_faculty(1)
+        session_user = RegistrySession[update.callback_query.from_user.id]
+        session_user.faculty = True
+        commit()
         end_of_registration(bot, update)
     elif query == 'NotFaculty':
-        temp_patron.set_faculty(0)
+        session_user = RegistrySession[update.callback_query.from_user.id]
+        session_user.faculty = False
+        commit()
         end_of_registration(bot, update)
     elif query == 'prevRequest':
-        requestCard.decrease_cursor()
+        session = RegistrySession[update.callback_query.from_user.id]
+        session.request_c -= 1
+        commit()
         edit_request_card(bot, update)
     elif query == 'nextRequest':
-        requestCard.increase_cursor()
+        session = RegistrySession[update.callback_query.from_user.id]
+        session.request_c += 1
+        commit()
         edit_request_card(bot, update)
     elif query == 'prevItem':
-        mediaCard.decrease_cursor()
+        session = RegistrySession[update.callback_query.from_user.id]
+        session.media_c -= 1
+        commit()
         edit_media_card(bot, update)
     elif query == 'nextItem':
-        mediaCard.increase_cursor()
+        session = RegistrySession[update.callback_query.from_user.id]
+        session.media_c += 1
+        commit()
         edit_media_card(bot, update)
     elif query == 'approveRequest':
-        requestCard.approve_request(bot, update)
+        approve_request(bot, update)
     elif query == 'rejectRequest':
-        requestCard.reject_request(bot, update)
+        reject_request(bot, update)
     elif query == 'book':
-        mediaCard.book_media(bot, update)
+        book_media(bot, update)
     elif query == 'prevBookingRequest':
-        temp.decrease_cursor()
+        session = RegistrySession[update.callback_query.from_user.id]
+        session.book_r_c -= 1
+        commit()
         edit_issue_media(bot, update)
     elif query == 'nextBookingRequest':
-        temp.increase_cursor()
+        session = RegistrySession[update.callback_query.from_user.id]
+        session.book_r_c += 1
+        commit()
         edit_issue_media(bot, update)
     elif query == 'approveBookingRequest':
-        temp.accept_booking_request(bot, update)
+        accept_booking_request(bot, update)
     elif query == 'rejectBookingRequest':
-        temp.reject_booking_request(bot, update)
+        reject_booking_request(bot, update)
     elif query == 'prevLogItem':
         log.decrease_cursor()
     elif query == 'nextLogItem':
@@ -105,16 +129,23 @@ This handler starts registration process. It handles from
 """
 
 
-@run_async
+@db_session
 def ask_name(bot, update):
-    global temp_patron
     message = update.message
-    if temp_patron.exists(message.chat_id):
+    user = User.get(telegramID=message.chat_id)
+    session = RegistrySession.get(telegramID=message.chat_id)
+    if user is not None:
         bot.send_message(text="🎓 Sorry, you have already been registered", chat_id=message.chat_id)
         return register_conversation.END
+    elif session is not None:
+        if session.phone is None:
+            ask_phone(bot, update)
+        elif session.address is None:
+            ask_address(bot, update)
+        elif session.faculty is None:
+            ask_faculty(bot, update)
     else:
-        temp_patron.set_telegram_id(message.chat_id)
-        temp_patron.set_alias(message.chat.username)
+        session_user = RegistrySession(telegramID=message.chat_id, alias=message.chat.username)
         bot.send_message(chat_id=update.message.chat_id, text="""Let's start the enrolling process into Innopolis University Library!
 Please, write your first and last name""")
 
@@ -122,6 +153,7 @@ Please, write your first and last name""")
         This statement is required for transferring from one handler 
         to another using ConversationHandler
         """
+        commit()
         return PHONE_NUMBER
 
 
@@ -134,11 +166,12 @@ because of Telegram restrictions :(
 """
 
 
-@run_async
+@db_session
 def ask_phone(bot, update):
-    global temp_patron
-    temp_patron.set_name(update.message.text)
+    session_user = RegistrySession[update.message.chat_id]
+    session_user.name = update.message.text
     bot.send_message(chat_id=update.message.chat_id, text="Please, write your phone number")
+    commit()
     return ADDRESS
 
 
@@ -149,14 +182,15 @@ This is the third handler. It asks for address.
 """
 
 
-@run_async
+@db_session
 def ask_address(bot, update):
-    global temp_patron
+    session_user = RegistrySession[update.message.chat_id]
     message = update.message.text
     filtered_message = message.replace("+", "").replace("(", "").replace(")", "").replace("-", "").replace(" ", "")
     if all_numbers(filtered_message):
-        temp_patron.set_phone(message)
+        session_user.phone = update.message.text
         bot.send_message(chat_id=update.message.chat_id, text="Please, write your address")
+        commit()
         return FACULTY
     else:
         bot.send_message(chat_id=update.message.chat_id, text="Oops, this is not a phone number, try again")
@@ -168,10 +202,11 @@ This is the fourth handler. It asks user's status
 """
 
 
-@run_async
+@db_session
 def ask_faculty(bot, update):
-    global temp_patron
-    temp_patron.set_address(update.message.text)
+    session_user = RegistrySession[update.message.chat_id]
+    session_user.address = update.message.text
+    commit()
 
     #   Buttons for answering Yes or No. callback_data is what bot gets as a query (see search_functions())
     reply = InlineKeyboardMarkup([[InlineKeyboardButton("Yes", callback_data="Faculty"),
@@ -187,10 +222,18 @@ If everything is correct, send request to database.
 
 
 @run_async
+@db_session
 def end_of_registration(bot, update):
-    global temp_patron
+    session_user = RegistrySession[update.callback_query.from_user.id]
+    user_request = Request(
+        telegramID=session_user.telegramID,
+        name=session_user.name,
+        phone=session_user.phone,
+        address=session_user.address,
+        alias=session_user.alias,
+        faculty=session_user.faculty)
+    commit()
     bot.send_message(chat_id=update.callback_query.from_user.id, text="Application was sent to library!")
-    temp_patron.add_request()
     return register_conversation.END
 
 
@@ -216,11 +259,6 @@ These objects are from Scroller class (see scroller.py)
 They perform menus for viewing menu, registry requests
 and booking requests.
 """
-requestCard = Scroller('request', get_list('request'))
-mediaCard = Scroller('media', get_list('media'))
-temp = Scroller('bookingRequest', get_list('mediarequest'))
-log = Scroller('log', get_list('log'))
-
 
 """
 These three functions are called when commands 
@@ -228,8 +266,11 @@ are getting called at first time.
 """
 
 
+@db_session
 def create_request_card(bot, update):
-    requestCard.update(get_list('request'))  # Updating table
+    registry = list(Request.select(lambda c: c.status == 0))
+
+    requestCard = Scroller('request', registry, update.message.chat_id)
     try:
         bot.send_message(text=requestCard.create_message(), chat_id=update.message.chat_id,
                          reply_markup=requestCard.create_keyboard())
@@ -237,20 +278,24 @@ def create_request_card(bot, update):
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
 
+@db_session
 def create_media_card(bot, update):
-    mediaCard.update(get_list('media'))  # Updating table
+    registry = list(Media.select())
+    mediaCard = Scroller('media', registry, update.message.chat_id)
+
     try:
         bot.send_message(text=mediaCard.create_message(), chat_id=update.message.chat_id,
                          reply_markup=mediaCard.create_keyboard())
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
-
+@db_session
 def issue_media(bot, update):
-    temp.update(get_list('mediarequest'))  # Updating table
+    registry = list(MediaRequest.select())
+    issue_card = Scroller('bookingRequest', registry, update.message.chat_id)
     try:
-        bot.send_message(text=temp.create_message(), chat_id=update.message.chat_id,
-                         reply_markup=temp.create_keyboard())
+        bot.send_message(text=issue_card.create_message(), chat_id=update.message.chat_id,
+                         reply_markup=issue_card.create_keyboard())
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
@@ -274,7 +319,9 @@ record.
 def edit_request_card(bot, update):
     query = update.callback_query
     try:
-        requestCard.update(get_list('request'))
+        registry = list(Request.select(lambda c: c.status == 0))
+
+        requestCard = Scroller('request', registry, update.callback_query.from_user.id)
         bot.edit_message_text(text=requestCard.create_message(), chat_id=query.message.chat_id,
                               message_id=query.message.message_id, reply_markup=requestCard.create_keyboard())
     except UnboundLocalError as e:
@@ -286,7 +333,8 @@ def edit_request_card(bot, update):
 def edit_media_card(bot, update):
     query = update.callback_query
     try:
-        mediaCard.update(get_list('media'))
+        registry = list(Media.select())
+        mediaCard = Scroller('media', registry, query.message.chat_id)
         bot.edit_message_text(text=mediaCard.create_message(), chat_id=query.message.chat_id,
                               message_id=query.message.message_id, reply_markup=mediaCard.create_keyboard())
     except UnboundLocalError as e:
@@ -298,9 +346,10 @@ def edit_media_card(bot, update):
 def edit_issue_media(bot, update):
     query = update.callback_query
     try:
-        temp.update(get_list('mediarequest'))
-        bot.edit_message_text(text=temp.create_message(), chat_id=query.message.chat_id,
-                              message_id=query.message.message_id, reply_markup=temp.create_keyboard())
+        registry = list(MediaRequest.select())
+        issue_card = Scroller('bookingRequest', registry, query.message.chat_id)
+        bot.edit_message_text(text=issue_card.create_message(), chat_id=query.message.chat_id,
+                              message_id=query.message.message_id, reply_markup=issue_card.create_keyboard())
     except UnboundLocalError as e:
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
@@ -337,6 +386,7 @@ def librarian_authentication(user_id):
     else:
         return True
 
+
 """
 patron_authentication(user_id)
 
@@ -348,6 +398,10 @@ if yes - return true.
 
 def patron_authentication(user_id):
     return temp_patron.exists(user_id)
+
+
+def my_medias(bot, update):
+    temp_media = user.ItemCard()
 
 
 """
@@ -373,6 +427,7 @@ dispatcher.add_handler(CommandHandler('requests', create_request_card))
 dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', issue_media))
 dispatcher.add_handler(CommandHandler('log', create_log_card))
+dispatcher.add_handler(CommandHandler('my', my_medias))
 dispatcher.add_handler(search_query_handler)
 dispatcher.add_handler(register_conversation)
 

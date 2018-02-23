@@ -1,6 +1,7 @@
 import pymysql
 import config
 import logging
+
 """
 Connection to database. Configuration values 
 are hidden in config.py 
@@ -332,14 +333,12 @@ availability = %s, bestseller = %s where mediaid = %s;""" % (self.__type,
         else:
             self.set_item(found_data[0])
 
-
     def get_list(self, table):
         connection.connect()
         sql = "SELECT * FROM %s;" % table
         cursor.execute(sql)
         res = cursor.fetchall()
         return res
-
 
     @staticmethod
     def exists(media_id):
@@ -433,7 +432,6 @@ class log:
         self.__renewed = 0
 
     def set_log(self, json_line):
-<<<<<<< HEAD
         customer_sql = "SELECT * FROM user WHERE libID = %s;" % json_line['libID']
         cursor.execute(customer_sql)
         self.__lib_id = cursor.fetchone()['name']
@@ -447,9 +445,6 @@ class log:
         self.__expiry_date = json_line['expirydate']
         self.__returned = json_line['returned']
         self.__renewed = json_line['renewed']
-=======
-
->>>>>>> 8e84bb9c5df7be2f829931c2df78ea33c93ed48b
 
     def get_lib_id(self):
         return self.__lib_id
@@ -468,4 +463,3 @@ class log:
 
     def is_renewed(self):
         return self.__renewed
-
