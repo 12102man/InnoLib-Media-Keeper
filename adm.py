@@ -1,15 +1,14 @@
 from telegram.ext import Updater
-from telegram.ext import CommandHandler
+from telegram.ext import CommandHandler, MessageHandler, ConversationHandler
+from telegram.ext import Filters
 from pony.orm import *
-import user
 import config
+from user import User, Media, RegistrySession
 
 db = Database()
+db.bind(provider='mysql', host='37.46.132.57', user='telebot', passwd='Malinka2017', db='testbase')
 updater = Updater(token=config.token)
-new_patron = Pony_patron()
-new_media = Pony_media()
-current_patron = Pony_patron()
-current_media = Pony_media()
+
 
 def create_new_patron(bot, update, state):
     """
@@ -17,31 +16,46 @@ def create_new_patron(bot, update, state):
     put there new data from message of librarian
     Ask required field to user and put it new entity
     Then commit it
+    ATTENTION: registration is being done by LIBRARIAN, not PATRON by himself
     """
-    global new_patron
-    if state == "start":
-        return NAME
-    if state == "name":
-        new_patron.set_name(update.message.text)
-        return TELEGRAM_ID
-    if state == "telegram_id":
-        new_patron.set_telegram_id(update.message.text)
-        return ALIAS
-    if state == "alias":
-        new_patron.set_alias(update.message.text)
-        return PHONE_NUMBER
-    if state == "phone_number":
-        new_patron.set_phone(update.message.text)
-        return ADDRESS
-    if state == "address":
-        new_patron.set_address(update.message.text)
-        return FACULTY
-    if state == "faculty":
-        new_patron.set_faculty(update.message.text)
-        return COMMIT
-    if state == "commit":
+    #new_user = User.get(telegramID=update.message.chat_id)
+    session = RegistrySession.get(telegramID=update.message.chat_id)
+    if session is not None:
+        if session.telegramID is None:
+            """Тут ещё не понятно, сможет ли библиотекарь писать сразу ИД
+            или бот сможет находить по алиасу ИД """
+            session.request_c = update.message.text
+            bot.send_message("write his full name")
+            commit()
+            return NAME
+        elif session.name is None:
+            session.name = update.message.text
+            bot.send_message("write his full name")
+            commit()
+            return PHONE_NUMBER
+        elif session.phone is None:
+            session.phone = update.message.text
+            bot.send_message("write his address")
+            commit()
+            return ADDRESS
+        elif session.address is None:
+            session.address = update.message.text
+            bot.send_message("write is he a faculty member")
+            commit()
+            return FACULTY
+        elif session.faculty is None:
+            session.faculty = update.message.text
+            bot.send_message("write is he a faculty member")
+            new_user = User(telegramID=session.request_c, name=session.name,
+                            phone=session.phone, address=session.address,
+                            faculty=session.faculty)
+            commit()
+            return new_patron_conversation.END
+    else:
+        session_lib = RegistrySession(telegramID=update.message.chat_id)
+        bot.send("start reg new patron, write his tgID/alias")
         commit()
-        return new_patron_conversation.END
+        return TELEGRAM_ID
 
 
 def create_new_media(bot, update, state):
@@ -49,99 +63,126 @@ def create_new_media(bot, update, state):
     The same thing as with NEW PATRON but with media
     """
 
-    global new_media
-    if state == "start":
-        return TYPE
-    if state == "type":
-        new_media.set_type(update.message.text)
-        return TITLE
-    if state == "title":
-        new_media.set_type(update.message.text)
-        return AUTHORS
-    if state == "authors":
-        new_media.set_type(update.message.text)
-        return COPY
-    if state == "copy":
-        new_media.set_type(update.message.text)
-        return COMMIT
-    if state == "commit":
+    session = RegistrySession.get(telegramID=update.message.chat_id)
+    if session is not None:
+        if session.media_c is None:
+            session.media_c = update.message.text
+            new_media = Media(mediaID=session.media_c)
+            bot.send_message("write his full name")
+            commit()
+            return TYPE
+        else:
+            new_media = Media.get(mediaID=session.media_c)
+            if new_media.type is None:
+                new_media.type = update.message.text
+                bot.send_message("write its name")
+                commit()
+                return TITLE
+            elif new_media.name is None:
+                new_media.name = update.message.text
+                bot.send_message("write its authors")
+                commit()
+                return PUBLISHER
+            elif new_media.publisher is None:
+                new_media.publisher = update.message.text
+                commit()
+                return new_media_conversation.END
+    else:
+        session_lib = RegistrySession(telegramID=update.message.chat_id)
+        bot.send("start reg new media, write its libID")
         commit()
-        return new_media_conversation.END
+        return MEDIA_ID
 
 
-def delete_user(bot, update, state):
-    global current_patron
+def delete_patron(bot, update, state):
     if state == "find":
+        """
+        Librarian can also write a libID
+        """
         name = update.message.text
-        current_patron = select(from db with attribute 'name' == name)
+        session = RegistrySession(telegramID=update.message.chat_id)
+        current_patron = select(p for p in User if p.name == name)
+        session.request_c = current_patron.telegramID
+        bot.send_message(current_patron.name + " " + current_patron.address + " " + current_patron.phone)
+        bot.send_message("Do you want to delete him")
         """  Print data about this patron to librarian and ask, does he want to delete him or no """
         return DELETE
-    if state == "delete":
+    elif state == "delete":
         if update.message.text == "yes":
-            delete(current_patron)
-            bot.send_message("Delete successful")
+            session = RegistrySession.get(telegramID=update.message.text)
+            User.get(telegramID=session.request_c).delete()
+            bot.send_message("Delete completed")
         else:
             bot.send_message("Delete was cancelled")
         return delete_user_conversation.END
+    else:
+        bot.send_message("write his name")
+        return FIND
 
 
-def delete_media():
-    global current_media
+def delete_media(bot, update, state):
     if state == "find":
-        lid_media_id = update.message.text
-        current_media = select(from db with attribute 'libid' == lib_media_id)
+        session = RegistrySession(telegramID=update.message.chat_id)
+        lib_media_id = update.message.text
+        session.request_c = lib_media_id
+        current_media = select(m for m in Media if mediaID == lib_media_id)
         """  Print data about this media to librarian and ask, does he want to delete it or no """
+        bot.send_message(current_media.name + " " + current_media.authors + " " + current_media.type)
+        bot.send_message("Do you want to delete it")
         return DELETE
-    if state == "delete":
+    elif state == "delete":
         if update.message.text == "yes":
-            delete(current_media)
-            bot.send_message("Delete successful")
+            session = RegistrySession.get(telegramID=update.message.chat_id)
+            Media.get(session.request_c).delte()
+            bot.send_message("Delete completed")
         else:
             bot.send_message("Delete was cancelled")
         return delete_media_conversation.END
+    else:
+        bot.send_message("write its mediaID")
+        return FIND
 """def modify_user():
 
 def modify_media():"""
 
 
-
-new_patron_handler = CommandHanlder("add_new_user", create_new_user("start"))
-new_patron_conversation = ConversationHandler(entry_points=[new_user_handler],
-                                                states={
-                                                    NAME: [MessageHandler(Filters.text, create_new_patron("name"))],
-                                                    TELEGRAM_ID: [MessageHandler(Filters.text, create_new_patron("telegram_id"))],
-                                                    ALIAS: [MessageHandler(Filters.text, create_new_patron("alias"))],
-                                                    PHONE_NUMBER: [MessageHandler(Filters.text, create_new_patron("phone_number"))],
-                                                    ADDRESS: [MessageHandler(Filters.text, create_new_patron("address"))],
-                                                    FACULTY: [MessageHandler(Filters.text, create_new_patron("faculty"))],
-                                                    COMMIT: [MessageHandler(Filters.text, create_new_patron("commit"))]
+new_patron_handler = CommandHandler("add_new_user", create_new_patron("start"))
+new_patron_conversation = ConversationHandler(entry_points=[new_patron_handler],
+                                              states={
+                                                    NAME: [MessageHandler(Filters.text, create_new_patron)],
+                                                    TELEGRAM_ID: [MessageHandler(Filters.text, create_new_patron)],
+                                                    PHONE_NUMBER: [MessageHandler(Filters.text, create_new_patron)],
+                                                    ADDRESS: [MessageHandler(Filters.text, create_new_patron)],
+                                                    FACULTY: [MessageHandler(Filters.text, create_new_patron)]
                                                 },
-                                                fallbacks=[])
+                                              fallbacks=[])
 
-new_media_handler = CommandHanlder("add_new_media", create_new_media("start"))
+new_media_handler = CommandHandler("add_new_media", create_new_media("start"))
 new_media_conversation = ConversationHandler(entry_points=[new_media_handler],
-                                                states={
-                                                    TYPE: [MessageHandler(Filters.text, create_new_patron("type"))],
-                                                    TITLE: [MessageHandler(Filters.text, create_new_patron("title"))],
-                                                    AUTHORS: [MessageHandler(Filters.text, create_new_patron("authors"))],
-                                                    COPY: [MessageHandler(Filters.text, create_new_patron("copy"))],
-                                                    COMMIT: [MessageHandler(Filters.text, create_new_media("commit"))]
+                                             states={
+                                                    MEDIA_ID: [MessageHandler(Filters.text, create_new_media)],
+                                                    TYPE: [MessageHandler(Filters.text, create_new_media)],
+                                                    TITLE: [MessageHandler(Filters.text, create_new_media)],
+                                                    AUTHORS: [MessageHandler(Filters.text, create_new_media)],
+                                                    COPY: [MessageHandler(Filters.text, create_new_media)]
                                                 },
-                                                fallbacks=[])
+                                             fallbacks=[])
 
-delete_user_handler = CommandHandler("delete_user", delete_user)
+delete_user_handler = CommandHandler("delete_user", delete_patron)
 delete_user_conversation = ConversationHandler(entry_points=[delete_user_handler],
                                                states={
                                                    FIND: [MessageHandler(Filters.text, delete_user("find"))],
                                                    DELETE: [MessageHandler(Filters.text, delete_user("delete"))]
-                                               })
+                                               },
+                                               fallbacks=[])
 
 delete_media_handler = CommandHandler("delete_media", delete_media)
 delete_media_conversation = ConversationHandler(entry_points=[delete_media_handler],
-                                               states={
+                                                states={
                                                    FIND: [MessageHandler(Filters.text, delete_media("find"))],
                                                    DELETE: [MessageHandler(Filters.text, delete_media("delete"))]
-                                               })
+                                               },
+                                                fallbacks=[])
 
 
 updater.dispatcher.add_handler(new_patron_handler)
