@@ -4,7 +4,7 @@ from telegram.ext import ConversationHandler, MessageHandler, CallbackQueryHandl
 from telegram.ext import Filters
 from telegram.ext import CommandHandler
 from pony.orm import *
-from new_user import User, Request, RegistrySession, Media, MediaRequest, Librarian, Log
+from new_user import User, Request, RegistrySession, Media, MediaRequest, Librarian, Log, MediaCopies
 import logging
 import pymysql
 import config
@@ -413,8 +413,43 @@ Here's a list of useful commands, which are only allowed to librarians:
 """ % librarian.name, chat_id=telegramID)
 
 
+@db_session
 def my_medias(bot, update):
-    temp_media = user.ItemCard()
+    list_of_user_medias = Log.select(lambda c: c.libID == update.message.chat_id)
+    string = ""
+    for item in list_of_user_medias:
+        abstract_media = MediaCopies.get(copyID=item.mediaID).mediaID
+        string += "ID: " + item.mediaID + "\n" + \
+                  abstract_media.name + " by " + abstract_media.authors + "\n" + \
+                  "Issued: " + item.issue_date.strftime("%H:%M %d %h %Y") + "\n" + \
+                  "Expiry: " + item.expiry_date.strftime("%H:%M %d %h %Y") + "\n" + "\n"
+
+    bot.send_message(text=string, chat_id=update.message.chat_id)
+
+
+@db_session
+def users(bot, update):
+    telegramID = update.message.chat_id
+    if not librarian_authentication(telegramID):
+        return 0
+    list_of_all_users = User.select()
+    string = ""
+    for user in list_of_all_users:
+        string += "Telegram ID: " + str(user.telegramID) + "\n" + \
+                  "Name: " + user.name + "\n" + \
+                  "Address: " + user.address + "\n" + \
+                  "Phone: " + user.phone + "\n" + \
+                  "Faculty? " + str(user.faculty) + "\n" + \
+                  "Medias: " + "\n"
+        list_of_user_medias = Log.select(lambda c: c.libID == user.telegramID)
+        for item in list_of_user_medias:
+            abstract_media = MediaCopies.get(copyID=item.mediaID).mediaID
+            string += "     ID: " + item.mediaID + "\n" + \
+                      "         " + abstract_media.name + " by " + abstract_media.authors + "\n" + \
+                      "     Issued: " + item.issue_date.strftime("%H:%M %d %h %Y") + "\n" + \
+                      "     Expiry: " + item.expiry_date.strftime("%H:%M %d %h %Y") + "\n"
+        string += "\n"
+    bot.send_message(text=string, chat_id=update.message.chat_id)
 
 
 """
@@ -531,54 +566,6 @@ def create_new_media(bot, update):
             return new_media_conversation.END
 
 
-def delete_patron(bot, update, state):
-    if state == "find":
-        """
-        Librarian can also write a libID
-        """
-        name = update.message.text
-        session = RegistrySession(telegramID=update.message.chat_id)
-        current_patron = select(p for p in User if p.name == name)
-        session.request_c = current_patron.telegramID
-        bot.send_message(current_patron.name + " " + current_patron.address + " " + current_patron.phone)
-        bot.send_message("Do you want to delete him")
-        """  Print data about this patron to librarian and ask, does he want to delete him or no """
-        return DELETE
-    elif state == "delete":
-        if update.message.text == "yes":
-            session = RegistrySession.get(telegramID=update.message.text)
-            User.get(telegramID=session.request_c).delete()
-            bot.send_message("Delete completed")
-        else:
-            bot.send_message("Delete was cancelled")
-        return delete_user_conversation.END
-    else:
-        bot.send_message("write his name")
-        return FIND
-
-
-def delete_media(bot, update, state):
-    if state == "find":
-        session = RegistrySession(telegramID=update.message.chat_id)
-        lib_media_id = update.message.text
-        session.request_c = lib_media_id
-        current_media = select(m for m in Media if m.mediaID == lib_media_id)
-        """  Print data about this media to librarian and ask, does he want to delete it or no """
-        bot.send_message(current_media.name + " " + current_media.authors + " " + current_media.type)
-        bot.send_message("Do you want to delete it")
-        return DELETE
-    elif state == "delete":
-        if update.message.text == "yes":
-            session = RegistrySession.get(telegramID=update.message.chat_id)
-            Media.get(session.request_c).delte()
-            bot.send_message("Delete completed")
-        else:
-            bot.send_message("Delete was cancelled")
-        return delete_media_conversation.END
-    else:
-        bot.send_message("write its mediaID")
-        return FIND
-
 
 """def modify_user():
 def modify_media():"""
@@ -602,6 +589,7 @@ dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', issue_media))
 dispatcher.add_handler(CommandHandler('log', create_log_card))
 dispatcher.add_handler(CommandHandler('my', my_medias))
+dispatcher.add_handler(CommandHandler('users', users))
 dispatcher.add_handler(CommandHandler('librarian', librarian_interface))
 dispatcher.add_handler(search_query_handler)
 dispatcher.add_handler(register_conversation)
