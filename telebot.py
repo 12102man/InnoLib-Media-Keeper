@@ -594,6 +594,18 @@ def delete_user(bot, update, args):
                                       InlineKeyboardButton("🚫", callback_data=stay)]])
     bot.send_message(text=message, chat_id=update.message.chat_id, reply_markup=keyboard)
 
+@db_session
+def add_copy(bot, update, args):
+    mediaID = int("".join(args))
+    abstract_media = Media.get(mediaID=mediaID)
+    copies = list(abstract_media.copies)
+    copy_to_add = MediaCopies(mediaID=mediaID, copyID=str(mediaID) + "-" + str(len(copies)+1), available=1)
+    copies.append(copy_to_add)
+    abstract_media.copies = copies
+    commit()
+    bot.send_message(text="New copy has been added!", chat_id=update.message.chat_id)
+
+
 
 @db_session
 def create_new_media(bot, update):
@@ -666,6 +678,7 @@ dispatcher.add_handler(CommandHandler('my', my_medias))
 dispatcher.add_handler(CommandHandler('delete_media', delete_media, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_user', delete_user, pass_args=True))
+dispatcher.add_handler(CommandHandler('add_copy', add_copy, pass_args=True))
 dispatcher.add_handler(CommandHandler('users', users))
 dispatcher.add_handler(CommandHandler('librarian', librarian_interface))
 dispatcher.add_handler(search_query_handler)
