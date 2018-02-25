@@ -147,6 +147,27 @@ def search_functions(bot, update):
 
             bot.send_message(text="User hasn't been deleted!",
                              chat_id=update.callback_query.from_user.id)
+        elif type == 'inverseBestseller':
+            media = Media.get(mediaID=argument)
+            last_state = media.bestseller
+            media.bestseller = not last_state
+            bot.edit_message_text(
+                text="Media's bestseller state has been changed from %s to %s" % (str(last_state), str(not last_state)),
+                message_id=update.callback_query.message.message_id,
+                chat_id=update.callback_query.from_user.id)
+        elif type == 'inverseMediaAvailability':
+            media = Media.get(mediaID=argument)
+            last_state = media.availability
+            media.availability = not last_state
+            for elem in media.copies:
+                elem.available = not last_state
+            bot.edit_message_text(text="Media's availability state has been changed from %s to %s" % (
+                str(last_state), str(not last_state)),
+                                  message_id=update.callback_query.message.message_id,
+                                  chat_id=update.callback_query.from_user.id)
+        elif type == 'editMediaAuthor' or type == 'editMediaTitle' or type == 'editMediaFine' or type == 'editMediaPrice':
+            a = parsed_query['field']
+            edit_field(bot, update, argument, a)
 
 
 # Filter for phone
@@ -496,58 +517,10 @@ register_conversation = ConversationHandler(entry_points=[CommandHandler('enroll
                                             },
                                             fallbacks=[])
 
-TYPE, TITLE, PUBLISHER, MEDIA_ID, DELETE, FIND, TELEGRAM_ID, AUTHORS, COPY, FINE, PRICE = range(11)
+TYPE, TITLE, PUBLISHER, MEDIA_ID, DELETE, FIND, TELEGRAM_ID, AUTHORS, COPY, FINE, PRICE, NOT_FINISHED = range(12)
 
 
-def create_new_patron(bot, update, state):
-    """
-    We need to create new record in database with filled TelegramID and then
-    put there new data from message of librarian
-    Ask required field to user and put it new entity
-    Then commit it
-    ATTENTION: registration is being done by LIBRARIAN, not PATRON by himself
-    """
-    # new_user = User.get(telegramID=update.message.chat_id)
-    session = RegistrySession.get(telegramID=update.message.chat_id)
-    if session is not None:
-        if session.name is None:
-            """Тут ещё не понятно, сможет ли библиотекарь писать сразу ИД
-            или бот сможет находить по алиасу ИД """
-            session.request_c = update.message.text
-            bot.send_message("write his full name")
-            commit()
-            return NAME
-        elif session.name is None:
-            session.name = update.message.text
-            bot.send_message("write his full name")
-            commit()
-            return PHONE_NUMBER
-        elif session.phone is None:
-            session.phone = update.message.text
-            bot.send_message("write his address")
-            commit()
-            return ADDRESS
-        elif session.address is None:
-            session.address = update.message.text
-            bot.send_message("write is he a faculty member")
-            commit()
-            return FACULTY
-        elif session.faculty is None:
-            session.faculty = update.message.text
-            bot.send_message("write is he a faculty member")
-            new_user = User(telegramID=session.request_c, name=session.name,
-                            phone=session.phone, address=session.address,
-                            faculty=session.faculty)
-            commit()
-            return new_patron_conversation.END
-    else:
-        session_lib = RegistrySession(telegramID=update.message.chat_id)
-        bot.send("start reg new patron, write his tgID/alias")
-        commit()
-        return TELEGRAM_ID
 
-
-NOT_FINISHED = range(1)
 
 
 @db_session
@@ -594,17 +567,95 @@ def delete_user(bot, update, args):
                                       InlineKeyboardButton("🚫", callback_data=stay)]])
     bot.send_message(text=message, chat_id=update.message.chat_id, reply_markup=keyboard)
 
+
 @db_session
 def add_copy(bot, update, args):
     mediaID = int("".join(args))
     abstract_media = Media.get(mediaID=mediaID)
     copies = list(abstract_media.copies)
-    copy_to_add = MediaCopies(mediaID=mediaID, copyID=str(mediaID) + "-" + str(len(copies)+1), available=1)
+    copy_to_add = MediaCopies(mediaID=mediaID, copyID=str(mediaID) + "-" + str(len(copies) + 1), available=1)
     copies.append(copy_to_add)
     abstract_media.copies = copies
     commit()
     bot.send_message(text="New copy has been added!", chat_id=update.message.chat_id)
 
+
+@db_session
+def edit_media(bot, update, args):
+    mediaID = int("".join(args))
+    abstract_media = Media.get(mediaID=mediaID)
+    author = InlineKeyboardButton("Author",
+                                  callback_data=json.dumps(
+                                      {'type': 'editMediaAuthor', 'argument': mediaID, 'field': 'author'}))
+    title = InlineKeyboardButton("Title",
+                                 callback_data=json.dumps(
+                                     {'type': 'editMediaTitle', 'argument': mediaID, 'field': 'title'}))
+    availability = InlineKeyboardButton("Availability",
+                                        callback_data=json.dumps(
+                                            {'type': 'inverseMediaAvailability', 'argument': mediaID}))
+    fine = InlineKeyboardButton("Fine",
+                                callback_data=json.dumps(
+                                    {'type': 'editMediaFine', 'argument': mediaID, 'field': 'fine'}))
+    price = InlineKeyboardButton("Price",
+                                 callback_data=json.dumps(
+                                     {'type': 'editMediaPrice', 'argument': mediaID, 'field': 'price'}))
+    bestseller = InlineKeyboardButton("Bestseller",
+                                      callback_data=json.dumps({'type': 'inverseBestseller', 'argument': mediaID}))
+    up_row = [author, title, bestseller]
+    low_row = [availability, fine, price]
+    keyboard = InlineKeyboardMarkup([up_row, low_row])
+
+    bot.send_message(text="What do you want to change?", chat_id=update.message.chat_id, reply_markup=keyboard)
+
+
+ENTER_VALUE = range(1)
+
+
+@db_session
+def edit_field(bot, update, id, field):
+    telegramID = update.callback_query.message.chat_id
+    media = Media.get(mediaID=id)
+    if field == 'title':
+        last_value = media.name
+    elif field == 'author':
+        last_value = media.authors
+    elif field == 'fine':
+        last_value = str(media.fine)
+    elif field == 'price':
+        last_value = str(media.cost)
+
+    session = RegistrySession[telegramID]
+    session.edit_media_cursor = id
+    session.edit_media_state = field
+    commit()
+
+    bot.edit_message_text(text="Last value: %s \nPlease, enter new value:" % last_value,
+                          message_id=update.callback_query.message.message_id,
+                          chat_id=update.callback_query.message.chat_id)
+
+    return ENTER_VALUE
+
+
+@db_session
+def change_value(bot, update):
+    telegramID = update.message.chat_id
+    text = update.message.text
+    session = RegistrySession[telegramID]
+    field = session.edit_media_state
+    media = Media.get(mediaID=session.edit_media_cursor)
+    if field == 'title':
+        media.title = text
+    elif field == 'author':
+        media.authors = text
+    elif field == 'fine':
+        media.fine = int(text)
+    elif field == 'price':
+        media.cost = int(text)
+    commit()
+
+    bot.edit_message_text(text="Everything has been saved!",
+                          message_id=update.callback_query.message.message_id,
+                          chat_id=update.callback_query.message.chat_id)
 
 
 @db_session
@@ -612,58 +663,60 @@ def create_new_media(bot, update):
     """
     The same thing as with NEW PATRON but with media
     """
-
     session = RegistrySession.get(telegramID=update.message.chat_id)
     if session is not None:
-        if session.title is None:
-            bot.send_message(text="Please, enter Title: ", chat_id=update.message.chat_id)
-            return NOT_FINISHED
-        elif session.type is None:
-            session.title = update.message.text
-            bot.send_message(text="What is the type of media: ", chat_id=update.message.chat_id)
-            # commit()
-            return TYPE
-        elif session.author is None:
+        if session.type is None:
+            if update.message.text == "/add_media":
+                bot.send_message(text="What is the type of media: ", chat_id=update.message.chat_id)
+                return NOT_FINISHED
             session.type = update.message.text
+            bot.send_message(text="What is the title of media: ", chat_id=update.message.chat_id)
+            return NOT_FINISHED
+        elif session.title is None:
+            session.title = update.message.text
             bot.send_message(text="Who is the author?", chat_id=update.message.chat_id)
             commit()
             return NOT_FINISHED
-        elif session.publisher is None:
+        elif session.author is None:
             session.author = update.message.text
             bot.send_message(text="What is the publisher?", chat_id=update.message.chat_id)
             commit()
             return NOT_FINISHED
-        elif session.price is None:
+        elif session.publisher is None:
             session.publisher = update.message.text
             bot.send_message(text="What is the price?", chat_id=update.message.chat_id)
             commit()
             return NOT_FINISHED
-        elif session.fine is None:
+        elif session.price is None:
             session.price = update.message.text
             bot.send_message(text="What is the fine?", chat_id=update.message.chat_id)
             commit()
             return NOT_FINISHED
-        else:
-            session.price = update.message.text
-            bot.send_message(text="What is the fine?", chat_id=update.message.chat_id)
-
-            new_media = Media(mediaID=2, name=session.title, type=session.type, authors=session.author,
-                              publisher=session.publisher, price=session.price, fine=session.fine)
+        elif session.fine is None:
+            session.fine = update.message.text
+            Media(name=session.title, type=session.type, authors=session.author,
+                  publisher=session.publisher, cost=session.price, fine=session.fine,
+                  availability=True, bestseller=False)
             commit()
+            mediaID = Media.get(name=session.title).mediaID
+            MediaCopies(mediaID=mediaID, copyID="%s-1" % str(mediaID), available=1)
             return new_media_conversation.END
+            session.title = None
+            session.author = None
+            session.fine = None
+            session.price = None
+    else:
+        RegistrySession(telegramID=update.message.chat_id)
+        bot.send_message(text="Please, enter Title: ", chat_id=update.message.chat_id)
+        return NOT_FINISHED
 
 
-"""def modify_user():
-def modify_media():"""
-
-new_media_handler = CommandHandler("add_media", create_new_media)
 new_media_conversation = ConversationHandler(entry_points=[CommandHandler("add_media", create_new_media)],
                                              states={
-                                                 TYPE: [MessageHandler(Filters.text, ask_address)],
-                                                 TITLE: [MessageHandler(Filters.text, ask_address)],
                                                  NOT_FINISHED: [MessageHandler(Filters.text, create_new_media)]
                                              },
                                              fallbacks=[])
+dispatcher.add_handler(new_media_conversation)
 
 """
 This part connects commands, queries and any other input information to features
@@ -679,12 +732,19 @@ dispatcher.add_handler(CommandHandler('delete_media', delete_media, pass_args=Tr
 dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_user', delete_user, pass_args=True))
 dispatcher.add_handler(CommandHandler('add_copy', add_copy, pass_args=True))
+dispatcher.add_handler(CommandHandler('edit_media', edit_media, pass_args=True))
 dispatcher.add_handler(CommandHandler('users', users))
 dispatcher.add_handler(CommandHandler('librarian', librarian_interface))
 dispatcher.add_handler(search_query_handler)
 dispatcher.add_handler(register_conversation)
-dispatcher.add_handler(new_media_handler)
 dispatcher.add_handler(new_media_conversation)
+
+edit_conv = ConversationHandler(entry_points=[],
+                                states={
+                                    ENTER_VALUE: [MessageHandler(Filters.text, change_value)]
+                                },
+                                fallbacks=[])
+dispatcher.add_handler(edit_conv)
 
 updater.start_polling()  # Start asking for server about any incoming requests
 

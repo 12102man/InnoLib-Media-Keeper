@@ -18,7 +18,7 @@ class User(db.Entity):
 
 
 class Media(db.Entity):
-    mediaID = PrimaryKey(int)
+    mediaID = PrimaryKey(int, auto=True)
     name = Required(str)  # title?
 
     type = Required(str)
@@ -39,7 +39,7 @@ class Request(db.Entity):
     address = Required(str)
     phone = Required(str)
     faculty = Required(bool)
-    status = Optional(bool)
+    status = Optional(bool, default=False)
 
 
 class MediaRequest(db.Entity):
@@ -92,6 +92,9 @@ class RegistrySession(db.Entity):
     author = Optional(str)
     price = Optional(int, default=0)
     fine = Optional(int, default=0)
+    edit_media_cursor = Optional(int, default=0)
+    edit_media_state = Optional(str)
+    publisher = Optional(str)
 
 
 db.generate_mapping(create_tables=True)
