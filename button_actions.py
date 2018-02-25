@@ -1,6 +1,7 @@
 from pony.orm import *
 
 import new_user as database
+import datetime
 
 db = Database()
 # MySQL
@@ -19,6 +20,7 @@ def approve_request(bot, update):
     query = update.callback_query
     telegramID = query.message.chat_id
     session = database.RegistrySession[telegramID]
+
     request = list(database.Request.select(lambda c: c.status == 0))[session.request_c]
 
     enrolled_user = database.User(telegramID=request.telegramID,
@@ -86,10 +88,10 @@ def book_media(bot, update):
             i = 0
             while not copies_list[i].available and i < len(copies_list):
                 i +=1
-            new_request = database.MediaRequest(libID=telegramID, mediaID=copies_list[i].copyID)
+            log_record = database.Log(libID=telegramID, mediaID=copies_list[i].copyID, expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
             copies_list[i].available = False
 
-            available_list = [x for x in copies_list if x.available == True]
+            available_list = [x for x in copies_list if x.available]
             if len(available_list) == 0:
                 media.availability = 0
             copies_list = set(copies_list)
@@ -114,39 +116,16 @@ This function accepts booking request
 """
 
 
-def accept_booking_request(self, bot, update):
-    try:
+def accept_booking_request(bot, update):
+    query = update.callback_query
+    telegramID = query.message.chat_id
+    session = database.RegistrySession[telegramID]
+    user = database.User[telegramID]
+    media = database.Media[session.media_c]
 
-        te = self.list[self.__cursor]["mediaID"]
-        media.find(te)
+    patron = Patron()  # Creating and filling with data Patron instance
+    libID = self.list[self.__cursor]["libID"]
 
-        patron = Patron()  # Creating and filling with data Patron instance
-        libID = self.list[self.__cursor]["libID"]
-        cursor.execute("SELECT * FROM user WHERE libID = %s;" % libID)
-        telegramID = cursor.fetchone()['telegramID']
-        patron.find(telegramID)  # Finding patron by Telegram ID
-        issue_date = datetime.datetime.utcnow()
-        # Moving request to 'log' table
-        sql = """INSERT INTO log (libID, mediaID, issuedate, expirydate, renewed, returned) 
-VALUES (%s, %s, '%s', '%s', 0,0);""" % (patron.get_lib_id(),
-                                        media.get_media_id(),
-                                        issue_date.strftime("%Y-%m-%d %H:%M:%S"),
-                                        self.generate_expiry_date(media,
-                                                                  patron,
-                                                                  issue_date).strftime("%Y-%m-%d %H:%M:%S"))
-        print(sql)
-        cursor.execute(sql)
-        connection.commit()
-
-        cursor.execute("DELETE FROM mediarequest WHERE mediaID = %s;" % media.get_media_id())
-        connection.commit()
-        bot.send_message(text="""🤘 Media #%s has been successfully issued. 
-Don't forget to return it on time!""" % media.get_media_id(),
-                         chat_id=patron.get_telegram_id())
-    except (pymysql.err.InternalError, IndexError, FileNotFoundError) as e:
-        logging.error("Can't insert into database: " + e.args[0])
-        bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=update.callback_query.message.chat_id,
-                              message_id=update.callback_query.message.message_id)
 
 
 """
@@ -179,3 +158,28 @@ def reject_booking_request(self, bot, update):
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
 
+"""
+def generate_expiry_date(self, media, patron, issue_date)
+
+This function generates expiry date based on type of media and user.
+"""
+
+
+def generate_expiry_date(media, patron, issue_date):
+    type_of_media = media.type
+    date = issue_date
+
+    if type_of_media == 'Book':
+        if media.bestseller and patron.faculty != 1:
+            date += datetime.timedelta(weeks=2)
+        elif patron.faculty:
+            date += datetime.timedelta(weeks=4)
+        else:
+            date += datetime.timedelta(weeks=3)
+        return date
+    elif type_of_media == 'AV' or type_of_media == 'Journals':
+        date += datetime.timedelta(weeks=2)
+        return date
+    else:
+        date += datetime.timedelta(weeks=2)
+        return date

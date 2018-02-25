@@ -39,7 +39,7 @@ class Request(db.Entity):
     address = Required(str)
     phone = Required(str)
     faculty = Required(bool)
-    status = Optional(bool, sql_default=False)
+    status = Optional(bool)
 
 
 class MediaRequest(db.Entity):
@@ -60,13 +60,13 @@ class Images(db.Entity):
 
 class Log(db.Entity):
     libID = Required(int)
-    mediaID = Required(int)
+    mediaID = Required(str)
     issue_date = Required(datetime.datetime,
                           default=datetime.datetime.utcnow)
     expiry_date = Required(datetime.datetime,
                            default=datetime.datetime.utcnow)
-    returned = Required(bool)
-    renewed = Required(bool)
+    returned = Required(bool, default=0)
+    renewed = Required(bool, default=0)
 
 
 class MediaCopies(db.Entity):
@@ -83,9 +83,15 @@ class RegistrySession(db.Entity):
     address = Optional(str)
     faculty = Optional(bool)
     telegramID = PrimaryKey(int)
-    request_c = Optional(int)
-    media_c = Optional(int)
-    book_r_c = Optional(int)
+    request_c = Optional(int, default=0)
+    media_c = Optional(int, default=0)
+    book_r_c = Optional(int, default=0)
+    log_c = Optional(int, default=0)
+    type = Optional(str)
+    title = Optional(str)
+    author = Optional(str)
+    price = Optional(int, default=0)
+    fine = Optional(int, default=0)
 
 
 db.generate_mapping(create_tables=True)

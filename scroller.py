@@ -118,8 +118,9 @@ class Scroller:
             return message
 
         elif self.state == 'log':
-            self.__type = log()  # Initializing certain type of class with data
-            self.__type.set_log(self.list[self.__cursor])
+            self.__cursor = new_user.RegistrySession[self.__telegram_id].log_c
+            log = self.list[self.__cursor]
+            user = new_user.User.get(telegramID=log.libID)
             message = """ Log:
                         Customer: %s
                         What: %s
@@ -127,13 +128,17 @@ class Scroller:
                         Expiry date: %s
                         Returned: %s
                         Renewed: %s
-                        """ % (self.__type.get_lib_id(), self.__type.get_media_id(), self.__type.get_issue_date(),
-                               self.__type.get_expiry_date(), self.__type.is_returned(), self.__type.is_renewed())
+                        """ % (user.name + " (@" + user.alias + ")",
+                               new_user.MediaCopies.get(copyID=log.mediaID).mediaID.name + " (" + log.mediaID + ")",
+                               log.issue_date,
+                               log.expiry_date,
+                               log.returned,
+                               log.renewed)
             return message
 
     """
     create_keyboard(self)
-    
+
     This function creates buttons under the message for navigation 
     and extra actions.
     """
@@ -177,30 +182,3 @@ class Scroller:
 
         return InlineKeyboardMarkup([up_row, low_row])
 
-
-"""
-def generate_expiry_date(self, media, patron, issue_date)
-
-This function generates expiry date based on type of media and user.
-"""
-
-
-@staticmethod
-def generate_expiry_date(media, patron, issue_date):
-    type_of_media = media.get_type()
-    date = issue_date
-
-    if type_of_media == 'Book':
-        if media.get_bestseller() == 1 and patron.get_status() != 1:
-            date += datetime.timedelta(weeks=2)
-        elif patron.get_status() == 1:
-            date += datetime.timedelta(weeks=4)
-        else:
-            date += datetime.timedelta(weeks=3)
-        return date
-    elif type_of_media == 'AV' or type_of_media == 'Journals':
-        date += datetime.timedelta(weeks=2)
-        return date
-    else:
-        date += datetime.timedelta(weeks=2)
-        return date
