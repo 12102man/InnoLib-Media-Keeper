@@ -138,6 +138,15 @@ def search_functions(bot, update):
         elif type == 'cancelDeleteCopy':
             bot.send_message(text="Copy hasn't been deleted!",
                              chat_id=update.callback_query.from_user.id)
+        elif type == 'deleteUser':
+            deleted = User.get(alias=argument).delete()
+            commit()
+            bot.send_message(text="User has been successfully deleted!",
+                             chat_id=update.callback_query.from_user.id)
+        elif type == 'cancelDeleteUser':
+
+            bot.send_message(text="User hasn't been deleted!",
+                             chat_id=update.callback_query.from_user.id)
 
 
 # Filter for phone
@@ -572,6 +581,21 @@ def delete_copy(bot, update, args):
 
 
 @db_session
+def delete_user(bot, update, args):
+    alias = "".join(args).replace("@", "")
+    deleted_user = User.get(alias=alias)
+    if deleted_user is None:
+        bot.send_message(text="Sorry, copy with this alias doesn't exist", chat_id=update.message.chat_id)
+        return 0
+    message = "Are you sure you want to delete " + deleted_user.name + " from the ILMK?"
+    delete = json.dumps({'type': 'deleteUser', 'argument': alias})
+    stay = json.dumps({'type': 'cancelDeleteUser', 'argument': alias})
+    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("✅", callback_data=delete),
+                                      InlineKeyboardButton("🚫", callback_data=stay)]])
+    bot.send_message(text=message, chat_id=update.message.chat_id, reply_markup=keyboard)
+
+
+@db_session
 def create_new_media(bot, update):
     """
     The same thing as with NEW PATRON but with media
@@ -641,6 +665,7 @@ dispatcher.add_handler(CommandHandler('log', create_log_card))
 dispatcher.add_handler(CommandHandler('my', my_medias))
 dispatcher.add_handler(CommandHandler('delete_media', delete_media, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True))
+dispatcher.add_handler(CommandHandler('delete_user', delete_user, pass_args=True))
 dispatcher.add_handler(CommandHandler('users', users))
 dispatcher.add_handler(CommandHandler('librarian', librarian_interface))
 dispatcher.add_handler(search_query_handler)
