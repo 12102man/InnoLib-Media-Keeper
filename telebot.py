@@ -165,9 +165,6 @@ def search_functions(bot, update):
                 str(last_state), str(not last_state)),
                                   message_id=update.callback_query.message.message_id,
                                   chat_id=update.callback_query.from_user.id)
-        elif type == 'editMediaAuthor' or type == 'editMediaTitle' or type == 'editMediaFine' or type == 'editMediaPrice':
-            a = parsed_query['field']
-            edit_field(bot, update, argument, a)
 
 
 # Filter for phone
@@ -520,9 +517,6 @@ register_conversation = ConversationHandler(entry_points=[CommandHandler('enroll
 TYPE, TITLE, PUBLISHER, MEDIA_ID, DELETE, FIND, TELEGRAM_ID, AUTHORS, COPY, FINE, PRICE, NOT_FINISHED = range(12)
 
 
-
-
-
 @db_session
 def delete_media(bot, update, args):
     id = int("".join(args))
@@ -612,8 +606,11 @@ ENTER_VALUE = range(1)
 
 
 @db_session
-def edit_field(bot, update, id, field):
+def edit_field(bot, update):
+    query = json.loads(update.callback_query.data)
     telegramID = update.callback_query.message.chat_id
+    id = query['argument']
+    field = query['field']
     media = Media.get(mediaID=id)
     if field == 'title':
         last_value = media.name
@@ -644,7 +641,7 @@ def change_value(bot, update):
     field = session.edit_media_state
     media = Media.get(mediaID=session.edit_media_cursor)
     if field == 'title':
-        media.title = text
+        media.name = text
     elif field == 'author':
         media.authors = text
     elif field == 'fine':
@@ -653,9 +650,9 @@ def change_value(bot, update):
         media.cost = int(text)
     commit()
 
-    bot.edit_message_text(text="Everything has been saved!",
-                          message_id=update.callback_query.message.message_id,
-                          chat_id=update.callback_query.message.chat_id)
+    bot.send_message(text="Everything has been saved!",
+                     chat_id=update.message.chat_id)
+    return edit_conv.END
 
 
 @db_session
@@ -705,6 +702,7 @@ def create_new_media(bot, update):
             session.author = None
             session.fine = None
             session.price = None
+            session.type = None
     else:
         RegistrySession(telegramID=update.message.chat_id)
         bot.send_message(text="Please, enter Title: ", chat_id=update.message.chat_id)
@@ -717,12 +715,17 @@ new_media_conversation = ConversationHandler(entry_points=[CommandHandler("add_m
                                              },
                                              fallbacks=[])
 dispatcher.add_handler(new_media_conversation)
-
+edit_conv = ConversationHandler(entry_points=[CallbackQueryHandler(edit_field, pattern="^{\"type\": \"edit")],
+                                states={
+                                    ENTER_VALUE: [MessageHandler(Filters.text, change_value)]
+                                },
+                                fallbacks=[])
+dispatcher.add_handler(edit_conv)
 """
 This part connects commands, queries and any other input information to features
 in code. These are handlers.
 """
-search_query_handler = CallbackQueryHandler(search_functions, pass_groups=True)
+search_query_handler = CallbackQueryHandler(search_functions)
 dispatcher.add_handler(CommandHandler('requests', create_request_card))
 dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', issue_media))
@@ -738,13 +741,6 @@ dispatcher.add_handler(CommandHandler('librarian', librarian_interface))
 dispatcher.add_handler(search_query_handler)
 dispatcher.add_handler(register_conversation)
 dispatcher.add_handler(new_media_conversation)
-
-edit_conv = ConversationHandler(entry_points=[],
-                                states={
-                                    ENTER_VALUE: [MessageHandler(Filters.text, change_value)]
-                                },
-                                fallbacks=[])
-dispatcher.add_handler(edit_conv)
 
 updater.start_polling()  # Start asking for server about any incoming requests
 
