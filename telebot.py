@@ -4,7 +4,7 @@ from telegram.ext import ConversationHandler, MessageHandler, CallbackQueryHandl
 from telegram.ext import Filters
 from telegram.ext import CommandHandler
 from pony.orm import *
-from new_user import User, Request, RegistrySession, Media, MediaRequest
+from new_user import User, Request, RegistrySession, Media, MediaRequest, Librarian, Log
 import logging
 import pymysql
 import config
@@ -108,9 +108,15 @@ def search_functions(bot, update):
     elif query == 'rejectBookingRequest':
         reject_booking_request(bot, update)
     elif query == 'prevLogItem':
-        log.decrease_cursor()
+        session = RegistrySession[update.callback_query.from_user.id]
+        session.log_c -= 1
+        commit()
+        edit_log_card(bot, update)
     elif query == 'nextLogItem':
-        log.increase_cursor()
+        session = RegistrySession[update.callback_query.from_user.id]
+        session.log_c += 1
+        commit()
+        edit_log_card(bot, update)
 
 
 # Filter for phone
@@ -289,6 +295,7 @@ def create_media_card(bot, update):
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
+
 @db_session
 def issue_media(bot, update):
     registry = list(MediaRequest.select())
@@ -300,8 +307,10 @@ def issue_media(bot, update):
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
 
+@db_session
 def create_log_card(bot, update):
-    log.update(get_list('log'))  # Updating table
+    registry = list(Log.select())
+    log = Scroller('log', registry, update.message.chat_id)
     try:
         bot.send_message(text=log.create_message(), chat_id=update.message.chat_id,
                          reply_markup=log.create_keyboard())
@@ -359,8 +368,9 @@ def edit_issue_media(bot, update):
 def edit_log_card(bot, update):
     query = update.callback_query
     try:
-        log.update(get_list('log'))
-        log.edit_message_text(text=log.create_message(), chat_id=query.message.chat_id,
+        registry = list(Log.select())
+        log = Scroller('log', registry, query.message.chat_id)
+        bot.edit_message_text(text=log.create_message(), chat_id=query.message.chat_id,
                               message_id=query.message.message_id, reply_markup=log.create_keyboard())
     except UnboundLocalError as e:
         logging.error("Error occured: " + e.args[0])
@@ -377,27 +387,30 @@ if yes - return true.
 """
 
 
+@db_session
 def librarian_authentication(user_id):
-    connection.connect()
-    sql = "SELECT telegramID FROM librarian WHERE telegramID = %s;" % user_id
-    cursor.execute(sql)
-    if len(cursor.fetchall()) == 0:
-        return False
-    else:
+    librarian = Librarian.get(telegramID=user_id)
+    if librarian is not None:
         return True
+    else:
+        return False
 
 
-"""
-patron_authentication(user_id)
+@db_session
+def librarian_interface(bot, update):
+    telegramID = update.message.chat_id
+    librarian = Librarian.get(telegramID=telegramID)
+    if not librarian_authentication(telegramID):
+        print("Unauthorized logging")
+        return 0
 
-This function is responsible for checking if 
-user is a librarian or not. If not - return false,
-if yes - return true.
-"""
-
-
-def patron_authentication(user_id):
-    return temp_patron.exists(user_id)
+    bot.send_message(text="""Hello, %s!
+Here's a list of useful commands, which are only allowed to librarians:
+/requests - see registry requests    
+/log - see log of librarian
+/return - return a book
+/users - list of users
+""" % librarian.name, chat_id=telegramID)
 
 
 def my_medias(bot, update):
@@ -418,6 +431,167 @@ register_conversation = ConversationHandler(entry_points=[CommandHandler('enroll
                                             },
                                             fallbacks=[])
 
+TYPE, TITLE, PUBLISHER, MEDIA_ID, DELETE, FIND, TELEGRAM_ID, AUTHORS, COPY, FINE, PRICE = range(11)
+
+
+def create_new_patron(bot, update, state):
+    """
+    We need to create new record in database with filled TelegramID and then
+    put there new data from message of librarian
+    Ask required field to user and put it new entity
+    Then commit it
+    ATTENTION: registration is being done by LIBRARIAN, not PATRON by himself
+    """
+    # new_user = User.get(telegramID=update.message.chat_id)
+    session = RegistrySession.get(telegramID=update.message.chat_id)
+    if session is not None:
+        if session.name is None:
+            """Тут ещё не понятно, сможет ли библиотекарь писать сразу ИД
+            или бот сможет находить по алиасу ИД """
+            session.request_c = update.message.text
+            bot.send_message("write his full name")
+            commit()
+            return NAME
+        elif session.name is None:
+            session.name = update.message.text
+            bot.send_message("write his full name")
+            commit()
+            return PHONE_NUMBER
+        elif session.phone is None:
+            session.phone = update.message.text
+            bot.send_message("write his address")
+            commit()
+            return ADDRESS
+        elif session.address is None:
+            session.address = update.message.text
+            bot.send_message("write is he a faculty member")
+            commit()
+            return FACULTY
+        elif session.faculty is None:
+            session.faculty = update.message.text
+            bot.send_message("write is he a faculty member")
+            new_user = User(telegramID=session.request_c, name=session.name,
+                            phone=session.phone, address=session.address,
+                            faculty=session.faculty)
+            commit()
+            return new_patron_conversation.END
+    else:
+        session_lib = RegistrySession(telegramID=update.message.chat_id)
+        bot.send("start reg new patron, write his tgID/alias")
+        commit()
+        return TELEGRAM_ID
+
+
+NOT_FINISHED = range(1)
+
+
+@db_session
+def create_new_media(bot, update):
+    """
+    The same thing as with NEW PATRON but with media
+    """
+
+    session = RegistrySession.get(telegramID=update.message.chat_id)
+    if session is not None:
+        if session.title is None:
+            bot.send_message(text="Please, enter Title: ", chat_id=update.message.chat_id)
+            return NOT_FINISHED
+        elif session.type is None:
+            session.title = update.message.text
+            bot.send_message(text="What is the type of media: ", chat_id=update.message.chat_id)
+            # commit()
+            return TYPE
+        elif session.author is None:
+            session.type = update.message.text
+            bot.send_message(text="Who is the author?", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.publisher is None:
+            session.author = update.message.text
+            bot.send_message(text="What is the publisher?", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.price is None:
+            session.publisher = update.message.text
+            bot.send_message(text="What is the price?", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.fine is None:
+            session.price = update.message.text
+            bot.send_message(text="What is the fine?", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        else:
+            session.price = update.message.text
+            bot.send_message(text="What is the fine?", chat_id=update.message.chat_id)
+
+            new_media = Media(mediaID=2, name=session.title, type=session.type, authors=session.author,
+                              publisher=session.publisher, price=session.price, fine=session.fine)
+            commit()
+            return new_media_conversation.END
+
+
+def delete_patron(bot, update, state):
+    if state == "find":
+        """
+        Librarian can also write a libID
+        """
+        name = update.message.text
+        session = RegistrySession(telegramID=update.message.chat_id)
+        current_patron = select(p for p in User if p.name == name)
+        session.request_c = current_patron.telegramID
+        bot.send_message(current_patron.name + " " + current_patron.address + " " + current_patron.phone)
+        bot.send_message("Do you want to delete him")
+        """  Print data about this patron to librarian and ask, does he want to delete him or no """
+        return DELETE
+    elif state == "delete":
+        if update.message.text == "yes":
+            session = RegistrySession.get(telegramID=update.message.text)
+            User.get(telegramID=session.request_c).delete()
+            bot.send_message("Delete completed")
+        else:
+            bot.send_message("Delete was cancelled")
+        return delete_user_conversation.END
+    else:
+        bot.send_message("write his name")
+        return FIND
+
+
+def delete_media(bot, update, state):
+    if state == "find":
+        session = RegistrySession(telegramID=update.message.chat_id)
+        lib_media_id = update.message.text
+        session.request_c = lib_media_id
+        current_media = select(m for m in Media if m.mediaID == lib_media_id)
+        """  Print data about this media to librarian and ask, does he want to delete it or no """
+        bot.send_message(current_media.name + " " + current_media.authors + " " + current_media.type)
+        bot.send_message("Do you want to delete it")
+        return DELETE
+    elif state == "delete":
+        if update.message.text == "yes":
+            session = RegistrySession.get(telegramID=update.message.chat_id)
+            Media.get(session.request_c).delte()
+            bot.send_message("Delete completed")
+        else:
+            bot.send_message("Delete was cancelled")
+        return delete_media_conversation.END
+    else:
+        bot.send_message("write its mediaID")
+        return FIND
+
+
+"""def modify_user():
+def modify_media():"""
+
+new_media_handler = CommandHandler("add_media", create_new_media)
+new_media_conversation = ConversationHandler(entry_points=[CommandHandler("add_media", create_new_media)],
+                                             states={
+                                                 TYPE: [MessageHandler(Filters.text, ask_address)],
+                                                 TITLE: [MessageHandler(Filters.text, ask_address)],
+                                                 NOT_FINISHED: [MessageHandler(Filters.text, create_new_media)]
+                                             },
+                                             fallbacks=[])
+
 """
 This part connects commands, queries and any other input information to features
 in code. These are handlers.
@@ -428,8 +602,11 @@ dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', issue_media))
 dispatcher.add_handler(CommandHandler('log', create_log_card))
 dispatcher.add_handler(CommandHandler('my', my_medias))
+dispatcher.add_handler(CommandHandler('librarian', librarian_interface))
 dispatcher.add_handler(search_query_handler)
 dispatcher.add_handler(register_conversation)
+dispatcher.add_handler(new_media_handler)
+dispatcher.add_handler(new_media_conversation)
 
 updater.start_polling()  # Start asking for server about any incoming requests
 
