@@ -183,3 +183,5 @@ def generate_expiry_date(media, patron, issue_date):
     else:
         date += datetime.timedelta(weeks=2)
         return date
+
+

@@ -12,6 +12,7 @@ from scroller import Scroller
 import user
 from button_actions import *
 from telegram.ext.dispatcher import run_async
+import json
 
 db = Database()
 # MySQL
@@ -117,6 +118,26 @@ def search_functions(bot, update):
         session.log_c += 1
         commit()
         edit_log_card(bot, update)
+    else:
+        parsed_query = json.loads(query)
+        type = parsed_query['type']
+        argument = parsed_query['argument']
+        if type == 'deleteMedia':
+            deleted = Media.get(mediaID=argument).delete()
+            commit()
+            bot.send_message(text="Media and its copies have been successfully deleted!",
+                             chat_id=update.callback_query.from_user.id)
+        elif type == 'cancelDeleteMedia':
+            bot.send_message(text="Media hasn't been deleted!",
+                             chat_id=update.callback_query.from_user.id)
+        elif type == 'deleteCopy':
+            deleted = MediaCopies.get(copyID=argument).delete()
+            commit()
+            bot.send_message(text="Copy has been successfully deleted!",
+                             chat_id=update.callback_query.from_user.id)
+        elif type == 'cancelDeleteCopy':
+            bot.send_message(text="Copy hasn't been deleted!",
+                             chat_id=update.callback_query.from_user.id)
 
 
 # Filter for phone
@@ -521,6 +542,36 @@ NOT_FINISHED = range(1)
 
 
 @db_session
+def delete_media(bot, update, args):
+    id = int("".join(args))
+    deleted_media = Media.get(mediaID=id)
+    if deleted_media is None:
+        bot.send_message(text="Sorry, media with this ID doesn't exist", chat_id=update.message.chat_id)
+        return 0
+    message = "Are you sure you want to delete \"" + deleted_media.name + "\" by " + deleted_media.authors + " and all its copies?"
+    delete = json.dumps({'type': 'deleteMedia', 'argument': id})
+    stay = json.dumps({'type': 'cancelDeleteMedia', 'argument': id})
+    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("✅", callback_data=delete),
+                                      InlineKeyboardButton("🚫", callback_data=stay)]])
+    bot.send_message(text=message, chat_id=update.message.chat_id, reply_markup=keyboard)
+
+
+@db_session
+def delete_copy(bot, update, args):
+    id = "".join(args).strip()
+    deleted_media = MediaCopies.get(copyID=id)
+    if deleted_media is None:
+        bot.send_message(text="Sorry, copy with this ID doesn't exist", chat_id=update.message.chat_id)
+        return 0
+    message = "Are you sure you want to delete \"" + deleted_media.mediaID.name + "\" by " + deleted_media.mediaID.authors + " (" + deleted_media.copyID + ")?"
+    delete = json.dumps({'type': 'deleteCopy', 'argument': id})
+    stay = json.dumps({'type': 'cancelDeleteCopy', 'argument': id})
+    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("✅", callback_data=delete),
+                                      InlineKeyboardButton("🚫", callback_data=stay)]])
+    bot.send_message(text=message, chat_id=update.message.chat_id, reply_markup=keyboard)
+
+
+@db_session
 def create_new_media(bot, update):
     """
     The same thing as with NEW PATRON but with media
@@ -566,7 +617,6 @@ def create_new_media(bot, update):
             return new_media_conversation.END
 
 
-
 """def modify_user():
 def modify_media():"""
 
@@ -589,6 +639,8 @@ dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', issue_media))
 dispatcher.add_handler(CommandHandler('log', create_log_card))
 dispatcher.add_handler(CommandHandler('my', my_medias))
+dispatcher.add_handler(CommandHandler('delete_media', delete_media, pass_args=True))
+dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True))
 dispatcher.add_handler(CommandHandler('users', users))
 dispatcher.add_handler(CommandHandler('librarian', librarian_interface))
 dispatcher.add_handler(search_query_handler)
