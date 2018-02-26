@@ -151,7 +151,7 @@ Expiry date: %s
                                       new_user.MediaCopies.get(
                                           copyID=log_record.mediaID).mediaID.authors,
                                       log_record.issue_date.strftime("%d %h %Y, %H:%M "),
-                                      log_record.issue_date.strftime("%d %h %Y, %H:%M "))
+                                      log_record.expiry_date.strftime("%d %h %Y, %H:%M "))
             return message
 
     """

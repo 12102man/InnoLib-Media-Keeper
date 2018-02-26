@@ -164,7 +164,9 @@ def search_functions(bot, update):
         elif type == 'user_delete':
             delete_user(bot, update, list(str(argument)))
         elif type == 'my_medias':
-            create_my_media_card(bot, update)
+            edit_my_medias_card(bot, update)
+        elif type == 'returnMedia':
+            make_return_request(bot, update, argument)
         elif type == 'nextItem':
             if argument == 'my_medias':
                 session = RegistrySession[update.callback_query.from_user.id]
@@ -177,6 +179,7 @@ def search_functions(bot, update):
                 session.my_medias_c -= 1
                 commit()
                 edit_my_medias_card(bot, update)
+
 
 # Filter for phone
 def all_numbers(input_string):
@@ -359,17 +362,6 @@ def create_log_card(bot, update):
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
-@db_session
-def create_my_media_card(bot, update):
-    telegramID = update.callback_query.message.chat_id
-    medias = list(Log.select(lambda c: c.libID == telegramID))
-    media_container = Scroller('user_medias', medias, telegramID)
-    try:
-        bot.send_message(text=media_container.create_message(), chat_id=update.callback_query.message.chat_id,
-                         reply_markup=media_container.create_keyboard())
-    except FileNotFoundError as e:
-        bot.send_message(text="Sorry, " + e.args[0], chat_id=update.callback_query.message.chat_id)
-
 
 """
 Following three functions are called from queries from buttons.
@@ -430,6 +422,7 @@ def edit_log_card(bot, update):
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
 
+
 def edit_my_medias_card(bot, update):
     query = update.callback_query
     try:
@@ -441,6 +434,7 @@ def edit_my_medias_card(bot, update):
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
+
 
 """
 librarian_authentication(user_id)
@@ -475,8 +469,6 @@ Here's a list of useful commands, which are only allowed to librarians:
 /return - return a book
 /users - list of users
 """ % librarian.name, chat_id=telegramID)
-
-
 
 
 @db_session
@@ -660,7 +652,7 @@ def me(bot, update):
     delete_button = InlineKeyboardButton("Delete",
                                          callback_data=json.dumps({'type': 'user_delete', 'argument': my_user.alias}))
     my_medias_button = InlineKeyboardButton("My medias",
-                                         callback_data=json.dumps({'type': 'my_medias', 'argument': 0}))
+                                            callback_data=json.dumps({'type': 'my_medias', 'argument': 0}))
 
     keyboard = [[edit_button, delete_button], [my_medias_button]]
     keyboard = InlineKeyboardMarkup(keyboard)
@@ -769,7 +761,6 @@ in code. These are handlers.
 dispatcher.add_handler(register_conversation)
 dispatcher.add_handler(new_media_conversation)
 dispatcher.add_handler(edit_conv)
-
 
 search_query_handler = CallbackQueryHandler(search_functions)
 dispatcher.add_handler(CommandHandler('requests', create_request_card))

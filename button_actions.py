@@ -85,6 +85,7 @@ def book_media(bot, update):
                                   message_id=query.message.message_id)
         # Else: book an item
         else:
+            # if database.Log.select(lambda c: c.)
             copies_list = list(media.copies)
             i = 0
             while not copies_list[i].available and i < len(copies_list):
@@ -110,54 +111,6 @@ def book_media(bot, update):
                               chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
 
-
-"""
-def accept_booking_request(self, bot, update)
-
-This function accepts booking request
-"""
-
-
-def accept_booking_request(bot, update):
-    query = update.callback_query
-    telegramID = query.message.chat_id
-    session = database.RegistrySession[telegramID]
-    user = database.User[telegramID]
-    media = database.Media[session.media_c]
-
-    patron = Patron()  # Creating and filling with data Patron instance
-    libID = self.list[self.__cursor]["libID"]
-
-
-"""
-def reject_booking_request(self, bot, update)
-
-This function rejects booking request. 
-"""
-
-
-def reject_booking_request(self, bot, update):
-    media = ItemCard()  # Creating and filling with data Media instance
-    try:
-        te = self.list[self.__cursor]["mediaID"]
-        media.find(te)
-
-        # Deleting request from 'mediarequest' table
-        libID = self.list[self.__cursor]["libID"]
-
-        patron = Patron()
-        cursor.execute("SELECT * FROM user WHERE libID = %s;" % libID)
-        telegramID = cursor.fetchone()['telegramID']
-        patron.find(telegramID)  # Finding patron by Telegram ID
-        cursor.execute("DELETE FROM mediarequest WHERE mediaID = %s;" % media.get_media_id())
-        connection.commit()
-        bot.send_message(
-            text="🤦🏻‍♂️ Request for media #%s has been rejected :(" % media.get_media_id(),
-            chat_id=patron.get_telegram_id())
-    except (pymysql.err.InternalError, IndexError, FileNotFoundError) as e:
-        logging.error("Can't insert into database: " + e.args[0])
-        bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=update.callback_query.message.chat_id,
-                              message_id=update.callback_query.message.message_id)
 
 
 """
