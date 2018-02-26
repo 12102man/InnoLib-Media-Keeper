@@ -92,12 +92,62 @@ def create_new_media(bot, update):
         return NOT_FINISHED
 
 
+@db_session
+def create_new_user(bot, update):
+    session = RegistrySession.get(telegramID=update.message.chat_id)
+    if session is not None:
+        if session.user_telegramID == 0:
+            session.user_telegramID = update.message.text
+            bot.send_message(text="Please, enter new user's alias", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.alias == "def":
+            session.alias = update.message.text
+            bot.send_message(text="Please, enter new user's name", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.name == "def":
+            session.name = update.message.text
+            bot.send_message(text="Please, enter new user's phone", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.phone == "def":
+            session.phone = update.message.text
+            bot.send_message(text="Please, enter new user's address", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.address == "def":
+            session.address = update.message.text
+            bot.send_message(text="Is he/she a faculty member?", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.faculty is None:
+            session.faculty = update.message.text
+            bot.send_message(text="User was added", chat_id=update.message.chat_id)
+            User(telegramID=session.user_telegramID, name=session.name, phone=session.phone,
+                 address=session.address, faculty=session.faculty, alias=session.alias)
+            session.delete()
+            commit()
+            return new_user_conversation.END
+    else:
+        RegistrySession(telegramID=update.message.chat_id)
+        bot.send_message(text="Please, enter new user's telegram ID", chat_id=update.message.chat_id)
+        return NOT_FINISHED
+
+
 NOT_FINISHED = range(1)
 new_media_conversation = ConversationHandler(entry_points=[CommandHandler("add_media", create_new_media)],
                                              states={
                                                  NOT_FINISHED: [MessageHandler(Filters.text, create_new_media)]
                                              },
                                              fallbacks=[])
+
+new_user_conversation = ConversationHandler(entry_points=[CommandHandler("add_patron", create_new_user)],
+                                            states={
+                                                NOT_FINISHED: [MessageHandler(Filters.text, create_new_user)]
+                                            },
+                                            fallbacks=[])
 dispatcher.add_handler(new_media_conversation)
+dispatcher.add_handler(new_user_conversation)
 
 updater.start_polling()  # Start asking for server about any incoming requests
