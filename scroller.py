@@ -136,6 +136,23 @@ class Scroller:
                                log.returned,
                                log.renewed)
             return message
+        elif self.state == 'user_medias':
+            self.__cursor = new_user.RegistrySession[self.__telegram_id].my_medias_c
+            log_record = self.list[self.__cursor]
+            media = log_record.mediaID
+            message = """ Your media #️⃣%s :
+            
+What: "%s" by %s
+Issue date: %s
+Expiry date: %s
+                               """ % (log_record.mediaID,
+                                      new_user.MediaCopies.get(
+                                          copyID=log_record.mediaID).mediaID.name,
+                                      new_user.MediaCopies.get(
+                                          copyID=log_record.mediaID).mediaID.authors,
+                                      log_record.issue_date.strftime("%d %h %Y, %H:%M "),
+                                      log_record.issue_date.strftime("%d %h %Y, %H:%M "))
+            return message
 
     """
     create_keyboard(self)
@@ -181,6 +198,11 @@ class Scroller:
         elif self.state == 'log':
             callback_prev = 'prevLogItem'
             callback_next = 'nextLogItem'
+        elif self.state == 'user_medias':
+            up_row.append(InlineKeyboardButton("Return", callback_data=json.dumps(
+                {'type': 'returnMedia', 'argument': self.list[self.__cursor].mediaID})))
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'my_medias'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'my_medias'})
 
         """ If cursor is on the egde position (0 or length of list with records),
         then don't append one of arrows."""

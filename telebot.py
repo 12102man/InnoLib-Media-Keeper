@@ -6,13 +6,11 @@ from telegram.ext import CommandHandler
 from pony.orm import *
 from new_user import User, Request, RegistrySession, Media, MediaRequest, Librarian, Log, MediaCopies
 import logging
-import pymysql
 import config
 from scroller import Scroller
-import user
-from button_actions import *
 from telegram.ext.dispatcher import run_async
 import json
+from button_actions import *
 
 db = Database()
 # MySQL
@@ -21,15 +19,6 @@ db.bind(provider='mysql', host='37.46.132.57', user='telebot', passwd='Malinka20
 updater = Updater(token=config.token)
 
 dispatcher = updater.dispatcher
-
-""" MySQL connection """
-connection = pymysql.connect(host=config.db_host,
-                             user=config.db_username,
-                             password=config.db_password,
-                             db=config.db_name,
-                             charset='utf8',
-                             cursorclass=pymysql.cursors.DictCursor)
-cursor = connection.cursor()
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -140,6 +129,7 @@ def search_functions(bot, update):
                              chat_id=update.callback_query.from_user.id)
         elif type == 'deleteUser':
             deleted = User.get(alias=argument).delete()
+            RegistrySession[update.callback_query.from_user.id].delete()
             commit()
             bot.send_message(text="User has been successfully deleted!",
                              chat_id=update.callback_query.from_user.id)
@@ -171,8 +161,22 @@ def search_functions(bot, update):
             add_copy(bot, update, argument)
         elif type == 'media_edit':
             edit_media(bot, update, argument)
-
-
+        elif type == 'user_delete':
+            delete_user(bot, update, list(str(argument)))
+        elif type == 'my_medias':
+            create_my_media_card(bot, update)
+        elif type == 'nextItem':
+            if argument == 'my_medias':
+                session = RegistrySession[update.callback_query.from_user.id]
+                session.my_medias_c += 1
+                commit()
+                edit_my_medias_card(bot, update)
+        elif type == 'prevItem':
+            if argument == 'my_medias':
+                session = RegistrySession[update.callback_query.from_user.id]
+                session.my_medias_c -= 1
+                commit()
+                edit_my_medias_card(bot, update)
 
 # Filter for phone
 def all_numbers(input_string):
@@ -298,23 +302,6 @@ def end_of_registration(bot, update):
     return register_conversation.END
 
 
-""" Getting list of users and listing the requests"""
-
-""" get_list(cursor, table)
-    Updates the list of all records from the table
-    Needs:      name of table to search in
-    Returns:    list with all the records from the table
-"""
-
-
-def get_list(table):
-    connection.connect()
-    sql = "SELECT * FROM %s;" % table
-    cursor.execute(sql)
-    res = cursor.fetchall()
-    return res
-
-
 """
 These objects are from Scroller class (see scroller.py)
 They perform menus for viewing menu, registry requests
@@ -371,6 +358,17 @@ def create_log_card(bot, update):
                          reply_markup=log.create_keyboard())
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+
+@db_session
+def create_my_media_card(bot, update):
+    telegramID = update.callback_query.message.chat_id
+    medias = list(Log.select(lambda c: c.libID == telegramID))
+    media_container = Scroller('user_medias', medias, telegramID)
+    try:
+        bot.send_message(text=media_container.create_message(), chat_id=update.callback_query.message.chat_id,
+                         reply_markup=media_container.create_keyboard())
+    except FileNotFoundError as e:
+        bot.send_message(text="Sorry, " + e.args[0], chat_id=update.callback_query.message.chat_id)
 
 
 """
@@ -432,6 +430,17 @@ def edit_log_card(bot, update):
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
 
+def edit_my_medias_card(bot, update):
+    query = update.callback_query
+    try:
+        medias = list(Log.select(lambda c: c.libID == update.callback_query.message.chat_id))
+        media_container = Scroller('user_medias', medias, query.message.chat_id)
+        bot.edit_message_text(text=media_container.create_message(), chat_id=query.message.chat_id,
+                              message_id=query.message.message_id, reply_markup=media_container.create_keyboard())
+    except UnboundLocalError as e:
+        logging.error("Error occured: " + e.args[0])
+        bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
+                              message_id=query.message.message_id)
 
 """
 librarian_authentication(user_id)
@@ -468,18 +477,6 @@ Here's a list of useful commands, which are only allowed to librarians:
 """ % librarian.name, chat_id=telegramID)
 
 
-@db_session
-def my_medias(bot, update):
-    list_of_user_medias = Log.select(lambda c: c.libID == update.message.chat_id)
-    string = ""
-    for item in list_of_user_medias:
-        abstract_media = MediaCopies.get(copyID=item.mediaID).mediaID
-        string += "ID: " + item.mediaID + "\n" + \
-                  abstract_media.name + " by " + abstract_media.authors + "\n" + \
-                  "Issued: " + item.issue_date.strftime("%H:%M %d %h %Y") + "\n" + \
-                  "Expiry: " + item.expiry_date.strftime("%H:%M %d %h %Y") + "\n" + "\n"
-
-    bot.send_message(text=string, chat_id=update.message.chat_id)
 
 
 @db_session
@@ -506,20 +503,6 @@ def users(bot, update):
         string += "\n"
     bot.send_message(text=string, chat_id=update.message.chat_id)
 
-
-"""
-This is a conversation handler. It helps smoothly iterating 
-from one command to another. Entry point is /enroll command.
-
-Using states handler switches from one function to another.
-"""
-register_conversation = ConversationHandler(entry_points=[CommandHandler('enroll', ask_name)],
-                                            states={
-                                                PHONE_NUMBER: [MessageHandler(Filters.text, ask_phone)],
-                                                ADDRESS: [MessageHandler(Filters.text, ask_address)],
-                                                FACULTY: [MessageHandler(Filters.text, ask_faculty)]
-                                            },
-                                            fallbacks=[])
 
 TYPE, TITLE, PUBLISHER, MEDIA_ID, DELETE, FIND, TELEGRAM_ID, AUTHORS, COPY, FINE, PRICE, NOT_FINISHED = range(12)
 
@@ -566,7 +549,10 @@ def delete_user(bot, update, args):
     stay = json.dumps({'type': 'cancelDeleteUser', 'argument': alias})
     keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("✅", callback_data=delete),
                                       InlineKeyboardButton("🚫", callback_data=stay)]])
-    bot.send_message(text=message, chat_id=update.message.chat_id, reply_markup=keyboard)
+    try:
+        bot.send_message(text=message, chat_id=update.message.chat_id, reply_markup=keyboard)
+    except AttributeError:
+        bot.send_message(text=message, chat_id=update.callback_query.message.chat_id, reply_markup=keyboard)
 
 
 @db_session
@@ -604,7 +590,8 @@ def edit_media(bot, update, mediaID):
     low_row = [availability, fine, price]
     keyboard = InlineKeyboardMarkup([up_row, low_row])
 
-    bot.send_message(text="What do you want to change?", chat_id=update.callback_query.message.chat_id, reply_markup=keyboard)
+    bot.send_message(text="What do you want to change?", chat_id=update.callback_query.message.chat_id,
+                     reply_markup=keyboard)
 
 
 ENTER_VALUE = range(1)
@@ -658,6 +645,28 @@ def change_value(bot, update):
     bot.send_message(text="Everything has been saved!",
                      chat_id=update.message.chat_id)
     return edit_conv.END
+
+
+@db_session
+def me(bot, update):
+    telegramID = update.message.chat_id
+    my_user = User.get(telegramID=telegramID)
+    if my_user is None:
+        bot.send_message(text="Sorry, you're not a user. /enroll now!", chat_id=telegramID)
+        return 0
+
+    edit_button = InlineKeyboardButton("Edit",
+                                       callback_data=json.dumps({'type': 'user_edit', 'argument': my_user.alias}))
+    delete_button = InlineKeyboardButton("Delete",
+                                         callback_data=json.dumps({'type': 'user_delete', 'argument': my_user.alias}))
+    my_medias_button = InlineKeyboardButton("My medias",
+                                         callback_data=json.dumps({'type': 'my_medias', 'argument': 0}))
+
+    keyboard = [[edit_button, delete_button], [my_medias_button]]
+    keyboard = InlineKeyboardMarkup(keyboard)
+    message = "Hello, %s! \nHere is information about you: \n👨‍🎓: %s (@%s) \n🏠: %s \n☎️: %s \n🎓: %s" % (
+        my_user.name, my_user.name, my_user.alias, my_user.address, my_user.phone, convert_to_emoji(my_user.faculty))
+    bot.send_message(text=message, chat_id=telegramID, reply_markup=keyboard)
 
 
 @db_session
@@ -725,35 +734,54 @@ def create_new_media(bot, update):
         return NOT_FINISHED
 
 
+def cancel_process(bot, update):
+    bot.send_message(text="Process has been cancelled.", chat_id=update.message.chat_id)
+
+
+"""
+This is a conversation handler. It helps smoothly iterating 
+from one command to another. Entry point is /enroll command.
+
+Using states handler switches from one function to another.
+"""
+register_conversation = ConversationHandler(entry_points=[CommandHandler("enroll", ask_name)],
+                                            states={
+                                                PHONE_NUMBER: [MessageHandler(Filters.text, ask_phone)],
+                                                ADDRESS: [MessageHandler(Filters.text, ask_address)],
+                                                FACULTY: [MessageHandler(Filters.text, ask_faculty)]
+                                            },
+                                            fallbacks=[])
 new_media_conversation = ConversationHandler(entry_points=[CommandHandler("add_media", create_new_media)],
                                              states={
                                                  NOT_FINISHED: [MessageHandler(Filters.text, create_new_media)]
                                              },
-                                             fallbacks=[])
-dispatcher.add_handler(new_media_conversation)
+                                             fallbacks=[CommandHandler('cancel', cancel_process)])
 edit_conv = ConversationHandler(entry_points=[CallbackQueryHandler(edit_field, pattern="^{\"type\": \"edit")],
                                 states={
                                     ENTER_VALUE: [MessageHandler(Filters.text, change_value)]
                                 },
                                 fallbacks=[])
-dispatcher.add_handler(edit_conv)
+
 """
 This part connects commands, queries and any other input information to features
 in code. These are handlers.
 """
+dispatcher.add_handler(register_conversation)
+dispatcher.add_handler(new_media_conversation)
+dispatcher.add_handler(edit_conv)
+
+
 search_query_handler = CallbackQueryHandler(search_functions)
 dispatcher.add_handler(CommandHandler('requests', create_request_card))
 dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', issue_media))
 dispatcher.add_handler(CommandHandler('log', create_log_card))
-dispatcher.add_handler(CommandHandler('my', my_medias))
+dispatcher.add_handler(CommandHandler('me', me))
 dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_user', delete_user, pass_args=True))
 dispatcher.add_handler(CommandHandler('users', users))
 dispatcher.add_handler(CommandHandler('librarian', librarian_interface))
 dispatcher.add_handler(search_query_handler)
-dispatcher.add_handler(register_conversation)
-dispatcher.add_handler(new_media_conversation)
 
 updater.start_polling()  # Start asking for server about any incoming requests
 

@@ -44,6 +44,7 @@ def approve_request(bot, update):
     This function rejects request for enrolling the system
 """
 
+
 @db_session
 def reject_request(bot, update):
     query = update.callback_query
@@ -87,8 +88,9 @@ def book_media(bot, update):
             copies_list = list(media.copies)
             i = 0
             while not copies_list[i].available and i < len(copies_list):
-                i +=1
-            log_record = database.Log(libID=telegramID, mediaID=copies_list[i].copyID, expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
+                i += 1
+            log_record = database.Log(libID=telegramID, mediaID=copies_list[i].copyID,
+                                      expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
             copies_list[i].available = False
 
             available_list = [x for x in copies_list if x.available]
@@ -127,7 +129,6 @@ def accept_booking_request(bot, update):
     libID = self.list[self.__cursor]["libID"]
 
 
-
 """
 def reject_booking_request(self, bot, update)
 
@@ -158,6 +159,7 @@ def reject_booking_request(self, bot, update):
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
 
+
 """
 def generate_expiry_date(self, media, patron, issue_date)
 
@@ -185,3 +187,14 @@ def generate_expiry_date(media, patron, issue_date):
         return date
 
 
+def convert_to_emoji(state):
+    if state:
+        return "✅"
+    elif not state:
+        return "❌"
+    elif state == 'Book':
+        return "📚"
+    elif state == 'AV':
+        return "📀"
+    else:
+        return state
