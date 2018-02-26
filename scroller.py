@@ -6,6 +6,7 @@ import datetime
 import logging
 from pony.orm import *
 import new_user
+import json
 
 db = Database()
 # MySQL
@@ -145,6 +146,7 @@ class Scroller:
 
     def create_keyboard(self):
         low_row = []  # Keyboard is a converted two-dimensional array.
+        mid_row = []
         up_row = []  # Our keyboard has two levels: 'low' and 'up'
 
         callback_next = 0  # Callback data for buttons 'Next' and 'Prev' (replaced by arrows)
@@ -163,6 +165,13 @@ class Scroller:
         elif self.state == 'media':
             callback_prev = 'prevItem'
             callback_next = 'nextItem'
+            if new_user.Librarian.get(telegramID=self.__telegram_id) is not None:
+                mid_row.append(InlineKeyboardButton("Edit", callback_data=json.dumps(
+                    {'type': 'media_edit', 'argument': self.list[self.__cursor].mediaID})))
+                mid_row.append(InlineKeyboardButton("Delete", callback_data=json.dumps(
+                    {'type': 'media_delete', 'argument': self.list[self.__cursor].mediaID})))
+                mid_row.append(InlineKeyboardButton("Copy", callback_data=json.dumps(
+                    {'type': 'media_add_copy', 'argument': self.list[self.__cursor].mediaID})))
             up_row.append(InlineKeyboardButton("Book", callback_data='book'))
         elif self.state == 'bookingRequest':
             callback_prev = 'prevBookingRequest'
@@ -180,5 +189,4 @@ class Scroller:
         if self.__cursor < len(self.list) - 1:
             low_row.append(InlineKeyboardButton("➡", callback_data=callback_next))
 
-        return InlineKeyboardMarkup([up_row, low_row])
-
+        return InlineKeyboardMarkup([up_row, mid_row, low_row])

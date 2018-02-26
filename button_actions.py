@@ -75,7 +75,7 @@ def book_media(bot, update):
     if user is not None:
         telegramID = query.message.chat_id
         session = database.RegistrySession[telegramID]
-        media = list(database.Media.select())[session.request_c]
+        media = list(database.Media.select())[session.media_c]
 
         # If media can't be booked, then reject booking
         if media.availability == 0:

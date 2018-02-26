@@ -95,6 +95,7 @@ class RegistrySession(db.Entity):
     edit_media_cursor = Optional(int, default=0)
     edit_media_state = Optional(str)
     publisher = Optional(str)
+    no_of_copies = Optional(int)
 
 
 db.generate_mapping(create_tables=True)
