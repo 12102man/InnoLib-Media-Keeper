@@ -4,7 +4,7 @@ from telegram.ext import ConversationHandler, MessageHandler, CallbackQueryHandl
 from telegram.ext import Filters
 from telegram.ext import CommandHandler
 from pony.orm import *
-from new_user import User, Request, RegistrySession, Media, MediaRequest, Librarian, Log, MediaCopies
+from new_user import User, Request, RegistrySession, Media, MediaRequest, Librarian, Log, MediaCopies, ReturnRequest
 import logging
 import config
 from scroller import Scroller
@@ -173,12 +173,26 @@ def search_functions(bot, update):
                 session.my_medias_c += 1
                 commit()
                 edit_my_medias_card(bot, update)
+            elif argument == 'return_request':
+                session = RegistrySession[update.callback_query.from_user.id]
+                session.return_c += 1
+                commit()
+                edit_return_media(bot, update)
+
         elif type == 'prevItem':
             if argument == 'my_medias':
                 session = RegistrySession[update.callback_query.from_user.id]
                 session.my_medias_c -= 1
                 commit()
                 edit_my_medias_card(bot, update)
+            elif argument == 'return_request':
+                session = RegistrySession[update.callback_query.from_user.id]
+                session.return_c -= 1
+                commit()
+                edit_return_media(bot, update)
+        elif type == 'accept':
+            if argument == 'return_request':
+                accept_return(bot, update, parsed_query['id'])
 
 
 # Filter for phone
@@ -363,6 +377,29 @@ def create_log_card(bot, update):
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
 
+@db_session
+def return_media(bot, update):
+    registry = list(ReturnRequest.select())
+    log = Scroller('return_request', registry, update.message.chat_id)
+    try:
+        bot.send_message(text=log.create_message(), chat_id=update.message.chat_id,
+                         reply_markup=log.create_keyboard())
+    except FileNotFoundError as e:
+        bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+
+
+@db_session
+def edit_return_media(bot, update):
+    registry = list(ReturnRequest.select())
+    query = update.callback_query
+    log = Scroller('return_request', registry, update.callback_query.message.chat_id)
+    try:
+        bot.edit_message_text(text=log.create_message(), chat_id=query.message.chat_id,
+                              message_id=query.message.message_id, reply_markup=log.create_keyboard())
+    except FileNotFoundError as e:
+        bot.edit_message_text(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+
+
 """
 Following three functions are called from queries from buttons.
 When user presses button, message gets changed for the next/previous
@@ -426,7 +463,7 @@ def edit_log_card(bot, update):
 def edit_my_medias_card(bot, update):
     query = update.callback_query
     try:
-        medias = list(Log.select(lambda c: c.libID == update.callback_query.message.chat_id))
+        medias = list(Log.select(lambda c: c.libID == update.callback_query.message.chat_id and c.returned == False))
         media_container = Scroller('user_medias', medias, query.message.chat_id)
         bot.edit_message_text(text=media_container.create_message(), chat_id=query.message.chat_id,
                               message_id=query.message.message_id, reply_markup=media_container.create_keyboard())
@@ -485,7 +522,7 @@ def users(bot, update):
                   "Phone: " + user.phone + "\n" + \
                   "Faculty? " + str(user.faculty) + "\n" + \
                   "Medias: " + "\n"
-        list_of_user_medias = Log.select(lambda c: c.libID == user.telegramID)
+        list_of_user_medias = Log.select(lambda c: c.libID == user.telegramID and c.returned == False)
         for item in list_of_user_medias:
             abstract_media = MediaCopies.get(copyID=item.mediaID).mediaID
             string += "     ID: " + item.mediaID + "\n" + \
@@ -764,6 +801,7 @@ dispatcher.add_handler(edit_conv)
 
 search_query_handler = CallbackQueryHandler(search_functions)
 dispatcher.add_handler(CommandHandler('requests', create_request_card))
+dispatcher.add_handler(CommandHandler('return', return_media))
 dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', issue_media))
 dispatcher.add_handler(CommandHandler('log', create_log_card))

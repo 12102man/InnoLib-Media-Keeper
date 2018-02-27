@@ -112,12 +112,46 @@ def book_media(bot, update):
                               message_id=query.message.message_id)
 
 
+def make_return_request(bot, update, copyID):
+    telegramID = update.callback_query.message.chat_id
+    database.ReturnRequest(
+        telegramID=telegramID,
+        copyID=copyID
+    )
+    bot.edit_message_text(
+        text="Return request has been successfully added",
+        message_id=update.callback_query.message.message_id,
+        chat_id=telegramID
+    )
+
 
 """
 def generate_expiry_date(self, media, patron, issue_date)
 
 This function generates expiry date based on type of media and user.
 """
+
+
+def accept_return(bot, update, requestID):
+    request = database.ReturnRequest[requestID]
+    copyID = request.copyID
+    userID = request.telegramID
+
+    #   Setting log.return to 1
+    log_record = database.Log.get(mediaID=request.copyID)
+    log_record.returned = True
+
+    #   Correcting user medias
+    media_copy = database.MediaCopies.get(copyID=copyID)
+    media_copy.available = True
+
+    request.delete()
+
+    commit()
+    bot.send_message(text="Media %s has been successfully returned" % copyID, chat_id=userID)
+    bot.edit_message_text(text="Media %s has been successfully returned" % copyID,
+                          message_id=update.callback_query.message.message_id,
+                          chat_id=update.callback_query.message.chat_id)
 
 
 def generate_expiry_date(media, patron, issue_date):

@@ -153,8 +153,19 @@ Expiry date: %s
                                       log_record.issue_date.strftime("%d %h %Y, %H:%M "),
                                       log_record.expiry_date.strftime("%d %h %Y, %H:%M "))
             return message
+        elif self.state == 'return_request':
+            self.__cursor = new_user.RegistrySession[self.__telegram_id].return_c
+            request = self.list[self.__cursor]
+            patron = new_user.User[request.telegramID]
+            media = new_user.MediaCopies.get(copyID=request.copyID).mediaID
+            message = """Request #️⃣ %s 
+What: \"%s\" by %s
+CopyID: %s
+From: %s (@%s)""" % (str(request.id), media.name, media.authors, request.copyID, patron.name, patron.alias)
+            return message
 
     """
+    
     create_keyboard(self)
 
     This function creates buttons under the message for navigation 
@@ -203,6 +214,15 @@ Expiry date: %s
                 {'type': 'returnMedia', 'argument': self.list[self.__cursor].mediaID})))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'my_medias'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'my_medias'})
+        elif self.state == 'return_request':
+            log_record = self.list[self.__cursor].id
+            a = json.dumps({'type': 'accept', 'argument': 'return_request', 'id': log_record})
+            print(a)
+            up_row.append(InlineKeyboardButton("✅", callback_data=a))
+            up_row.append(InlineKeyboardButton("🚫", callback_data=json.dumps({'type': 'reject', 'argument': 'return_request', 'id': log_record})))
+
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'return_request'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'return_request'})
 
         """ If cursor is on the egde position (0 or length of list with records),
         then don't append one of arrows."""
