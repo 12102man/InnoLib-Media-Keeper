@@ -845,9 +845,10 @@ def create_new_user(bot, update):
             session.name = ""
             session.phone = ""
             session.address = ""
+            commit()
             bot.send_message(text="User was added. Please, ask User to send the following command: \n/start %s" % key,
                              chat_id=update.message.chat_id)
-            db.execute("UPDATE registrysession SET faculty = NULL WHERE telegramid = %s" % str(update.message.chat_id))
+            db.execute("UPDATE registrysession SET faculty = NULL WHERE telegramid = %s;" % str(update.message.chat_id))
             commit()
 
             return new_user_conversation.END
