@@ -153,6 +153,20 @@ def accept_return(bot, update, requestID):
                           message_id=update.callback_query.message.message_id,
                           chat_id=update.callback_query.message.chat_id)
 
+def reject_return(bot, update, requestID):
+    request = database.ReturnRequest[requestID]
+    copyID = request.copyID
+    userID = request.telegramID
+
+
+    request.delete()
+
+    commit()
+    bot.send_message(text="Return request for Media #%s has been rejected. Please, contact librarian @librarian" % copyID, chat_id=userID)
+    bot.edit_message_text(text="Return request for Media #%s has been rejected" % copyID,
+                          message_id=update.callback_query.message.message_id,
+                          chat_id=update.callback_query.message.chat_id)
+
 
 def generate_expiry_date(media, patron, issue_date):
     type_of_media = media.type

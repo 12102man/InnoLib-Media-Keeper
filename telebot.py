@@ -167,6 +167,8 @@ def search_functions(bot, update):
             edit_my_medias_card(bot, update)
         elif type == 'returnMedia':
             make_return_request(bot, update, argument)
+            session = RegistrySession[update.callback_query.from_user.id]
+            session.my_medias_c = 0
         elif type == 'nextItem':
             if argument == 'my_medias':
                 session = RegistrySession[update.callback_query.from_user.id]
@@ -193,6 +195,11 @@ def search_functions(bot, update):
         elif type == 'accept':
             if argument == 'return_request':
                 accept_return(bot, update, parsed_query['id'])
+        elif type == 'reject':
+            if argument == 'return_request':
+                reject_return(bot, update, parsed_query['id'])
+        elif type == 'ask_for_return':
+
 
 
 # Filter for phone
@@ -597,7 +604,6 @@ def add_copy(bot, update, mediaID):
 
 @db_session
 def edit_media(bot, update, mediaID):
-    abstract_media = Media.get(mediaID=mediaID)
     author = InlineKeyboardButton("Author",
                                   callback_data=json.dumps(
                                       {'type': 'editMediaAuthor', 'argument': mediaID, 'field': 'author'}))

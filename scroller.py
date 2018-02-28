@@ -7,6 +7,7 @@ import logging
 from pony.orm import *
 import new_user
 import json
+from button_actions import convert_to_emoji
 
 db = Database()
 # MySQL
@@ -123,23 +124,22 @@ class Scroller:
             log = self.list[self.__cursor]
             user = new_user.User.get(telegramID=log.libID)
             message = """ Log:
-                        Customer: %s
-                        What: %s
-                        Issue date: %s
-                        Expiry date: %s
-                        Returned: %s
-                        Renewed: %s
+Customer: %s
+What: %s
+Issue date: %s
+Expiry date: %s
+Returned: %s
+Renewed: %s
                         """ % (user.name + " (@" + user.alias + ")",
                                new_user.MediaCopies.get(copyID=log.mediaID).mediaID.name + " (" + log.mediaID + ")",
-                               log.issue_date,
-                               log.expiry_date,
-                               log.returned,
-                               log.renewed)
+                               log.issue_date.strftime("%d %h %Y, %H:%M "),
+                               log.expiry_date.strftime("%d %h %Y, %H:%M "),
+                               convert_to_emoji(log.returned),
+                               convert_to_emoji(log.renewed))
             return message
         elif self.state == 'user_medias':
             self.__cursor = new_user.RegistrySession[self.__telegram_id].my_medias_c
             log_record = self.list[self.__cursor]
-            media = log_record.mediaID
             message = """ Your media #️⃣%s :
             
 What: "%s" by %s
@@ -209,6 +209,9 @@ From: %s (@%s)""" % (str(request.id), media.name, media.authors, request.copyID,
         elif self.state == 'log':
             callback_prev = 'prevLogItem'
             callback_next = 'nextLogItem'
+            log = self.list[self.__cursor]
+            if not log.returned:
+                up_row.append(InlineKeyboardButton("Ask for return", callback_data=json.dumps({'type': 'ask_for_return', 'argument': log.mediaID, 'user': log.libID})))
         elif self.state == 'user_medias':
             up_row.append(InlineKeyboardButton("Return", callback_data=json.dumps(
                 {'type': 'returnMedia', 'argument': self.list[self.__cursor].mediaID})))
