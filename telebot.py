@@ -133,6 +133,8 @@ def search_functions(bot, update):
             commit()
             bot.send_message(text="User has been successfully deleted!",
                              chat_id=update.callback_query.from_user.id)
+        elif type == 'user_edit':
+            edit_user(bot, update, argument)
         elif type == 'cancelDeleteUser':
 
             bot.send_message(text="User hasn't been deleted!",
@@ -208,7 +210,7 @@ def search_functions(bot, update):
         elif type == 'reject':
             if argument == 'return_request':
                 reject_return(bot, update, parsed_query['id'])
-        elif type == 'ask_for_return':
+
 
 
 
@@ -649,9 +651,9 @@ def edit_field(bot, update):
     id = query['argument']
     field = query['field']
     try:
-        media = Media.get(mediaID=id)
-    except:
         user = User[id]
+    except UnboundLocalError:
+        media = Media.get(mediaID=id)
     if field == 'title':
         last_value = media.name
     elif field == 'author':
@@ -660,9 +662,9 @@ def edit_field(bot, update):
         last_value = str(media.fine)
     elif field == 'price':
         last_value = str(media.cost)
-    elif field == 'username':
+    elif field == 'name':
         last_value = user.name
-    elif field == 'address':
+    elif field == 'addr':
         last_value = user.address
     elif field == 'phone':
         last_value = str(user.phone)
@@ -686,9 +688,10 @@ def change_value(bot, update):
     session = RegistrySession[telegramID]
     field = session.edit_media_state
     try:
-        media = Media.get(mediaID=session.edit_media_cursor)
-    except:
         user = User[session.edit_media_cursor]
+
+    except UnboundLocalError:
+        media = Media.get(mediaID=session.edit_media_cursor)
     if field == 'title':
         media.name = text
     elif field == 'author':
@@ -697,12 +700,12 @@ def change_value(bot, update):
         media.fine = int(text)
     elif field == 'price':
         media.cost = int(text)
-    elif field == 'username':
+    elif field == 'name':
         user.name = text
-    elif field == 'address':
+    elif field == 'addr':
         user.address = text
     elif field == 'phone':
-        user.phone == int(text)
+        user.phone = text
 
     commit()
 
@@ -714,10 +717,10 @@ def change_value(bot, update):
 def edit_user(bot, update, telegramID):
     name = InlineKeyboardButton("Name",
                                 callback_data=json.dumps(
-                                    {'type': 'editUserName', 'argument': telegramID, 'field': 'username'}))
+                                    {'type': 'editUserName', 'argument': telegramID, 'field': 'name'}))
     address = InlineKeyboardButton("Address",
                                    callback_data=json.dumps(
-                                       {'type': 'editAddress', 'argument': telegramID, 'field': 'address'}))
+                                       {'type': 'editAddress', 'argument': telegramID, 'field': 'addr'}))
     phone = InlineKeyboardButton("Phone",
                                  callback_data=json.dumps(
                                      {'type': 'editPhone', 'argument': telegramID, 'field': 'phone'}))
