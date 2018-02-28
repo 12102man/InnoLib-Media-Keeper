@@ -85,26 +85,36 @@ def book_media(bot, update):
                                   message_id=query.message.message_id)
         # Else: book an item
         else:
-            copies_list = list(media.copies)
-            i = 0
-            while not copies_list[i].available and i < len(copies_list):
-                i += 1
-            if not check_copy(copies_list[i].copyID, telegramID):
+            # If user already has a copy, reject request
+            if not check_copy(str(media.mediaID), telegramID):
                 bot.edit_message_text(text="🤦🏻‍♂ Sorry, but you already have a copy of this book :( ",
                                       chat_id=query.message.chat_id,
                                       message_id=query.message.message_id)
                 return 0
+
+            # Taking copies list
+            copies_list = list(media.copies)
+            i = 0
+            # Searching for an appropriate copy
+            while not copies_list[i].available and i < len(copies_list):
+                i += 1
+            # Making a record in log
             log_record = database.Log(libID=telegramID, mediaID=copies_list[i].copyID,
                                       expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
             copies_list[i].available = False
 
+            # If media has no copies left, set status to False
             available_list = [x for x in copies_list if x.available]
+
+            # Save mediacopies set
             if len(available_list) == 0:
                 media.availability = 0
             copies_list = set(copies_list)
             media.copies = copies_list
 
+            # Media cursor - to 0
             session.media_c = 0
+            # Save changes
             commit()
 
             bot.edit_message_text(text="🤘 Media has been successfully booked. Please visit the library to get it.",
@@ -115,7 +125,11 @@ def book_media(bot, update):
                               chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
 
+"""
+def make_return_request(media, patron, issue_date)
 
+This function generates expiry date based on type of media and user.
+"""
 def make_return_request(bot, update, copyID):
     telegramID = update.callback_query.message.chat_id
     database.ReturnRequest(
@@ -127,13 +141,6 @@ def make_return_request(bot, update, copyID):
         message_id=update.callback_query.message.message_id,
         chat_id=telegramID
     )
-
-
-"""
-def generate_expiry_date(self, media, patron, issue_date)
-
-This function generates expiry date based on type of media and user.
-"""
 
 
 def accept_return(bot, update, requestID):
@@ -172,6 +179,12 @@ def reject_return(bot, update, requestID):
                           chat_id=update.callback_query.message.chat_id)
 
 
+"""
+def generate_expiry_date(self, media, patron, issue_date)
+
+This function generates expiry date based on type of media and user.
+"""
+
 def generate_expiry_date(media, patron, issue_date):
     type_of_media = media.type
     date = issue_date
@@ -191,12 +204,23 @@ def generate_expiry_date(media, patron, issue_date):
         date += datetime.timedelta(weeks=2)
         return date
 
+"""
+def check_copy(copyID, userID)
+
+Function checks the number of copies of a particular media and returns True if there are not such ones
+"""
 def check_copy(copyID, userID):
     a = copyID.split('-')[0]
     number_of_copies = len(database.Log.select(lambda c: c.libID == userID and not c.returned and c.mediaID.startswith(a)))
     if number_of_copies == 0:
         return True
     return False
+
+"""
+def convert_to_emoji(state):
+
+Converts states to emojis
+"""
 def convert_to_emoji(state):
     if state:
         return "✅"
