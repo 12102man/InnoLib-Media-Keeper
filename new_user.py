@@ -98,6 +98,7 @@ class RegistrySession(db.Entity):
     no_of_copies = Optional(int)
     my_medias_c = Optional(int)
     return_c = Optional(int)
+    user_telegramID = Optional(int)
 
 
 class ReturnRequest(db.Entity):

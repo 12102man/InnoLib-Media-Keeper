@@ -199,10 +199,11 @@ def search_functions(bot, update):
             if argument == 'return_request':
                 reject_return(bot, update, parsed_query['id'])
         elif type == 'ask_for_return':
-
+            ask_for_return(bot, update, argument, parsed_query['user'])
 
 
 # Filter for phone
+
 def all_numbers(input_string):
     return all(char.isdigit() for char in input_string)
 
@@ -375,6 +376,8 @@ def issue_media(bot, update):
 
 @db_session
 def create_log_card(bot, update):
+    if not librarian_authentication(update.message.chat_id):
+        return 0
     registry = list(Log.select())
     log = Scroller('log', registry, update.message.chat_id)
     try:
@@ -769,6 +772,54 @@ def create_new_media(bot, update):
         return NOT_FINISHED
 
 
+@db_session
+def create_new_user(bot, update):
+    session = RegistrySession.get(telegramID=update.message.chat_id)
+    if session is not None:
+        if session.user_telegramID == -1:
+            if update.message.text == "/add_patron":
+                bot.send_message(text="Let's add a new user! What is the telegram of user?",
+                                 chat_id=update.message.chat_id)
+                return NOT_FINISHED
+            session.user_telegramID = update.message.text
+            bot.send_message(text="Please, enter new user's alias", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.alias == "":
+            session.alias = update.message.text
+            bot.send_message(text="Please, enter new user's name", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.name == "":
+            session.name = update.message.text
+            bot.send_message(text="Please, enter new user's phone", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.phone == "":
+            session.phone = update.message.text
+            bot.send_message(text="Please, enter new user's address", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.address == "":
+            session.address = update.message.text
+            bot.send_message(text="Is he/she a faculty member?", chat_id=update.message.chat_id)
+            commit()
+            return NOT_FINISHED
+        elif session.faculty is None:
+            session.faculty = int(update.message.text)
+            bot.send_message(text="User was added", chat_id=update.message.chat_id)
+            User(telegramID=session.user_telegramID, name=session.name, phone=session.phone,
+                 address=session.address, faculty=session.faculty, alias=session.alias)
+            session.delete()
+            commit()
+            return new_user_conversation.END
+    else:
+        RegistrySession(telegramID=update.message.chat_id)
+        bot.send_message(text="Please, enter new user's telegram ID", chat_id=update.message.chat_id)
+        return NOT_FINISHED
+
+
+
 def cancel_process(bot, update):
     bot.send_message(text="Process has been cancelled.", chat_id=update.message.chat_id)
 
@@ -791,6 +842,11 @@ new_media_conversation = ConversationHandler(entry_points=[CommandHandler("add_m
                                                  NOT_FINISHED: [MessageHandler(Filters.text, create_new_media)]
                                              },
                                              fallbacks=[CommandHandler('cancel', cancel_process)])
+new_user_conversation = ConversationHandler(entry_points=[CommandHandler("add_patron", create_new_user)],
+                                            states={
+                                                NOT_FINISHED: [MessageHandler(Filters.text, create_new_user)]
+                                            },
+                                            fallbacks=[])
 edit_conv = ConversationHandler(entry_points=[CallbackQueryHandler(edit_field, pattern="^{\"type\": \"edit")],
                                 states={
                                     ENTER_VALUE: [MessageHandler(Filters.text, change_value)]
@@ -803,6 +859,7 @@ in code. These are handlers.
 """
 dispatcher.add_handler(register_conversation)
 dispatcher.add_handler(new_media_conversation)
+dispatcher.add_handler(new_user_conversation)
 dispatcher.add_handler(edit_conv)
 
 search_query_handler = CallbackQueryHandler(search_functions)
