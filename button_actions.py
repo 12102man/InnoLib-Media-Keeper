@@ -85,11 +85,15 @@ def book_media(bot, update):
                                   message_id=query.message.message_id)
         # Else: book an item
         else:
-            # if database.Log.select(lambda c: c.)
             copies_list = list(media.copies)
             i = 0
             while not copies_list[i].available and i < len(copies_list):
                 i += 1
+            if not check_copy(copies_list[i].copyID, telegramID):
+                bot.edit_message_text(text="🤦🏻‍♂ Sorry, but you already have a copy of this book :( ",
+                                      chat_id=query.message.chat_id,
+                                      message_id=query.message.message_id)
+                return 0
             log_record = database.Log(libID=telegramID, mediaID=copies_list[i].copyID,
                                       expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
             copies_list[i].available = False
@@ -138,7 +142,7 @@ def accept_return(bot, update, requestID):
     userID = request.telegramID
 
     #   Setting log.return to 1
-    log_record = database.Log.get(mediaID=request.copyID)
+    log_record = database.Log.select(lambda c: c.mediaID==request.copyID and c.returned == False)
     log_record.returned = True
 
     #   Correcting user medias
@@ -187,7 +191,12 @@ def generate_expiry_date(media, patron, issue_date):
         date += datetime.timedelta(weeks=2)
         return date
 
-
+def check_copy(copyID, userID):
+    a = copyID.split('-')[0]
+    number_of_copies = len(database.Log.select(lambda c: c.libID == userID and not c.returned and c.mediaID.startswith(a)))
+    if number_of_copies == 0:
+        return True
+    return False
 def convert_to_emoji(state):
     if state:
         return "✅"
