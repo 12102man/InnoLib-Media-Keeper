@@ -80,6 +80,7 @@ class RegistrySession(db.Entity):
     telegramID = PrimaryKey(int)
 
     # Fields for registering or adding user
+    user_telegramID = Optional(int, default=-1)
     alias = Optional(str, default="")
     name = Optional(str, default="")
     phone = Optional(str, default="")
