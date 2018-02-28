@@ -766,6 +766,9 @@ def create_new_media(bot, update):
             bot.send_message(text="Media and %s its copies had been added" % str(no_of_copies),
                              chat_id=update.message.chat_id)
             return new_media_conversation.END
+
+
+
     else:
         RegistrySession(telegramID=update.message.chat_id)
         bot.send_message(text="Please, enter Title: ", chat_id=update.message.chat_id)
