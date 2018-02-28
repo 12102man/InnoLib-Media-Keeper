@@ -15,6 +15,8 @@ connection = pymysql.connect(host=config.db_host,
                              cursorclass=pymysql.cursors.DictCursor)
 cursor = connection.cursor()
 
+
+
 # API keys are hidden in config_test.py which is not in GitHub
 # because they're personal. You can create your own ones on
 # my.telegram.org
