@@ -112,5 +112,13 @@ class ReturnRequest(db.Entity):
     copyID = Required(str)
 
 
+class LibrarianEnrollment(db.Entity):
+    name = Required(str)
+    phone = Required(str)
+    faculty = Required(bool)
+    address = Required(str)
+    registrykey = PrimaryKey(str, max_len=100)
+
+
 db.generate_mapping(create_tables=True)
 set_sql_debug(True)

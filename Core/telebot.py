@@ -9,6 +9,7 @@ import Config.config as config
 from Core.scroller import Scroller
 import json
 from Core.button_actions import *
+from Core.key_generator import generate_key
 
 # MySQL
 db = Database()
@@ -219,8 +220,8 @@ This handler starts registration process. It handles from
 @db_session
 def ask_name(bot, update):
     message = update.message
-    user = User.get(telegram_ID=message.chat_id)
-    session = RegistrySession.get(telegram_ID=message.chat_id)
+    user = User.get(telegramID=message.chat_id)
+    session = RegistrySession.get(telegramID=message.chat_id)
     if user is not None:
         bot.send_message(text="🎓 Sorry, you have already been registered", chat_id=message.chat_id)
         return register_conversation.END
@@ -232,7 +233,7 @@ def ask_name(bot, update):
         elif session.faculty is None:
             ask_faculty(bot, update)
     else:
-        RegistrySession(telegram_ID=message.chat_id, alias=message.chat.username)
+        RegistrySession(telegramID=message.chat_id, alias=message.chat.username)
         bot.send_message(chat_id=update.message.chat_id, text="""Let's start the enrolling process into Innopolis University Library!
 Please, write your first and last name""")
         commit()
@@ -815,21 +816,11 @@ def create_new_media(bot, update):
 def create_new_user(bot, update):
     session = RegistrySession.get(telegramID=update.message.chat_id)
     if session is not None:
-        if session.user_telegramID == -1:
+        if session.name == "":
             if update.message.text == "/add_user":
-                bot.send_message(text="Let's add a new User! Please, enter new user's Telegram ID",
+                bot.send_message(text="Let's add a new User! Please, enter new user's name",
                                  chat_id=update.message.chat_id)
                 return NOT_FINISHED
-            session.user_telegramID = update.message.text
-            bot.send_message(text="Please, enter new user's alias", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.alias == "":
-            session.alias = update.message.text
-            bot.send_message(text="Please, enter new user's name", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.name == "":
             session.name = update.message.text
             bot.send_message(text="Please, enter new user's phone", chat_id=update.message.chat_id)
             commit()
@@ -846,17 +837,36 @@ def create_new_user(bot, update):
             return NOT_FINISHED
         elif session.faculty is None:
             session.faculty = update.message.text
-            bot.send_message(text="User was added", chat_id=update.message.chat_id)
-            User(telegramID=session.user_telegramID, name=session.name, phone=session.phone,
-                 address=session.address, faculty=session.faculty, alias=session.alias)
-            session.delete()
+            key = generate_key()
+
+
+            LibrarianEnrollment(name=session.name, phone=session.phone,
+                                 address=session.address, faculty=session.faculty, registrykey=key)
+            session.name = ""
+            session.phone = ""
+            session.address = ""
+            bot.send_message(text="User was added. Please, ask User to send the following command: \n/start %s" % key,
+                             chat_id=update.message.chat_id)
+            db.execute("UPDATE registrysession SET faculty = NULL WHERE telegramid = %s" % str(update.message.chat_id))
             commit()
+
             return new_user_conversation.END
 
 
 def cancel_process(bot, update):
     bot.send_message(text="Process has been cancelled.", chat_id=update.message.chat_id)
 
+@db_session
+def confirm_user(bot, update, args):
+    key = "".join(args).strip()
+    enroll_request = LibrarianEnrollment.get(registrykey=key)
+    if enroll_request is None:
+        bot.send_message(text="Error with the key. Please, try again", chat_id=update.message.chat_id)
+        return 0
+    User(name=enroll_request.name, address=enroll_request.address, phone=enroll_request.phone, faculty=enroll_request.faculty, telegramID=update.message.chat_id, alias=update.message.from_user.username)
+    enroll_request.delete()
+    commit()
+    bot.send_message(text="Hello! You have been successfully enrolled", chat_id=update.message.chat_id)
 
 """
 This is a conversation handler. It helps smoothly iterating 
@@ -903,6 +913,7 @@ dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', issue_media))
 dispatcher.add_handler(CommandHandler('log', create_log_card))
 dispatcher.add_handler(CommandHandler('me', me))
+dispatcher.add_handler(CommandHandler('start', confirm_user, pass_args=True))
 dispatcher.add_handler(CommandHandler('edit_user', edit_user, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_user', delete_user, pass_args=True))
