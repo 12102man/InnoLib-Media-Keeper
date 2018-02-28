@@ -846,7 +846,9 @@ def create_new_user(bot, update):
             session.phone = ""
             session.address = ""
             commit()
-            bot.send_message(text="User was added. Please, ask User to send the following command: \n/start %s" % key,
+            bot.send_message(text="User was added. Please, ask User to send the following command:",
+                             chat_id=update.message.chat_id)
+            bot.send_message(text="/start %s" % key,
                              chat_id=update.message.chat_id)
             db.execute("UPDATE registrysession SET faculty = NULL WHERE telegramid = %s;" % str(update.message.chat_id))
             commit()
@@ -865,9 +867,9 @@ def confirm_user(bot, update, args):
         bot.send_message(text="Error with the key. Please, try again", chat_id=update.message.chat_id)
         return 0
     User(name=enroll_request.name, address=enroll_request.address, phone=enroll_request.phone, faculty=enroll_request.faculty, telegramID=update.message.chat_id, alias=update.message.from_user.username)
+    bot.send_message(text="Hello %s! You have been successfully enrolled" % enroll_request.name, chat_id=update.message.chat_id)
     enroll_request.delete()
     commit()
-    bot.send_message(text="Hello! You have been successfully enrolled", chat_id=update.message.chat_id)
 
 """
 This is a conversation handler. It helps smoothly iterating 
