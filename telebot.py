@@ -694,7 +694,7 @@ def me(bot, update):
         return 0
 
     edit_button = InlineKeyboardButton("Edit",
-                                       callback_data=json.dumps({'type': 'user_edit', 'argument': my_user.alias}))
+                                       callback_data=json.dumps({'type': 'user_edit', 'argument': my_user.telegramID}))
     delete_button = InlineKeyboardButton("Delete",
                                          callback_data=json.dumps({'type': 'user_delete', 'argument': my_user.alias}))
     my_medias_button = InlineKeyboardButton("My medias",
