@@ -155,6 +155,16 @@ def search_functions(bot, update):
                 str(last_state), str(not last_state)),
                                   message_id=update.callback_query.message.message_id,
                                   chat_id=update.callback_query.from_user.id)
+        elif type == 'inverseFaculty':
+            user = User[argument]
+            user.faculty = not user.faculty
+            commit()
+            bot.edit_message_text(text="User's faculty state has been changed from %s to %s" % (
+                str(not user.faculty), str(user.faculty)),
+                                  message_id=update.callback_query.message.message_id,
+                                  chat_id=update.callback_query.from_user.id)
+
+
         elif type == 'media_delete':
             delete_media(bot, update, argument)
         elif type == 'media_add_copy':
@@ -199,11 +209,10 @@ def search_functions(bot, update):
             if argument == 'return_request':
                 reject_return(bot, update, parsed_query['id'])
         elif type == 'ask_for_return':
-            ask_for_return(bot, update, argument, parsed_query['user'])
+
 
 
 # Filter for phone
-
 def all_numbers(input_string):
     return all(char.isdigit() for char in input_string)
 
@@ -376,8 +385,6 @@ def issue_media(bot, update):
 
 @db_session
 def create_log_card(bot, update):
-    if not librarian_authentication(update.message.chat_id):
-        return 0
     registry = list(Log.select())
     log = Scroller('log', registry, update.message.chat_id)
     try:
@@ -641,7 +648,10 @@ def edit_field(bot, update):
     telegramID = update.callback_query.message.chat_id
     id = query['argument']
     field = query['field']
-    media = Media.get(mediaID=id)
+    try:
+        media = Media.get(mediaID=id)
+    except:
+        user = User[id]
     if field == 'title':
         last_value = media.name
     elif field == 'author':
@@ -650,6 +660,12 @@ def edit_field(bot, update):
         last_value = str(media.fine)
     elif field == 'price':
         last_value = str(media.cost)
+    elif field == 'username':
+        last_value = user.name
+    elif field == 'address':
+        last_value = user.address
+    elif field == 'phone':
+        last_value = str(user.phone)
 
     session = RegistrySession[telegramID]
     session.edit_media_cursor = id
@@ -669,7 +685,10 @@ def change_value(bot, update):
     text = update.message.text
     session = RegistrySession[telegramID]
     field = session.edit_media_state
-    media = Media.get(mediaID=session.edit_media_cursor)
+    try:
+        media = Media.get(mediaID=session.edit_media_cursor)
+    except:
+        user = User[session.edit_media_cursor]
     if field == 'title':
         media.name = text
     elif field == 'author':
@@ -678,11 +697,39 @@ def change_value(bot, update):
         media.fine = int(text)
     elif field == 'price':
         media.cost = int(text)
+    elif field == 'username':
+        user.name = text
+    elif field == 'address':
+        user.address = text
+    elif field == 'phone':
+        user.phone == int(text)
+
     commit()
 
     bot.send_message(text="Everything has been saved!",
                      chat_id=update.message.chat_id)
     return edit_conv.END
+
+@db_session
+def edit_user(bot, update, telegramID):
+    name = InlineKeyboardButton("Name",
+                                callback_data=json.dumps(
+                                    {'type': 'editUserName', 'argument': telegramID, 'field': 'username'}))
+    address = InlineKeyboardButton("Address",
+                                   callback_data=json.dumps(
+                                       {'type': 'editAddress', 'argument': telegramID, 'field': 'address'}))
+    phone = InlineKeyboardButton("Phone",
+                                 callback_data=json.dumps(
+                                     {'type': 'editPhone', 'argument': telegramID, 'field': 'phone'}))
+    faculty = InlineKeyboardButton("Faculty",
+                                   callback_data=json.dumps({'type': 'inverseFaculty', 'argument': telegramID}))
+
+    up_row = [name, address]
+    low_row = [phone, faculty]
+    keyboard = InlineKeyboardMarkup([up_row, low_row])
+
+    bot.send_message(text="What do you want to change?", chat_id=update.callback_query.message.chat_id,
+                     reply_markup=keyboard)
 
 
 @db_session
@@ -775,54 +822,6 @@ def create_new_media(bot, update):
         return NOT_FINISHED
 
 
-@db_session
-def create_new_user(bot, update):
-    session = RegistrySession.get(telegramID=update.message.chat_id)
-    if session is not None:
-        if session.user_telegramID == -1:
-            if update.message.text == "/add_patron":
-                bot.send_message(text="Let's add a new user! What is the telegram of user?",
-                                 chat_id=update.message.chat_id)
-                return NOT_FINISHED
-            session.user_telegramID = update.message.text
-            bot.send_message(text="Please, enter new user's alias", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.alias == "":
-            session.alias = update.message.text
-            bot.send_message(text="Please, enter new user's name", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.name == "":
-            session.name = update.message.text
-            bot.send_message(text="Please, enter new user's phone", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.phone == "":
-            session.phone = update.message.text
-            bot.send_message(text="Please, enter new user's address", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.address == "":
-            session.address = update.message.text
-            bot.send_message(text="Is he/she a faculty member?", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.faculty is None:
-            session.faculty = int(update.message.text)
-            bot.send_message(text="User was added", chat_id=update.message.chat_id)
-            User(telegramID=session.user_telegramID, name=session.name, phone=session.phone,
-                 address=session.address, faculty=session.faculty, alias=session.alias)
-            session.delete()
-            commit()
-            return new_user_conversation.END
-    else:
-        RegistrySession(telegramID=update.message.chat_id)
-        bot.send_message(text="Please, enter new user's telegram ID", chat_id=update.message.chat_id)
-        return NOT_FINISHED
-
-
-
 def cancel_process(bot, update):
     bot.send_message(text="Process has been cancelled.", chat_id=update.message.chat_id)
 
@@ -845,11 +844,6 @@ new_media_conversation = ConversationHandler(entry_points=[CommandHandler("add_m
                                                  NOT_FINISHED: [MessageHandler(Filters.text, create_new_media)]
                                              },
                                              fallbacks=[CommandHandler('cancel', cancel_process)])
-new_user_conversation = ConversationHandler(entry_points=[CommandHandler("add_patron", create_new_user)],
-                                            states={
-                                                NOT_FINISHED: [MessageHandler(Filters.text, create_new_user)]
-                                            },
-                                            fallbacks=[])
 edit_conv = ConversationHandler(entry_points=[CallbackQueryHandler(edit_field, pattern="^{\"type\": \"edit")],
                                 states={
                                     ENTER_VALUE: [MessageHandler(Filters.text, change_value)]
@@ -862,7 +856,6 @@ in code. These are handlers.
 """
 dispatcher.add_handler(register_conversation)
 dispatcher.add_handler(new_media_conversation)
-dispatcher.add_handler(new_user_conversation)
 dispatcher.add_handler(edit_conv)
 
 search_query_handler = CallbackQueryHandler(search_functions)
