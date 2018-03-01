@@ -6,6 +6,8 @@ import datetime
 import logging
 from pony.orm import *
 import new_user
+import json
+from button_actions import convert_to_emoji
 
 db = Database()
 # MySQL
@@ -122,28 +124,57 @@ class Scroller:
             log = self.list[self.__cursor]
             user = new_user.User.get(telegramID=log.libID)
             message = """ Log:
-                        Customer: %s
-                        What: %s
-                        Issue date: %s
-                        Expiry date: %s
-                        Returned: %s
-                        Renewed: %s
+Customer: %s
+What: %s
+Issue date: %s
+Expiry date: %s
+Returned: %s
+Renewed: %s
                         """ % (user.name + " (@" + user.alias + ")",
                                new_user.MediaCopies.get(copyID=log.mediaID).mediaID.name + " (" + log.mediaID + ")",
-                               log.issue_date,
-                               log.expiry_date,
-                               log.returned,
-                               log.renewed)
+                               log.issue_date.strftime("%d %h %Y, %H:%M "),
+                               log.expiry_date.strftime("%d %h %Y, %H:%M "),
+                               convert_to_emoji(log.returned),
+                               convert_to_emoji(log.renewed))
+            return message
+        elif self.state == 'user_medias':
+            self.__cursor = new_user.RegistrySession[self.__telegram_id].my_medias_c
+            log_record = self.list[self.__cursor]
+            message = """ Your media #️⃣%s :
+            
+What: "%s" by %s
+Issue date: %s
+Expiry date: %s
+                               """ % (log_record.mediaID,
+                                      new_user.MediaCopies.get(
+                                          copyID=log_record.mediaID).mediaID.name,
+                                      new_user.MediaCopies.get(
+                                          copyID=log_record.mediaID).mediaID.authors,
+                                      log_record.issue_date.strftime("%d %h %Y, %H:%M "),
+                                      log_record.expiry_date.strftime("%d %h %Y, %H:%M "))
+            return message
+        elif self.state == 'return_request':
+            self.__cursor = new_user.RegistrySession[self.__telegram_id].return_c
+            request = self.list[self.__cursor]
+            patron = new_user.User[request.telegramID]
+            media = new_user.MediaCopies.get(copyID=request.copyID).mediaID
+            message = """Request #️⃣ %s 
+What: \"%s\" by %s
+CopyID: %s
+From: %s (@%s)""" % (str(request.id), media.name, media.authors, request.copyID, patron.name, patron.alias)
             return message
 
     """
+    
     create_keyboard(self)
+
     This function creates buttons under the message for navigation 
     and extra actions.
     """
 
     def create_keyboard(self):
         low_row = []  # Keyboard is a converted two-dimensional array.
+        mid_row = []
         up_row = []  # Our keyboard has two levels: 'low' and 'up'
 
         callback_next = 0  # Callback data for buttons 'Next' and 'Prev' (replaced by arrows)
@@ -162,6 +193,13 @@ class Scroller:
         elif self.state == 'media':
             callback_prev = 'prevItem'
             callback_next = 'nextItem'
+            if new_user.Librarian.get(telegramID=self.__telegram_id) is not None:
+                mid_row.append(InlineKeyboardButton("Edit", callback_data=json.dumps(
+                    {'type': 'media_edit', 'argument': self.list[self.__cursor].mediaID})))
+                mid_row.append(InlineKeyboardButton("Delete", callback_data=json.dumps(
+                    {'type': 'media_delete', 'argument': self.list[self.__cursor].mediaID})))
+                mid_row.append(InlineKeyboardButton("Copy", callback_data=json.dumps(
+                    {'type': 'media_add_copy', 'argument': self.list[self.__cursor].mediaID})))
             up_row.append(InlineKeyboardButton("Book", callback_data='book'))
         elif self.state == 'bookingRequest':
             callback_prev = 'prevBookingRequest'
@@ -171,6 +209,23 @@ class Scroller:
         elif self.state == 'log':
             callback_prev = 'prevLogItem'
             callback_next = 'nextLogItem'
+            log = self.list[self.__cursor]
+            if not log.returned:
+                up_row.append(InlineKeyboardButton("Ask for return", callback_data=json.dumps({'type': 'ask_for_return', 'argument': log.mediaID, 'user': log.libID})))
+        elif self.state == 'user_medias':
+            up_row.append(InlineKeyboardButton("Return", callback_data=json.dumps(
+                {'type': 'returnMedia', 'argument': self.list[self.__cursor].mediaID})))
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'my_medias'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'my_medias'})
+        elif self.state == 'return_request':
+            log_record = self.list[self.__cursor].id
+            a = json.dumps({'type': 'accept', 'argument': 'return_request', 'id': log_record})
+            print(a)
+            up_row.append(InlineKeyboardButton("✅", callback_data=a))
+            up_row.append(InlineKeyboardButton("🚫", callback_data=json.dumps({'type': 'reject', 'argument': 'return_request', 'id': log_record})))
+
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'return_request'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'return_request'})
 
         """ If cursor is on the egde position (0 or length of list with records),
         then don't append one of arrows."""
@@ -179,4 +234,4 @@ class Scroller:
         if self.__cursor < len(self.list) - 1:
             low_row.append(InlineKeyboardButton("➡", callback_data=callback_next))
 
-        return InlineKeyboardMarkup([up_row, low_row])
+        return InlineKeyboardMarkup([up_row, mid_row, low_row])

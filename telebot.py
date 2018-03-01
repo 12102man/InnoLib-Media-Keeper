@@ -4,7 +4,7 @@ from telegram.ext import ConversationHandler, MessageHandler, CallbackQueryHandl
 from telegram.ext import Filters
 from telegram.ext import CommandHandler
 from pony.orm import *
-from new_user import User, Request, RegistrySession, Media, MediaRequest, Librarian, Log, MediaCopies
+from new_user import User, Request, RegistrySession, Media, MediaRequest, Librarian, Log, MediaCopies, ReturnRequest
 import logging
 import config
 from scroller import Scroller
@@ -133,6 +133,8 @@ def search_functions(bot, update):
             commit()
             bot.send_message(text="User has been successfully deleted!",
                              chat_id=update.callback_query.from_user.id)
+        elif type == 'user_edit':
+            edit_user(bot, update, argument)
         elif type == 'cancelDeleteUser':
 
             bot.send_message(text="User hasn't been deleted!",
@@ -155,6 +157,16 @@ def search_functions(bot, update):
                 str(last_state), str(not last_state)),
                                   message_id=update.callback_query.message.message_id,
                                   chat_id=update.callback_query.from_user.id)
+        elif type == 'inverseFaculty':
+            user = User[argument]
+            user.faculty = not user.faculty
+            commit()
+            bot.edit_message_text(text="User's faculty state has been changed from %s to %s" % (
+                str(not user.faculty), str(user.faculty)),
+                                  message_id=update.callback_query.message.message_id,
+                                  chat_id=update.callback_query.from_user.id)
+
+
         elif type == 'media_delete':
             delete_media(bot, update, argument)
         elif type == 'media_add_copy':
@@ -167,6 +179,8 @@ def search_functions(bot, update):
             edit_my_medias_card(bot, update)
         elif type == 'returnMedia':
             make_return_request(bot, update, argument)
+            session = RegistrySession[update.callback_query.from_user.id]
+            session.my_medias_c = 0
         elif type == 'nextItem':
             if argument == 'my_medias':
                 session = RegistrySession[update.callback_query.from_user.id]
@@ -175,7 +189,7 @@ def search_functions(bot, update):
                 edit_my_medias_card(bot, update)
             elif argument == 'return_request':
                 session = RegistrySession[update.callback_query.from_user.id]
-                session.request_c += 1
+                session.return_c += 1
                 commit()
                 edit_return_media(bot, update)
 
@@ -187,9 +201,17 @@ def search_functions(bot, update):
                 edit_my_medias_card(bot, update)
             elif argument == 'return_request':
                 session = RegistrySession[update.callback_query.from_user.id]
-                session.request_c -= 1
+                session.return_c -= 1
                 commit()
                 edit_return_media(bot, update)
+        elif type == 'accept':
+            if argument == 'return_request':
+                accept_return(bot, update, parsed_query['id'])
+        elif type == 'reject':
+            if argument == 'return_request':
+                reject_return(bot, update, parsed_query['id'])
+
+
 
 
 # Filter for phone
@@ -388,11 +410,11 @@ def return_media(bot, update):
 @db_session
 def edit_return_media(bot, update):
     registry = list(ReturnRequest.select())
-    log = Scroller('return_request', registry, update.message.chat_id)
+    query = update.callback_query
+    log = Scroller('return_request', registry, update.callback_query.message.chat_id)
     try:
-        bot.edit_message_text(text=log.create_message(), chat_id=update.callback_query.message.chat_id,
-                              message_id=update.callback_query.message.chat_id,
-                              reply_markup=log.create_keyboard())
+        bot.edit_message_text(text=log.create_message(), chat_id=query.message.chat_id,
+                              message_id=query.message.message_id, reply_markup=log.create_keyboard())
     except FileNotFoundError as e:
         bot.edit_message_text(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
@@ -460,7 +482,7 @@ def edit_log_card(bot, update):
 def edit_my_medias_card(bot, update):
     query = update.callback_query
     try:
-        medias = list(Log.select(lambda c: c.libID == update.callback_query.message.chat_id))
+        medias = list(Log.select(lambda c: c.libID == update.callback_query.message.chat_id and c.returned == False))
         media_container = Scroller('user_medias', medias, query.message.chat_id)
         bot.edit_message_text(text=media_container.create_message(), chat_id=query.message.chat_id,
                               message_id=query.message.message_id, reply_markup=media_container.create_keyboard())
@@ -519,7 +541,7 @@ def users(bot, update):
                   "Phone: " + user.phone + "\n" + \
                   "Faculty? " + str(user.faculty) + "\n" + \
                   "Medias: " + "\n"
-        list_of_user_medias = Log.select(lambda c: c.libID == user.telegramID)
+        list_of_user_medias = Log.select(lambda c: c.libID == user.telegramID and c.returned == False)
         for item in list_of_user_medias:
             abstract_media = MediaCopies.get(copyID=item.mediaID).mediaID
             string += "     ID: " + item.mediaID + "\n" + \
@@ -594,7 +616,6 @@ def add_copy(bot, update, mediaID):
 
 @db_session
 def edit_media(bot, update, mediaID):
-    abstract_media = Media.get(mediaID=mediaID)
     author = InlineKeyboardButton("Author",
                                   callback_data=json.dumps(
                                       {'type': 'editMediaAuthor', 'argument': mediaID, 'field': 'author'}))
@@ -629,7 +650,10 @@ def edit_field(bot, update):
     telegramID = update.callback_query.message.chat_id
     id = query['argument']
     field = query['field']
-    media = Media.get(mediaID=id)
+    try:
+        user = User[id]
+    except UnboundLocalError:
+        media = Media.get(mediaID=id)
     if field == 'title':
         last_value = media.name
     elif field == 'author':
@@ -638,6 +662,12 @@ def edit_field(bot, update):
         last_value = str(media.fine)
     elif field == 'price':
         last_value = str(media.cost)
+    elif field == 'name':
+        last_value = user.name
+    elif field == 'addr':
+        last_value = user.address
+    elif field == 'phone':
+        last_value = str(user.phone)
 
     session = RegistrySession[telegramID]
     session.edit_media_cursor = id
@@ -657,7 +687,11 @@ def change_value(bot, update):
     text = update.message.text
     session = RegistrySession[telegramID]
     field = session.edit_media_state
-    media = Media.get(mediaID=session.edit_media_cursor)
+    try:
+        user = User[session.edit_media_cursor]
+
+    except UnboundLocalError:
+        media = Media.get(mediaID=session.edit_media_cursor)
     if field == 'title':
         media.name = text
     elif field == 'author':
@@ -666,11 +700,39 @@ def change_value(bot, update):
         media.fine = int(text)
     elif field == 'price':
         media.cost = int(text)
+    elif field == 'name':
+        user.name = text
+    elif field == 'addr':
+        user.address = text
+    elif field == 'phone':
+        user.phone = text
+
     commit()
 
     bot.send_message(text="Everything has been saved!",
                      chat_id=update.message.chat_id)
     return edit_conv.END
+
+@db_session
+def edit_user(bot, update, telegramID):
+    name = InlineKeyboardButton("Name",
+                                callback_data=json.dumps(
+                                    {'type': 'editUserName', 'argument': telegramID, 'field': 'name'}))
+    address = InlineKeyboardButton("Address",
+                                   callback_data=json.dumps(
+                                       {'type': 'editAddress', 'argument': telegramID, 'field': 'addr'}))
+    phone = InlineKeyboardButton("Phone",
+                                 callback_data=json.dumps(
+                                     {'type': 'editPhone', 'argument': telegramID, 'field': 'phone'}))
+    faculty = InlineKeyboardButton("Faculty",
+                                   callback_data=json.dumps({'type': 'inverseFaculty', 'argument': telegramID}))
+
+    up_row = [name, address]
+    low_row = [phone, faculty]
+    keyboard = InlineKeyboardMarkup([up_row, low_row])
+
+    bot.send_message(text="What do you want to change?", chat_id=update.callback_query.message.chat_id,
+                     reply_markup=keyboard)
 
 
 @db_session
@@ -682,7 +744,7 @@ def me(bot, update):
         return 0
 
     edit_button = InlineKeyboardButton("Edit",
-                                       callback_data=json.dumps({'type': 'user_edit', 'argument': my_user.alias}))
+                                       callback_data=json.dumps({'type': 'user_edit', 'argument': my_user.telegramID}))
     delete_button = InlineKeyboardButton("Delete",
                                          callback_data=json.dumps({'type': 'user_delete', 'argument': my_user.alias}))
     my_medias_button = InlineKeyboardButton("My medias",
@@ -754,6 +816,9 @@ def create_new_media(bot, update):
             bot.send_message(text="Media and %s its copies had been added" % str(no_of_copies),
                              chat_id=update.message.chat_id)
             return new_media_conversation.END
+
+
+
     else:
         RegistrySession(telegramID=update.message.chat_id)
         bot.send_message(text="Please, enter Title: ", chat_id=update.message.chat_id)
@@ -803,6 +868,7 @@ dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', issue_media))
 dispatcher.add_handler(CommandHandler('log', create_log_card))
 dispatcher.add_handler(CommandHandler('me', me))
+dispatcher.add_handler(CommandHandler('edit_user', edit_user, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_user', delete_user, pass_args=True))
 dispatcher.add_handler(CommandHandler('users', users))

@@ -95,6 +95,14 @@ class RegistrySession(db.Entity):
     edit_media_cursor = Optional(int, default=0)
     edit_media_state = Optional(str)
     publisher = Optional(str)
+    no_of_copies = Optional(int)
+    my_medias_c = Optional(int)
+    return_c = Optional(int)
+
+
+class ReturnRequest(db.Entity):
+    telegramID = Required(int)
+    copyID = Required(str)
 
 
 db.generate_mapping(create_tables=True)

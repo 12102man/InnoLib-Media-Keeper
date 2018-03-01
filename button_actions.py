@@ -44,6 +44,7 @@ def approve_request(bot, update):
     This function rejects request for enrolling the system
 """
 
+
 @db_session
 def reject_request(bot, update):
     query = update.callback_query
@@ -75,7 +76,7 @@ def book_media(bot, update):
     if user is not None:
         telegramID = query.message.chat_id
         session = database.RegistrySession[telegramID]
-        media = list(database.Media.select())[session.request_c]
+        media = list(database.Media.select())[session.media_c]
 
         # If media can't be booked, then reject booking
         if media.availability == 0:
@@ -84,20 +85,36 @@ def book_media(bot, update):
                                   message_id=query.message.message_id)
         # Else: book an item
         else:
+            # If user already has a copy, reject request
+            if not check_copy(str(media.mediaID), telegramID):
+                bot.edit_message_text(text="🤦🏻‍♂ Sorry, but you already have a copy of this book :( ",
+                                      chat_id=query.message.chat_id,
+                                      message_id=query.message.message_id)
+                return 0
+
+            # Taking copies list
             copies_list = list(media.copies)
             i = 0
+            # Searching for an appropriate copy
             while not copies_list[i].available and i < len(copies_list):
-                i +=1
-            log_record = database.Log(libID=telegramID, mediaID=copies_list[i].copyID, expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
+                i += 1
+            # Making a record in log
+            log_record = database.Log(libID=telegramID, mediaID=copies_list[i].copyID,
+                                      expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
             copies_list[i].available = False
 
+            # If media has no copies left, set status to False
             available_list = [x for x in copies_list if x.available]
+
+            # Save mediacopies set
             if len(available_list) == 0:
                 media.availability = 0
             copies_list = set(copies_list)
             media.copies = copies_list
 
+            # Media cursor - to 0
             session.media_c = 0
+            # Save changes
             commit()
 
             bot.edit_message_text(text="🤘 Media has been successfully booked. Please visit the library to get it.",
@@ -108,59 +125,65 @@ def book_media(bot, update):
                               chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
 
-
 """
-def accept_booking_request(self, bot, update)
-This function accepts booking request
+def make_return_request(media, patron, issue_date)
+
+This function generates expiry date based on type of media and user.
 """
+def make_return_request(bot, update, copyID):
+    telegramID = update.callback_query.message.chat_id
+    database.ReturnRequest(
+        telegramID=telegramID,
+        copyID=copyID
+    )
+    bot.edit_message_text(
+        text="Return request has been successfully added",
+        message_id=update.callback_query.message.message_id,
+        chat_id=telegramID
+    )
 
 
-def accept_booking_request(bot, update):
-    query = update.callback_query
-    telegramID = query.message.chat_id
-    session = database.RegistrySession[telegramID]
-    user = database.User[telegramID]
-    media = database.Media[session.media_c]
+def accept_return(bot, update, requestID):
+    request = database.ReturnRequest[requestID]
+    copyID = request.copyID
+    userID = request.telegramID
 
-    patron = Patron()  # Creating and filling with data Patron instance
-    libID = self.list[self.__cursor]["libID"]
+    #   Setting log.return to 1
+    log_record = database.Log.select(lambda c: c.mediaID==request.copyID and c.returned == False)
+    log_record.returned = True
+
+    #   Correcting user medias
+    media_copy = database.MediaCopies.get(copyID=copyID)
+    media_copy.available = True
+
+    request.delete()
+
+    commit()
+    bot.send_message(text="Media %s has been successfully returned" % copyID, chat_id=userID)
+    bot.edit_message_text(text="Media %s has been successfully returned" % copyID,
+                          message_id=update.callback_query.message.message_id,
+                          chat_id=update.callback_query.message.chat_id)
+
+def reject_return(bot, update, requestID):
+    request = database.ReturnRequest[requestID]
+    copyID = request.copyID
+    userID = request.telegramID
 
 
+    request.delete()
 
-"""
-def reject_booking_request(self, bot, update)
-This function rejects booking request. 
-"""
+    commit()
+    bot.send_message(text="Return request for Media #%s has been rejected. Please, contact librarian @librarian" % copyID, chat_id=userID)
+    bot.edit_message_text(text="Return request for Media #%s has been rejected" % copyID,
+                          message_id=update.callback_query.message.message_id,
+                          chat_id=update.callback_query.message.chat_id)
 
-
-def reject_booking_request(self, bot, update):
-    media = ItemCard()  # Creating and filling with data Media instance
-    try:
-        te = self.list[self.__cursor]["mediaID"]
-        media.find(te)
-
-        # Deleting request from 'mediarequest' table
-        libID = self.list[self.__cursor]["libID"]
-
-        patron = Patron()
-        cursor.execute("SELECT * FROM user WHERE libID = %s;" % libID)
-        telegramID = cursor.fetchone()['telegramID']
-        patron.find(telegramID)  # Finding patron by Telegram ID
-        cursor.execute("DELETE FROM mediarequest WHERE mediaID = %s;" % media.get_media_id())
-        connection.commit()
-        bot.send_message(
-            text="🤦🏻‍♂️ Request for media #%s has been rejected :(" % media.get_media_id(),
-            chat_id=patron.get_telegram_id())
-    except (pymysql.err.InternalError, IndexError, FileNotFoundError) as e:
-        logging.error("Can't insert into database: " + e.args[0])
-        bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=update.callback_query.message.chat_id,
-                              message_id=update.callback_query.message.message_id)
 
 """
 def generate_expiry_date(self, media, patron, issue_date)
+
 This function generates expiry date based on type of media and user.
 """
-
 
 def generate_expiry_date(media, patron, issue_date):
     type_of_media = media.type
@@ -180,3 +203,32 @@ def generate_expiry_date(media, patron, issue_date):
     else:
         date += datetime.timedelta(weeks=2)
         return date
+
+"""
+def check_copy(copyID, userID)
+
+Function checks the number of copies of a particular media and returns True if there are not such ones
+"""
+def check_copy(copyID, userID):
+    a = copyID.split('-')[0]
+    number_of_copies = len(database.Log.select(lambda c: c.libID == userID and not c.returned and c.mediaID.startswith(a)))
+    if number_of_copies == 0:
+        return True
+    return False
+
+"""
+def convert_to_emoji(state):
+
+Converts states to emojis
+"""
+def convert_to_emoji(state):
+    if state:
+        return "✅"
+    elif not state:
+        return "❌"
+    elif state == 'Book':
+        return "📚"
+    elif state == 'AV':
+        return "📀"
+    else:
+        return state
