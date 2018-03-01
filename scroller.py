@@ -164,6 +164,16 @@ CopyID: %s
 From: %s (@%s)""" % (str(request.id), media.name, media.authors, request.copyID, patron.name, patron.alias)
             return message
 
+        elif self.state == 'users':
+            self.__cursor = new_user.User[self.__telegram_id].users_c
+            request = self.list[self.__cursor]
+            patron = new_user.User[request.telegramID]
+            message = """ User %s %s information:
+Address: %s
+Alias: @%s
+Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.phone)
+            return message
+
     """
     
     create_keyboard(self)
@@ -226,6 +236,13 @@ From: %s (@%s)""" % (str(request.id), media.name, media.authors, request.copyID,
 
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'return_request'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'return_request'})
+
+        elif self.state == 'users':
+            log_record = self.list[self.__cursor].id
+            a = json.dumps({'type': 'accept', 'argument': 'users', 'id': log_record})
+            print(a)
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'users'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'users'})
 
         """ If cursor is on the egde position (0 or length of list with records),
         then don't append one of arrows."""

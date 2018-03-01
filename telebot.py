@@ -177,6 +177,8 @@ def search_functions(bot, update):
             delete_user(bot, update, list(str(argument)))
         elif type == 'my_medias':
             edit_my_medias_card(bot, update)
+        elif type == 'users':
+            users(bot, update)
         elif type == 'returnMedia':
             make_return_request(bot, update, argument)
             session = RegistrySession[update.callback_query.from_user.id]
