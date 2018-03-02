@@ -134,6 +134,14 @@ What: \"%s\" by %s
 CopyID: %s
 From: %s (@%s)""" % (str(request.id), media.name, media.authors, request.copyID, patron.name, patron.alias)
             return message
+        elif self.state == 'users':
+            self.__cursor = database.RegistrySession[self.__telegram_id].users_c
+            patron = self.list[self.__cursor]
+            message = """ User %s information:
+Address: %s
+Alias: @%s
+Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.phone)
+            return message
 
     """
     
@@ -199,6 +207,14 @@ From: %s (@%s)""" % (str(request.id), media.name, media.authors, request.copyID,
 
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'return_request'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'return_request'})
+        elif self.state == 'users':
+            log_record = self.list[self.__cursor].telegramID
+            a = json.dumps({'type': 'accept', 'argument': 'users', 'id': log_record})
+            print(a)
+            up_row.append(InlineKeyboardButton("🚫", callback_data=json.dumps(
+                {'type': 'delete_user', 'argument': log_record})))
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'users'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'users'})
 
         """ If cursor is on the egde position (0 or length of list with records),
         then don't append one of arrows."""
