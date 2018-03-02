@@ -1,10 +1,12 @@
 from pony.orm import *
 import datetime
+
 import Config.config as config
 
 db = Database()
 # MySQL
 db.bind(provider='mysql', host=config.db_host, user=config.db_username, passwd=config.db_password, db=config.db_name)
+
 
 
 class User(db.Entity):

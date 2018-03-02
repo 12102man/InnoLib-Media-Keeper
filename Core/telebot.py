@@ -13,10 +13,10 @@ from Core.key_generator import generate_key
 
 # MySQL
 db = Database()
+
 db.bind(provider='mysql', host=config.db_host, user=config.db_username, passwd=config.db_password, db=config.db_name)
 db.generate_mapping(create_tables=True)
 
-# Bot
 updater = Updater(token=config.token)
 dispatcher = updater.dispatcher
 
@@ -24,6 +24,7 @@ dispatcher = updater.dispatcher
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 # States for switching between handlers
+
 NAME, FACULTY, PHONE_NUMBER, ADDRESS, END_OF_SIGNUP, BOOK_SEARCH, ARTICLE_SEARCH, AV_SEARCH, NOT_FINISHED, ENTER_VALUE = range(
     10)
 
@@ -47,11 +48,14 @@ def callback_query_selector(bot, update):
 
     #
     if query_type == 'Faculty':
+
         session_user = RegistrySession[update.callback_query.from_user.id]
         session_user.faculty = True
         commit()
         end_of_registration(bot, update)
+
     elif query_type == 'NotFaculty':
+
         session_user = RegistrySession[update.callback_query.from_user.id]
         session_user.faculty = False
         commit()
@@ -226,12 +230,14 @@ def callback_query_selector(bot, update):
             edit_users_card(bot, update)
 
 
+
 """  Registration process   """
 
 
 # Filter for phone
 def all_numbers(input_string):
     return all(char.isdigit() for char in input_string)
+
 
 
 @db_session
@@ -270,6 +276,7 @@ Please, write your first and last name""")
         return PHONE_NUMBER
 
 
+
 @db_session
 def ask_phone(bot, update):
     """
@@ -280,11 +287,13 @@ def ask_phone(bot, update):
     :param update: update object
     :return: ADDRESS statement
     """
+
     session_user = RegistrySession[update.message.chat_id]
     session_user.name = update.message.text
     bot.send_message(chat_id=update.message.chat_id, text="Please, write your phone number")
     commit()
     return ADDRESS
+
 
 
 @db_session
@@ -307,6 +316,7 @@ def ask_address(bot, update):
         bot.send_message(chat_id=update.message.chat_id, text="Oops, this is not a phone number, try again")
 
 
+
 @db_session
 def ask_faculty(bot, update):
     """
@@ -316,16 +326,20 @@ def ask_faculty(bot, update):
     :param update: update object
     :return: end register_conversation
     """
+
     session_user = RegistrySession[update.message.chat_id]
     session_user.address = update.message.text
     commit()
+
 
     #   Buttons for answering Yes or No. callback_data is what bot gets as a query (see callback_query_selector())
     reply = InlineKeyboardMarkup(
         [[InlineKeyboardButton("Yes", callback_data=json.dumps({'type': 'Faculty', 'argument': 0})),
           InlineKeyboardButton("No", callback_data=json.dumps({'type': 'Faculty', 'argument': 0}))]])
+
     bot.send_message(chat_id=update.message.chat_id, text="Are you a faculty member?", reply_markup=reply)
     return register_conversation.END
+
 
 
 @db_session
@@ -340,6 +354,7 @@ def end_of_registration(bot, update):
     session_user = RegistrySession[update.callback_query.from_user.id]
     Request(
         telegramID=session_user.telegramID,
+
         name=session_user.name,
         phone=session_user.phone,
         address=session_user.address,
@@ -355,14 +370,17 @@ These objects are from Scroller class (see scroller.py)
 They perform menus for viewing menu, registry requests
 and booking requests.
 
+
 Card - message which contains all required data about object
 and allows to perform some actions (add, delete, modify)
 
 """
 
 
+
 @db_session
 def create_request_card(bot, update):
+
     """
     Creates request menu card
     :param bot: bot object
@@ -370,6 +388,7 @@ def create_request_card(bot, update):
     :return: request card
     """
     registry = list(Request.select(lambda c: c.status == 0))
+
     request_card = Scroller('request', registry, update.message.chat_id)
     try:
         bot.send_message(text=request_card.create_message(), chat_id=update.message.chat_id,
@@ -380,6 +399,7 @@ def create_request_card(bot, update):
 
 @db_session
 def create_media_card(bot, update):
+
     """
     Creates media menu card
     :param bot: bot object
@@ -388,11 +408,13 @@ def create_media_card(bot, update):
     """
     medias = list(Media.select())
     media_card = Scroller('media', medias, update.message.chat_id)
+
     try:
         bot.send_message(text=media_card.create_message(), chat_id=update.message.chat_id,
                          reply_markup=media_card.create_keyboard())
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+
 
 
 @db_session
@@ -403,6 +425,7 @@ def create_users_card(bot, update):
     :param update: update object
     :return: media card
     """
+
     registry = list(User.select())
     log = Scroller('users', registry, update.message.chat_id)
     try:
@@ -420,6 +443,7 @@ def create_booking_request_card(bot, update):
     :param update: update object
     :return: booking request card
     """
+
     registry = list(MediaRequest.select())
     issue_card = Scroller('bookingRequest', registry, update.message.chat_id)
     try:
@@ -431,12 +455,14 @@ def create_booking_request_card(bot, update):
 
 @db_session
 def create_log_card(bot, update):
+
     """
     Creates log menu card
     :param bot: bot object
     :param update: update object
     :return: log card
     """
+
     registry = list(Log.select())
     log = Scroller('log', registry, update.message.chat_id)
     try:
@@ -447,6 +473,7 @@ def create_log_card(bot, update):
 
 
 @db_session
+
 def create_return_media_card(bot, update):
     """
     Creates return media menu card
@@ -454,6 +481,7 @@ def create_return_media_card(bot, update):
     :param update: update object
     :return: return media card
     """
+
     registry = list(ReturnRequest.select())
     log = Scroller('return_request', registry, update.message.chat_id)
     try:
@@ -461,6 +489,7 @@ def create_return_media_card(bot, update):
                          reply_markup=log.create_keyboard())
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+
 
 
 """
@@ -489,6 +518,7 @@ def edit_request_card(bot, update):
                               message_id=query.message.message_id)
 
 
+
 @db_session
 def edit_media_card(bot, update):
     """
@@ -507,6 +537,7 @@ def edit_media_card(bot, update):
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
+
 
 
 @db_session
@@ -538,6 +569,7 @@ def edit_booking_request_card(bot, update):
     :param update: update object
     :return: return media card
     """
+
     query = update.callback_query
     try:
         registry = list(MediaRequest.select())
@@ -558,6 +590,7 @@ def edit_log_card(bot, update):
     :param update: update object
     :return: log card
     """
+
     query = update.callback_query
     try:
         registry = list(Log.select())
@@ -608,6 +641,7 @@ def edit_my_medias_card(bot, update):
                               message_id=query.message.message_id)
 
 
+
 @db_session
 def librarian_authentication(user_id):
     """
@@ -626,12 +660,14 @@ def librarian_authentication(user_id):
 
 @db_session
 def librarian_interface(bot, update):
+
     """
     Prints out librarian's menu wih all features
     :param bot: bot object
     :param update: update object
     :return: message with commands
     """
+
     telegram_id = update.message.chat_id
     librarian = Librarian.get(telegramID=telegram_id)
     if not librarian_authentication(telegram_id):
@@ -641,6 +677,7 @@ def librarian_interface(bot, update):
     bot.send_message(text="""Hello, %s!
 Here's a list of useful commands, which are only allowed to librarians:
 /requests - see registry requests    
+
 /log - see log of Library
 /return - return a book
 /users - list of users
@@ -649,6 +686,7 @@ Here's a list of useful commands, which are only allowed to librarians:
 
 
 @db_session
+
 def me(bot, update):
     """
     Prints out user's menu with information and features
@@ -674,6 +712,7 @@ def me(bot, update):
     message = "Hello, %s! \nHere is information about you: \n👨‍🎓: %s (@%s) \n🏠: %s \n☎️: %s \n🎓: %s" % (
         my_user.name, my_user.name, my_user.alias, my_user.address, my_user.phone, convert_to_emoji(my_user.faculty))
     bot.send_message(text=message, chat_id=telegram_id, reply_markup=keyboard)
+
 
 
 @db_session
@@ -709,6 +748,7 @@ def delete_media(bot, update, media_id):
 
 @db_session
 def delete_copy(bot, update, args):
+
     """
     Asks librarian if it still wants to delete a particular copy
     :param bot: bot object
@@ -730,6 +770,7 @@ def delete_copy(bot, update, args):
         return 0
     message = "Are you sure you want to delete \"" + deleted_media.mediaID.name + "\" by " + \
               deleted_media.mediaID.authors + " (" + deleted_media.copyID + ")?"
+
     delete_query = json.dumps({'type': 'deleteCopy', 'argument': copy_id})
     stay_query = json.dumps({'type': 'cancelDeleteCopy', 'argument': copy_id})
     keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("✅", callback_data=delete_query),
@@ -739,6 +780,7 @@ def delete_copy(bot, update, args):
 
 @db_session
 def delete_user(bot, update, telegram_id):
+
     """
     Asks librarian if it still wants to delete a particular
     user
@@ -767,6 +809,7 @@ def delete_user(bot, update, telegram_id):
     bot.send_message(text=message, chat_id=current_telegram_id, reply_markup=keyboard)
 
 
+
 @db_session
 def add_copy(bot, update, media_id):
     """
@@ -787,6 +830,7 @@ def add_copy(bot, update, media_id):
 
 @db_session
 def edit_media(bot, update, media_id):
+
     """
     Starting menu for media editing
     :param bot: bot object
@@ -814,8 +858,10 @@ def edit_media(bot, update, media_id):
     up_row = [author, title, bestseller]
     low_row = [availability, fine, price]
     keyboard = InlineKeyboardMarkup([up_row, low_row])
+
     bot.send_message(text="What do you want to change?", chat_id=update.callback_query.message.chat_id,
                      reply_markup=keyboard)
+
 
 
 @db_session
@@ -847,14 +893,17 @@ def edit_user(bot, update, telegram_id):
                      reply_markup=keyboard)
 
 
+
 @db_session
 def edit_field(bot, update):
+
     """
     Function which interacts with a certain field
     :param bot: bot object
     :param update: update object
     :return: message for user
     """
+
     query = json.loads(update.callback_query.data)
     telegram_id = update.callback_query.message.chat_id
     media_id = query['argument']
@@ -863,6 +912,7 @@ def edit_field(bot, update):
     last_value = ""
     try:
         user = User[telegram_id]
+
     except UnboundLocalError:
         media = Media.get(mediaID=media_id)
     if field == 'title':
@@ -894,12 +944,14 @@ def edit_field(bot, update):
 
 @db_session
 def change_value(bot, update):
+
     """
     Changes certain value
     :param bot: bot object
     :param update: update object
     :return: changed parameter
     """
+
     telegram_id = update.message.chat_id
     text = update.message.text
     session = RegistrySession[telegram_id]
@@ -924,13 +976,16 @@ def change_value(bot, update):
         user.address = text
     elif field == 'phone':
         user.phone = text
+
     commit()
+
     bot.send_message(text="Everything has been saved!",
                      chat_id=update.message.chat_id)
     return edit_conv.END
 
 
 @db_session
+
 def create_new_media(bot, update):
     """
     Menu for adding a new media
@@ -1000,12 +1055,14 @@ def create_new_media(bot, update):
 
 @db_session
 def create_new_user(bot, update):
+
     """
     Menu for adding a new user
     :param bot: bot object
     :param update: update object
     :return: user added
     """
+
     session = RegistrySession.get(telegramID=update.message.chat_id)
     if session is not None:
         if session.name == "":
@@ -1033,6 +1090,7 @@ def create_new_user(bot, update):
 
             LibrarianEnrollment(name=session.name, phone=session.phone,
                                 address=session.address, faculty=session.faculty, registrykey=key)
+
             session.name = ""
             session.phone = ""
             session.address = ""
@@ -1048,6 +1106,7 @@ def create_new_user(bot, update):
 
 
 def cancel_process(bot, update):
+
     """
     Cancel conversations
     :param bot: bot object
@@ -1066,11 +1125,13 @@ def confirm_user(bot, update, args):
     :param args: confirmation key
     :return: user confirmed
     """
+
     key = "".join(args).strip()
     enroll_request = LibrarianEnrollment.get(registrykey=key)
     if enroll_request is None:
         bot.send_message(text="Error with the key. Please, try again", chat_id=update.message.chat_id)
         return 0
+
     User(name=enroll_request.name, address=enroll_request.address, phone=enroll_request.phone,
          faculty=enroll_request.faculty, telegramID=update.message.chat_id, alias=update.message.from_user.username)
     bot.send_message(text="Hello %s! You have been successfully enrolled" % enroll_request.name,
@@ -1091,7 +1152,9 @@ register_conversation = ConversationHandler(entry_points=[CommandHandler("enroll
                                                 ADDRESS: [MessageHandler(Filters.text, ask_address)],
                                                 FACULTY: [MessageHandler(Filters.text, ask_faculty)]
                                             },
+
                                             fallbacks=[CommandHandler('cancel', cancel_process)])
+
 new_media_conversation = ConversationHandler(entry_points=[CommandHandler("add_media", create_new_media)],
                                              states={
                                                  NOT_FINISHED: [MessageHandler(Filters.text, create_new_media)]
@@ -1101,12 +1164,16 @@ new_user_conversation = ConversationHandler(entry_points=[CommandHandler("add_us
                                             states={
                                                 NOT_FINISHED: [MessageHandler(Filters.text, create_new_user)]
                                             },
+
                                             fallbacks=[CommandHandler('cancel', cancel_process)])
+
 edit_conv = ConversationHandler(entry_points=[CallbackQueryHandler(edit_field, pattern="^{\"type\": \"edit")],
                                 states={
                                     ENTER_VALUE: [MessageHandler(Filters.text, change_value)]
                                 },
+
                                 fallbacks=[CommandHandler('cancel', cancel_process)])
+
 
 """
 This part connects commands, queries and any other input information to features
@@ -1116,6 +1183,7 @@ dispatcher.add_handler(register_conversation)
 dispatcher.add_handler(new_media_conversation)
 dispatcher.add_handler(new_user_conversation)
 dispatcher.add_handler(edit_conv)
+
 
 search_query_handler = CallbackQueryHandler(callback_query_selector)
 dispatcher.add_handler(CommandHandler('requests', create_request_card))
