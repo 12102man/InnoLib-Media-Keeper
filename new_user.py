@@ -98,6 +98,7 @@ class RegistrySession(db.Entity):
     no_of_copies = Optional(int)
     my_medias_c = Optional(int)
     return_c = Optional(int)
+    users_c = Optional(int, default=0)
 
 
 class ReturnRequest(db.Entity):

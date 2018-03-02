@@ -165,10 +165,9 @@ From: %s (@%s)""" % (str(request.id), media.name, media.authors, request.copyID,
             return message
 
         elif self.state == 'users':
-            self.__cursor = new_user.User[self.__telegram_id].users_c
-            request = self.list[self.__cursor]
-            patron = new_user.User[request.telegramID]
-            message = """ User %s %s information:
+            self.__cursor = new_user.RegistrySession[self.__telegram_id].users_c
+            patron = self.list[self.__cursor]
+            message = """ User %s information:
 Address: %s
 Alias: @%s
 Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.phone)
@@ -238,9 +237,11 @@ Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.pho
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'return_request'})
 
         elif self.state == 'users':
-            log_record = self.list[self.__cursor].id
+            log_record = self.list[self.__cursor].telegramID
             a = json.dumps({'type': 'accept', 'argument': 'users', 'id': log_record})
             print(a)
+            up_row.append(InlineKeyboardButton("🚫", callback_data=json.dumps(
+                {'type': 'delete_user', 'argument': log_record})))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'users'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'users'})
 

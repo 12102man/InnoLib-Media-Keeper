@@ -128,7 +128,7 @@ def search_functions(bot, update):
             bot.send_message(text="Copy hasn't been deleted!",
                              chat_id=update.callback_query.from_user.id)
         elif type == 'deleteUser':
-            deleted = User.get(alias=argument).delete()
+            deleted = User.get(telegramID=argument).delete()
             RegistrySession[update.callback_query.from_user.id].delete()
             commit()
             bot.send_message(text="User has been successfully deleted!",
@@ -173,8 +173,8 @@ def search_functions(bot, update):
             add_copy(bot, update, argument)
         elif type == 'media_edit':
             edit_media(bot, update, argument)
-        elif type == 'user_delete':
-            delete_user(bot, update, list(str(argument)))
+        elif type == 'delete_user':
+            delete_user(bot, update, argument)
         elif type == 'my_medias':
             edit_my_medias_card(bot, update)
         elif type == 'users':
@@ -194,6 +194,11 @@ def search_functions(bot, update):
                 session.return_c += 1
                 commit()
                 edit_return_media(bot, update)
+            elif argument == 'users':
+                session = RegistrySession[update.callback_query.from_user.id]
+                session.users_c += 1
+                commit()
+                edit_users_card(bot, update)
 
         elif type == 'prevItem':
             if argument == 'my_medias':
@@ -206,6 +211,11 @@ def search_functions(bot, update):
                 session.return_c -= 1
                 commit()
                 edit_return_media(bot, update)
+            elif argument == 'users':
+                session = RegistrySession[update.callback_query.from_user.id]
+                session.users_c -= 1
+                commit()
+                edit_users_card(bot, update)
         elif type == 'accept':
             if argument == 'return_request':
                 accept_return(bot, update, parsed_query['id'])
@@ -397,6 +407,16 @@ def create_log_card(bot, update):
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
+@db_session
+def create_users_card(bot, update):
+    registry = list(User.select())
+    log = Scroller('users', registry, update.message.chat_id)
+    try:
+        bot.send_message(text=log.create_message(), chat_id=update.message.chat_id,
+                         reply_markup=log.create_keyboard())
+    except FileNotFoundError as e:
+        bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+
 
 @db_session
 def return_media(bot, update):
@@ -426,7 +446,18 @@ Following three functions are called from queries from buttons.
 When user presses button, message gets changed for the next/previous
 record.
 """
+def edit_users_card(bot, update):
+    query = update.callback_query
+    try:
+        registry = list(User.select())
 
+        users_card = Scroller('users', registry, update.callback_query.from_user.id)
+        bot.edit_message_text(text=users_card.create_message(), chat_id=query.message.chat_id,
+                              message_id=query.message.message_id, reply_markup=users_card.create_keyboard())
+    except UnboundLocalError as e:
+        logging.error("Error occured: " + e.args[0])
+        bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
+                              message_id=query.message.message_id)
 
 def edit_request_card(bot, update):
     query = update.callback_query
@@ -588,15 +619,15 @@ def delete_copy(bot, update, args):
 
 
 @db_session
-def delete_user(bot, update, args):
-    alias = "".join(args).replace("@", "")
-    deleted_user = User.get(alias=alias)
+def delete_user(bot, update, telegram_id):
+    update = update.callback_query
+    deleted_user = User.get(telegramID=telegram_id)
     if deleted_user is None:
         bot.send_message(text="Sorry, copy with this alias doesn't exist", chat_id=update.message.chat_id)
         return 0
     message = "Are you sure you want to delete " + deleted_user.name + " from the ILMK?"
-    delete = json.dumps({'type': 'deleteUser', 'argument': alias})
-    stay = json.dumps({'type': 'cancelDeleteUser', 'argument': alias})
+    delete = json.dumps({'type': 'deleteUser', 'argument': telegram_id})
+    stay = json.dumps({'type': 'cancelDeleteUser', 'argument': telegram_id})
     keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("✅", callback_data=delete),
                                       InlineKeyboardButton("🚫", callback_data=stay)]])
     try:
@@ -873,7 +904,7 @@ dispatcher.add_handler(CommandHandler('me', me))
 dispatcher.add_handler(CommandHandler('edit_user', edit_user, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_user', delete_user, pass_args=True))
-dispatcher.add_handler(CommandHandler('users', users))
+dispatcher.add_handler(CommandHandler('users', create_users_card))
 dispatcher.add_handler(CommandHandler('librarian', librarian_interface))
 dispatcher.add_handler(search_query_handler)
 
