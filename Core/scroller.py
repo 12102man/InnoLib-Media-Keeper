@@ -1,6 +1,5 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import Config.config as config
-import pymysql
 import logging
 from pony.orm import *
 import Core.database as database
@@ -9,16 +8,10 @@ from Core.button_actions import convert_to_emoji
 
 db = Database()
 # MySQL
-db.bind(provider='mysql', host='37.46.132.57', user='telebot', passwd='Malinka2017', db='testbase')
 
-""" MySQL connection """
-connection = pymysql.connect(host=config.db_host,
-                             user=config.db_username,
-                             password=config.db_password,
-                             db=config.db_name,
-                             charset='utf8',
-                             cursorclass=pymysql.cursors.DictCursor)
-cursor = connection.cursor()
+db.bind(provider='mysql', host=config.db_host, user=config.db_username, passwd=config.db_password, db=config.db_name)
+
+
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 
@@ -30,14 +23,16 @@ class Scroller:
         self.__length = len(list_update)
         self.__cursor = 0
 
-    """
-    create_message (self)
-    This function creates a message, depending on state, 
-    defined during initializing process (see def __init__ (self)
-    """
+
 
     @db_session
     def create_message(self):
+        """
+        This function creates a message, depending on state,
+        defined during initializing process (see def __init__ (self))
+        :return: Card with required information
+        """
+
         if self.__cursor < 0 or self.__cursor >= self.__length:
             self.__cursor = 0
             raise UnboundLocalError("Cursor is not in bound")
@@ -48,11 +43,13 @@ class Scroller:
             self.__cursor = database.RegistrySession[self.__telegram_id].request_c
 
             message = """Request #️⃣ %s
-            Name: %s
-            Telegram alias: @%s
-            Address: %s
-            Phone: %s
-            Faculty member: %s
+
+Name: %s
+Telegram alias: @%s
+Address: %s
+Phone: %s
+Faculty member: %s
+
                 """ % (self.list[self.__cursor].id,
                        self.list[self.__cursor].name,
                        self.list[self.__cursor].alias,
@@ -64,11 +61,13 @@ class Scroller:
             self.__cursor = database.RegistrySession[self.__telegram_id].media_c
 
             message = """MediaID #️⃣ %s
-            Type: %s
-            Title: "%s"
-            Author(s): %s
-            Available: %s
-            Bestseller: %s
+
+Type: %s
+Title: "%s"
+Author(s): %s
+Available: %s
+Bestseller: %s
+
                         """ % (self.list[self.__cursor].mediaID,
                                self.list[self.__cursor].type,
                                self.list[self.__cursor].name,
@@ -82,9 +81,10 @@ class Scroller:
             media_id = database.MediaCopies.get(copyID=self.list[self.__cursor].mediaID).mediaID
 
             message = """ Media booking request:
-            From: %s
-            What: %s
-            CopyID: %s
+From: %s
+What: %s
+CopyID: %s
+
             """ % (database.User[self.list[self.__cursor].libID].name,
                    media_id.name + " by " + media_id.authors,
                    self.list[self.__cursor].mediaID)
@@ -101,12 +101,13 @@ Issue date: %s
 Expiry date: %s
 Returned: %s
 Renewed: %s
-                        """ % (user.name + " (@" + user.alias + ")",
-                               database.MediaCopies.get(copyID=log.mediaID).mediaID.name + " (" + log.mediaID + ")",
-                               log.issue_date.strftime("%d %h %Y, %H:%M "),
-                               log.expiry_date.strftime("%d %h %Y, %H:%M "),
-                               convert_to_emoji(log.returned),
-                               convert_to_emoji(log.renewed))
+            """ % (user.name + " (@" + user.alias + ")",
+                   database.MediaCopies.get(copyID=log.mediaID).mediaID.name + " (" + log.mediaID + ")",
+                   log.issue_date.strftime("%d %h %Y, %H:%M "),
+                   log.expiry_date.strftime("%d %h %Y, %H:%M "),
+                   convert_to_emoji(log.returned),
+                   convert_to_emoji(log.renewed))
+
             return message
         elif self.state == 'user_medias':
             self.__cursor = database.RegistrySession[self.__telegram_id].my_medias_c
@@ -116,13 +117,14 @@ Renewed: %s
 What: "%s" by %s
 Issue date: %s
 Expiry date: %s
-                               """ % (log_record.mediaID,
-                                      database.MediaCopies.get(
-                                          copyID=log_record.mediaID).mediaID.name,
-                                      database.MediaCopies.get(
-                                          copyID=log_record.mediaID).mediaID.authors,
-                                      log_record.issue_date.strftime("%d %h %Y, %H:%M "),
-                                      log_record.expiry_date.strftime("%d %h %Y, %H:%M "))
+                        """ % (log_record.mediaID,
+                               database.MediaCopies.get(
+                                   copyID=log_record.mediaID).mediaID.name,
+                               database.MediaCopies.get(
+                                   copyID=log_record.mediaID).mediaID.authors,
+                               log_record.issue_date.strftime("%d %h %Y, %H:%M "),
+                               log_record.expiry_date.strftime("%d %h %Y, %H:%M "))
+
             return message
         elif self.state == 'return_request':
             self.__cursor = database.RegistrySession[self.__telegram_id].return_c
@@ -143,18 +145,17 @@ Alias: @%s
 Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.phone)
             return message
 
-    """
-    
-    create_keyboard(self)
-
-    This function creates buttons under the message for navigation 
-    and extra actions.
-    """
 
     def create_keyboard(self):
-        low_row = []  # Keyboard is a converted two-dimensional array.
-        mid_row = []
-        up_row = []  # Our keyboard has two levels: 'low' and 'up'
+        """
+        This function creates buttons under the message for navigation
+        and extra actions.
+        :return: keyboard for scrolling through data
+        """
+        low_row = []  # Keyboard is a converted three-dimensional array.
+        mid_row = []  # Our keyboard has three levels: 'low', 'mid' and 'up'
+        up_row = []
+
 
         callback_next = 0  # Callback data for buttons 'Next' and 'Prev' (replaced by arrows)
         callback_prev = 0
@@ -165,13 +166,21 @@ Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.pho
 
         # Depending on state build appropriate keyboard
         if self.state == 'request':
-            callback_prev = 'prevRequest'
-            callback_next = 'nextRequest'
-            up_row.append(InlineKeyboardButton("✅", callback_data='approveRequest'))
-            up_row.append(InlineKeyboardButton("🚫", callback_data='rejectRequest'))
+
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'request'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'request'})
+
+            button_accept = json.dumps({'type': 'approveRequest', 'argument': 0})
+            button_reject = json.dumps({'type': 'rejectRequest', 'argument': 0})
+
+            up_row.append(InlineKeyboardButton("✅", callback_data=button_accept))
+            up_row.append(InlineKeyboardButton("🚫", callback_data=button_reject))
+
         elif self.state == 'media':
-            callback_prev = 'prevItem'
-            callback_next = 'nextItem'
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'media'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'media'})
+            #   Buttons for editing (only for librarian)
+
             if database.Librarian.get(telegramID=self.__telegram_id) is not None:
                 mid_row.append(InlineKeyboardButton("Edit", callback_data=json.dumps(
                     {'type': 'media_edit', 'argument': self.list[self.__cursor].mediaID})))
@@ -179,15 +188,25 @@ Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.pho
                     {'type': 'media_delete', 'argument': self.list[self.__cursor].mediaID})))
                 mid_row.append(InlineKeyboardButton("Copy", callback_data=json.dumps(
                     {'type': 'media_add_copy', 'argument': self.list[self.__cursor].mediaID})))
-            up_row.append(InlineKeyboardButton("Book", callback_data='book'))
+
+            book = json.dumps({'type': 'book', 'argument': 0})
+            up_row.append(InlineKeyboardButton("Book", callback_data=book))
+
         elif self.state == 'bookingRequest':
-            callback_prev = 'prevBookingRequest'
-            callback_next = 'nextBookingRequest'
-            up_row.append(InlineKeyboardButton("✅", callback_data='approveBookingRequest'))
-            up_row.append(InlineKeyboardButton("🚫", callback_data='rejectBookingRequest'))
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'bookingRequest'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'bookingRequest'})
+
+            button_accept = json.dumps({'type': 'approveBookingRequest', 'argument': 0})
+            button_reject = json.dumps({'type': 'rejectBookingRequest', 'argument': 0})
+
+            up_row.append(InlineKeyboardButton("✅", callback_data=button_accept))
+            up_row.append(InlineKeyboardButton("🚫", callback_data=button_reject))
+
         elif self.state == 'log':
-            callback_prev = 'prevLogItem'
-            callback_next = 'nextLogItem'
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'log'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'log'})
+            # Get status of log record and add 'Ask for return' button
+
             log = self.list[self.__cursor]
             if not log.returned:
                 up_row.append(InlineKeyboardButton("Ask for return", callback_data=json.dumps(
@@ -197,26 +216,27 @@ Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.pho
                 {'type': 'returnMedia', 'argument': self.list[self.__cursor].mediaID})))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'my_medias'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'my_medias'})
+
         elif self.state == 'return_request':
             log_record = self.list[self.__cursor].id
-            a = json.dumps({'type': 'accept', 'argument': 'return_request', 'id': log_record})
-            print(a)
-            up_row.append(InlineKeyboardButton("✅", callback_data=a))
-            up_row.append(InlineKeyboardButton("🚫", callback_data=json.dumps(
-                {'type': 'reject', 'argument': 'return_request', 'id': log_record})))
+            button_accept = json.dumps({'type': 'accept', 'argument': 'return_request', 'id': log_record})
+            button_reject = json.dumps({'type': 'reject', 'argument': 'return_request', 'id': log_record})
+
+            up_row.append(InlineKeyboardButton("✅", callback_data=button_accept))
+            up_row.append(InlineKeyboardButton("🚫", callback_data=button_reject))
 
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'return_request'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'return_request'})
+
         elif self.state == 'users':
             log_record = self.list[self.__cursor].telegramID
-            a = json.dumps({'type': 'accept', 'argument': 'users', 'id': log_record})
-            print(a)
-            up_row.append(InlineKeyboardButton("🚫", callback_data=json.dumps(
-                {'type': 'delete_user', 'argument': log_record})))
+            delete_user = json.dumps({'type': 'accept', 'argument': 'users', 'id': log_record})
+            up_row.append(InlineKeyboardButton("Delete", callback_data=delete_user))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'users'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'users'})
 
-        """ If cursor is on the egde position (0 or length of list with records),
+        """ If cursor is on the edge position (0 or length of list with records),
+
         then don't append one of arrows."""
         if self.__cursor > 0:
             low_row.append(InlineKeyboardButton("⬅", callback_data=callback_prev))
