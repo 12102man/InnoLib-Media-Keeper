@@ -96,6 +96,7 @@ class RegistrySession(db.Entity):
     edit_media_state = Optional(str)
     my_medias_c = Optional(int)
     return_c = Optional(int)
+    users_c = Optional(int, default=0)
 
     # Fields for media adding
     type = Optional(str, default="")
