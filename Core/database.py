@@ -125,4 +125,4 @@ class LibrarianEnrollment(db.Entity):
 
 
 db.generate_mapping(create_tables=True)
-set_sql_debug(True)
+

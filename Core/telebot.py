@@ -756,7 +756,7 @@ def delete_copy(bot, update, args):
     :param args: copy ID
     :return: message with confirmation
     """
-    telegram_id = update.callback_query.message.chat_id
+    telegram_id = update.message.chat_id
 
     #   If user is not a librarian, exit
     if not librarian_authentication(telegram_id):
@@ -993,7 +993,7 @@ def create_new_media(bot, update):
     :param update: update object
     :return: media added
     """
-    session = RegistrySession.get(telegram_ID=update.message.chat_id)
+    session = RegistrySession.get(telegramID=update.message.chat_id)
     if session is not None:
         if session.type == "":
             if update.message.text == "/add_media":
@@ -1032,7 +1032,7 @@ def create_new_media(bot, update):
             session.no_of_copies = no_of_copies
             Media(name=session.title, type=session.type, authors=session.author,
                   publisher=session.publisher, cost=session.price, fine=session.fine,
-                  availability=True, bestseller=False)
+                  availability=True, bestseller=True)
             media_id = Media.get(name=session.title).mediaID
             for i in range(1, no_of_copies + 1):
                 MediaCopies(mediaID=media_id, copyID="%s-%s" % (str(media_id), str(i)), available=1)
@@ -1048,7 +1048,7 @@ def create_new_media(bot, update):
                              chat_id=update.message.chat_id)
             return new_media_conversation.END
     else:
-        RegistrySession(telegram_ID=update.message.chat_id)
+        RegistrySession(telegramID=update.message.chat_id)
         bot.send_message(text="Please, enter Title: ", chat_id=update.message.chat_id)
         return NOT_FINISHED
 
