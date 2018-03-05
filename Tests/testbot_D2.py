@@ -363,6 +363,7 @@ def test3():
     except AssertionError:
         logging.info("Test 3 is failed")
 
+
 @db_session
 def test4():
     fast_test2()
@@ -387,10 +388,32 @@ def test4():
         button_bytes = message.reply_markup.rows[0].buttons[0].data
         user_id = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
         assert (
-        user_id != 1011 and User.exists(telegramID=user_id) and User[user_id].name == "Elvira Espindola" and User[
-            user_id].phone == "30003" and not User[user_id].faculty)
+            user_id != 1011 and User.exists(telegramID=user_id) and User[user_id].name == "Elvira Espindola" and User[
+                user_id].phone == "30003" and not User[user_id].faculty)
         logging.info("Test 4 is Successful")
     except AssertionError:
         logging.info("Test 4 is Failed")
 
-test4()
+
+def test5():
+    fast_test2()
+    logging.info("Starting Test 5")
+    try:
+        client1.send_message(bot_name, "/medias")
+        time.sleep(3)
+
+        # Pressing "Book" button
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client1, bot_name, message, book)
+        time.sleep(3)
+
+        # Checking message
+        message = client1.get_message_history(bot_name, limit=1).data[0].message
+        assert (message == "🤦🏻‍♂️ You're not enrolled into the System. Shame on you! Enroll now! /enroll")
+        logging.info("Test 5 is Successful")
+    except AssertionError:
+        logging.info("Test 5 is Failed")
+
+
+test5()
