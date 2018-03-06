@@ -10,6 +10,7 @@ from Core.scroller import Scroller
 import json
 from Core.button_actions import *
 from Core.key_generator import generate_key
+import os
 
 # MySQL
 db = Database()
@@ -98,6 +99,9 @@ def callback_query_selector(bot, update):
         commit()
         bot.send_message(text="User has been successfully deleted!",
                          chat_id=update.callback_query.from_user.id)
+        session = RegistrySession[update.callback_query.from_user.id]
+        session.users_c = 0
+        commit()
     elif query_type == 'cancelDeleteUser':
         bot.send_message(text="User hasn't been deleted!",
                          chat_id=update.callback_query.from_user.id)
@@ -1032,7 +1036,7 @@ def create_new_media(bot, update):
             session.no_of_copies = no_of_copies
             Media(name=session.title, type=session.type, authors=session.author,
                   publisher=session.publisher, cost=session.price, fine=session.fine,
-                  availability=True, bestseller=True)
+                  availability=True, bestseller=False)
             media_id = Media.get(name=session.title).mediaID
             for i in range(1, no_of_copies + 1):
                 MediaCopies(mediaID=media_id, copyID="%s-%s" % (str(media_id), str(i)), available=1)
@@ -1139,6 +1143,22 @@ def confirm_user(bot, update, args):
     enroll_request.delete()
     commit()
 
+@db_session
+def reboot(bot, update):
+    """
+    This function reboots system (for TC9)
+    :param bot: bot object
+    :param update: update object
+    :return: rebooted system
+    """
+    telegram_id = update.message.chat_id
+    if not librarian_authentication(telegram_id):
+        return 0
+    bot.send_message(text="Rebooting...",
+                     chat_id=update.message.chat_id)
+    os.system("reboot")
+
+
 
 """
 This is a conversation handler. It helps smoothly iterating 
@@ -1187,6 +1207,7 @@ dispatcher.add_handler(edit_conv)
 
 search_query_handler = CallbackQueryHandler(callback_query_selector)
 dispatcher.add_handler(CommandHandler('requests', create_request_card))
+dispatcher.add_handler(CommandHandler('reboot', reboot))
 dispatcher.add_handler(CommandHandler('return', create_return_media_card))
 dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', create_booking_request_card))
