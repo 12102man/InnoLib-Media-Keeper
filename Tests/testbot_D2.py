@@ -8,6 +8,7 @@ import Config.config_test as config_test
 from Core.database import *
 import os
 import json
+import pickle
 
 bot_name = 'ILMKbot'
 # MySQL
@@ -112,7 +113,8 @@ def fast_test1():
     MediaCopies(mediaID=4, copyID="4-1", available=1)
     MediaCopies(mediaID=5, copyID="5-1", available=1)
 
-    User(telegramID=1010, name="Sergey Afonso", alias="@sergei", phone="30001", address="Via Margutta, 3", faculty=1)
+    User(telegramID=56069837, name="Sergey Afonso", alias="@sergei", phone="30001", address="Via Margutta, 3",
+         faculty=1)
     User(telegramID=1011, name="Nadia Teixeira", alias="@nadia", phone="30002", address="Via Sacra, 13", faculty=0)
     User(telegramID=1100, name="Elvira Espindola", alias="@elvira", phone="30003", address="Via del Corso, 22",
          faculty=0)
@@ -416,4 +418,338 @@ def test5():
         logging.info("Test 5 is Failed")
 
 
-test5()
+@db_session
+def test6():
+    fast_test2()
+    logging.info("Starting Test 6")
+    try:
+        """
+        # PART 1 Client 1 takes book 1
+        client1.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client1, bot_name, message, book)
+        time.sleep(3)
+
+        # PART 2 Client 1 takes book 2
+        client1.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Moving to next book
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data #TODO: Fix indexes!
+        press_button(client1, bot_name, message, next)
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client1, bot_name, message, book)
+        time.sleep(3)
+
+        # PART 3 Client 3 takes book 1
+        client3.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client3.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client1, bot_name, message, book)
+        time.sleep(3)
+
+        """
+
+        # Correcting date
+        for record in Log.select():
+            fifth_march = record.issue_date.replace(day=5)
+            delta = record.issue_date - fifth_march
+
+            record.issue_date = fifth_march
+            record.expiry_date = record.expiry_date - delta
+            commit()
+
+        """
+        # Getting menu with users
+        librarian.send_message(bot_name,"/names")
+        # Moving to next user
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[1].buttons[0].data
+        press_button(librarian, bot_name, message, next)
+        time.sleep(3)
+        """
+        log_1, log_2, log_3 = select(record for record in Log)
+
+        # Checking expiry dates
+        assert (log_1.expiry_date.day == 2 and log_1.expiry_date.month == 4)
+        assert (log_3.expiry_date.day == 19 and log_1.expiry_date.month == 3)
+        logging.info("Test 6 is Successful")
+    except AssertionError:
+        logging.info("Test 6 is Failed")
+
+
+def test_7():
+    fast_test1()
+    logging.info("Starting Test 7")
+    try:
+        # PART 1. Client1 issues b1
+        client1.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client1, bot_name, message, book)
+        time.sleep(3)
+
+        # PART 2 Client 1 takes book 2
+        client1.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Moving to next book
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client1, bot_name, message, next)
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client1, bot_name, message, book)
+        time.sleep(3)
+
+        # PART 3 Client 1 takes book 3
+        client1.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Moving to next book
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client1, bot_name, message, next)
+        time.sleep(3)
+        # Moving to next book
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client1, bot_name, message, next)
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client1, bot_name, message, book)
+        time.sleep(3)
+
+        # PART 4 Client 1 takes AV1
+        client1.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Moving to next book
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client1, bot_name, message, next)
+        time.sleep(3)
+        # Moving to next book
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client1, bot_name, message, next)
+        time.sleep(3)
+        # Moving to next book
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client1, bot_name, message, next)
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client1, bot_name, message, book)
+        time.sleep(3)
+
+        # USER 2 ACTIONS
+        # PART 1. Client2 issues b1
+        client2.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client2.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client2, bot_name, message, book)
+        time.sleep(3)
+
+        # PART 2 Client2 takes book 2
+        client2.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Moving to next book
+        message = client2.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client2, bot_name, message, next)
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client2.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client2, bot_name, message, book)
+        time.sleep(3)
+
+        # PART 4 Client2 takes AV2
+        client2.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Moving to next book
+        message = client2.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client2, bot_name, message, next)
+        time.sleep(3)
+        # Moving to next book
+        message = client2.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client2, bot_name, message, next)
+        time.sleep(3)
+        # Moving to next book
+        message = client2.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client2, bot_name, message, next)
+        time.sleep(3)
+        # Moving to next book
+        message = client2.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client2, bot_name, message, next)
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client2.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client2, bot_name, message, book)
+        time.sleep(3)
+
+        """
+        # Getting menu with users
+        librarian.send_message(bot_name,"/names")
+        # Moving to next user
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[1].buttons[0].data
+        press_button(librarian, bot_name, message, next)
+        time.sleep(3)
+        # Moving to next user
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[1].buttons[0].data
+        press_button(librarian, bot_name, message, next)
+        time.sleep(3)
+        """
+        u1_b1, u1_b2, u1_b3, u1_a1, u2_b2, u2_b2, u3_a3 = select(record for record in Log)
+        # TODO: ASSERTS!
+
+    except AssertionError:
+        logging.info("Test 7 is Failed")
+
+
+@db_session
+def test8():
+    fast_test1()
+    logging.info("Starting Test 8")
+    try:
+        """
+        # PART 1.1. Client1 issues b1
+        client1.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client1, bot_name, message, book)
+        time.sleep(3)
+
+        # PART 1.2 Client1 takes book 2
+        client1.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Moving to next book
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client1, bot_name, message, next)
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client1, bot_name, message, book)
+        time.sleep(3)
+
+        # PART 2.1 Client1 takes book 1
+        client1.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client1.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client1, bot_name, message, book)
+        time.sleep(3)
+
+        # PART 2.2 Client2 takes AV1
+        client2.send_message(bot_name, "/medias")
+        time.sleep(3)
+        # Moving to next book
+        message = client2.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client2, bot_name, message, next)
+        time.sleep(3)
+        # Moving to next book
+        message = client2.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client2, bot_name, message, next)
+        time.sleep(3)
+        # Moving to next book
+        message = client2.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        press_button(client2, bot_name, message, next)
+        time.sleep(3)
+        # Pressing "Book" button
+        message = client2.get_message_history(bot_name, limit=1).data[0]
+        book = message.reply_markup.rows[0].buttons[0].data
+        press_button(client2, bot_name, message, book)
+        time.sleep(3)
+        """
+        # Fixing dates
+        u1_b1, u1_b2, u2_b1, u2_a1 = select(record for record in Log)
+
+        delta = u1_b1.issue_date - u1_b1.issue_date.replace(month=2).replace(day=9)
+        u1_b1.issue_date = u1_b1.issue_date.replace(month=2).replace(day=9)
+        u1_b1.expiry_date = u1_b1.expiry_date - delta
+
+        delta = u1_b2.issue_date - u1_b2.issue_date.replace(month=2).replace(day=2)
+        u1_b2.issue_date = u1_b2.issue_date.replace(month=2).replace(day=2)
+        u1_b2.expiry_date = u1_b2.expiry_date - delta
+
+        delta = u2_b1.issue_date - u2_b1.issue_date.replace(month=2).replace(day=5)
+        u2_b1.issue_date = u2_b1.issue_date.replace(month=2).replace(day=5)
+        u2_b1.expiry_date = u2_b1.expiry_date - delta
+
+        delta = u2_a1.issue_date - u2_a1.issue_date.replace(month=2).replace(day=17)
+        u2_a1.issue_date = u2_a1.issue_date.replace(month=2).replace(day=17)
+        u2_a1.expiry_date = u2_a1.expiry_date - delta
+        commit()
+
+        """
+        # Getting menu with users
+        librarian.send_message(bot_name,"/names")
+        # Moving to next user
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[1].buttons[0].data
+        press_button(librarian, bot_name, message, next)
+        time.sleep(3)
+        # Moving to next user
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[1].buttons[0].data
+        press_button(librarian, bot_name, message, next)
+        time.sleep(3)
+        """
+        logging.info("Test 8 is Failed")
+    except AssertionError:
+        logging.info("Test 8 is Failed")
+
+
+@db_session
+def test9():
+    fast_test1()
+    logging.info("Starting Test 9")
+    try:
+        client1.send_message(bot_name, "/reboot")
+        time.sleep(25)
+        assert (len(MediaCopies.select(lambda c: c.copyID.startswith("1"))) >= 1)
+        assert (len(MediaCopies.select(lambda c: c.copyID.startswith("2"))) >= 2)
+        assert (len(MediaCopies.select(lambda c: c.copyID.startswith("3"))) >= 1)
+        assert (len(MediaCopies.select(lambda c: c.copyID.startswith("4"))) >= 1)
+        assert (len(MediaCopies.select(lambda c: c.copyID.startswith("5"))) >= 1)
+
+        assert (len(User.select(lambda c: c.name == "Sergey Afonso")) >= 1)
+        assert (len(User.select(lambda c: c.name == "Nadia Teixeira")) >= 1)
+        assert (len(User.select(lambda c: c.name == "Elvira Espindola")) >= 1)
+        logging.info("Test 9 is Successful")
+    except AssertionError:
+        logging.info("Test 9 is Failed")
+
+
+test9()
