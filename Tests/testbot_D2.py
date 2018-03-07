@@ -522,6 +522,7 @@ def test4():
     test2()
     logging.info("Starting Test 4")
     try:
+        assert (not User[239514818].exists)
         librarian.send_message(bot_name, "/users")
         time.sleep(3)
 
@@ -529,7 +530,6 @@ def test4():
         message = librarian.get_message_history(bot_name, limit=1).data[0]
         button_bytes = message.reply_markup.rows[0].buttons[0].data
         user_id = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
-        assert (user_id != 239514818)
 
         # Moving to next user
         next = message.reply_markup.rows[1].buttons[0].data
@@ -540,10 +540,11 @@ def test4():
         message = librarian.get_message_history(bot_name, limit=1).data[0]
         button_bytes = message.reply_markup.rows[0].buttons[0].data
         user_id = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
-        assert (
-            User.exists(telegramID=user_id) and User[user_id].name == "Sergey Afonso" and User[
-                user_id].phone == "30001" and
-            User[user_id].faculty)
+        assert (User.exists(telegramID=user_id))
+        assert (User[user_id].name == "Sergey Afonso")
+        assert (User[user_id].alias == "@sergei")
+        assert (User[user_id].phone == "30001")
+        assert (User[user_id].address == "Via Margutta, 3")
         logging.info("Test 4 is Successful")
     except AssertionError:
         logging.info("Test 4 is Failed")
@@ -565,6 +566,7 @@ def test5():
         # Checking message
         message = client2.get_message_history(bot_name, limit=1).data[0].message
         assert (message == "🤦🏻‍♂️ You're not enrolled into the System. Shame on you! Enroll now! /enroll")
+        assert (not User[client2_telegram_ID].exists)
         logging.info("Test 5 is Successful")
     except AssertionError:
         logging.info("Test 5 is Failed")
