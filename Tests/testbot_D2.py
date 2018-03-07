@@ -479,6 +479,14 @@ def test3():
 
         button_bytes = message.reply_markup.rows[0].buttons[0].data
         user_id = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
+
+        assert (User.exists(telegramID=user_id))
+        assert (User[user_id].name == "Elvira Espindola")
+        assert (User[user_id].alias == "@elvira")
+        assert (User[user_id].phone == "30003")
+        assert (User[user_id].address == "Via del Corso, 22")
+        assert (len(Log.select(lambda c: c.libID == user_id)) == 0)
+
         assert (
             User.exists(telegramID=user_id) and User[user_id].name == "Elvira Espindola" and User[
                 user_id].phone == "30003" and not User[user_id].faculty)
@@ -493,10 +501,13 @@ def test3():
         message = librarian.get_message_history(bot_name, limit=1).data[0]
         button_bytes = message.reply_markup.rows[0].buttons[0].data
         user_id = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
-        assert (
-            User.exists(telegramID=user_id) and User[user_id].name == "Sergey Afonso" and User[
-                user_id].phone == "30001" and
-            User[user_id].faculty)
+        assert (User.exists(telegramID=user_id))
+        assert (User[user_id].name == "Sergey Afonso")
+        assert (User[user_id].alias == "@sergei")
+        assert (User[user_id].phone == "30001")
+        assert (User[user_id].address == "Via Margutta, 3")
+        assert (len(Log.select(lambda c: c.libID == user_id)) == 0)
+
         press_button(librarian, bot_name, message, next)
         time.sleep(3)
 
