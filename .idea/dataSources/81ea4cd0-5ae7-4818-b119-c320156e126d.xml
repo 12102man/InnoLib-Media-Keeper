@@ -279,6 +279,7 @@
     <column id="71" parent="17" name="user_telegramid">
       <Position>2</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;-1&apos;</DefaultExpression>
     </column>
     <column id="72" parent="17" name="alias">
       <Position>3</Position>
@@ -307,22 +308,27 @@
     <column id="77" parent="17" name="request_c">
       <Position>8</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
     </column>
     <column id="78" parent="17" name="media_c">
       <Position>9</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
     </column>
     <column id="79" parent="17" name="book_r_c">
       <Position>10</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
     </column>
     <column id="80" parent="17" name="log_c">
       <Position>11</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
     </column>
     <column id="81" parent="17" name="edit_media_cursor">
       <Position>12</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
     </column>
     <column id="82" parent="17" name="edit_media_state">
       <Position>13</Position>
@@ -332,14 +338,17 @@
     <column id="83" parent="17" name="my_medias_c">
       <Position>14</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
     </column>
     <column id="84" parent="17" name="return_c">
       <Position>15</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
     </column>
     <column id="85" parent="17" name="users_c">
       <Position>16</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
     </column>
     <column id="86" parent="17" name="type">
       <Position>17</Position>
@@ -359,10 +368,12 @@
     <column id="89" parent="17" name="price">
       <Position>20</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;-1&apos;</DefaultExpression>
     </column>
     <column id="90" parent="17" name="fine">
       <Position>21</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;-1&apos;</DefaultExpression>
     </column>
     <column id="91" parent="17" name="publisher">
       <Position>22</Position>
@@ -372,6 +383,7 @@
     <column id="92" parent="17" name="no_of_copies">
       <Position>23</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;-1&apos;</DefaultExpression>
     </column>
     <key id="93" parent="17" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>

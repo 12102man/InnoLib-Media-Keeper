@@ -21,25 +21,29 @@ db.generate_mapping(create_tables=True)
 # because they're personal. You can create your own ones on
 # my.telegram.org
 
+api_id_lib = config_test.api_id_lib
+api_hash_lib = config_test.api_hash_lib
+librarian = TelegramClient('session_name_lib', api_id_lib, api_hash_lib)
+librarian_telegram_ID = config_test.librarian_telegram_ID
+librarian.start()
+
 api_id_1 = config_test.api_id_1
 api_hash_1 = config_test.api_hash_1
-client1 = TelegramClient('session_name', api_id_1, api_hash_1)
+client1 = TelegramClient('session_name_1', api_id_1, api_hash_1)
 client1_telegram_ID = config_test.client1_telegram_ID
 client1.start()
 
-"""
 api_id_2 = config_test.api_id_2
 api_hash_2 = config_test.api_hash_2
-client2 = TelegramClient('session_name_1', api_id_2, api_hash_2)
+client2 = TelegramClient('session_name_2', api_id_2, api_hash_2)
 client2_telegram_ID = config_test.client2_telegram_ID
 client2.start()
 
 api_id_3 = config_test.api_id_3
 api_hash_3 = config_test.api_hash_3
-client3 = TelegramClient('session_name_2', api_id_3, api_hash_3)
+client3 = TelegramClient('session_name_3', api_id_3, api_hash_3)
 client3_telegram_ID = config_test.client3_telegram_ID
 client3.start()
-"""
 
 logging.basicConfig(level=logging.INFO)
 
@@ -60,6 +64,21 @@ def update_message(client):
     return client.get_message_history(bot_name, limit=1).data[0]
 
 
+def initialize():
+    RegistrySession(telegramID=56069837, alias="", name="", phone="", address="", edit_media_state="", type="",
+                    title="", author="", publisher="")
+    RegistrySession(telegramID=client1_telegram_ID, alias="", name="", phone="", address="", edit_media_state="",
+                    type="",
+                    title="", author="", publisher="")
+    RegistrySession(telegramID=client2_telegram_ID, alias="", name="", phone="", address="", edit_media_state="",
+                    type="",
+                    title="", author="", publisher="")
+    RegistrySession(telegramID=client3_telegram_ID, alias="", name="", phone="", address="", edit_media_state="",
+                    type="",
+                    title="", author="", publisher="")
+    commit()
+
+
 @db_session
 def flush_db():
     for elem in Media.select():
@@ -78,7 +97,10 @@ def flush_db():
         elem.delete()
     for elem in User.select():
         elem.delete()
+    for elem in RegistrySession.select():
+        elem.delete()
     commit()
+    initialize()
 
 
 @db_session
@@ -86,7 +108,7 @@ def fast_test1():
     flush_db()
     Media(mediaID=1, name="Introduction to algorithms (Third edition), 2009", type="Book",
           authors="Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest and Clifford Stein",
-          publisher="MIT Press", cost=1000, fine=100, availability=1, bestseller=1)
+          publisher="MIT Press", cost=1000, fine=100, availability=1, bestseller=0)
     Media(mediaID=2, name="Design Patterns: Elements of Reusable Object-Oriented Software (First edition), 2003",
           type="Book",
           authors="Erich Gamma, Ralph Johnson, John Vlissides, Richard Helm",
@@ -94,7 +116,7 @@ def fast_test1():
     Media(mediaID=3, name="The Mythical Man-month (Second edition), 1995",
           type="Book",
           authors="Brooks,Jr., Frederick P.",
-          publisher="Addison-Wesley Longman Publishing Co., Inc.", cost=1000, fine=100, availability=1, bestseller=1)
+          publisher="Addison-Wesley Longman Publishing Co., Inc.", cost=1000, fine=100, availability=0, bestseller=0)
     Media(mediaID=4, name="Null References: The Billion Dollar Mistake",
           type="AV",
           authors="Tony Hoare.",
@@ -113,10 +135,10 @@ def fast_test1():
     MediaCopies(mediaID=4, copyID="4-1", available=1)
     MediaCopies(mediaID=5, copyID="5-1", available=1)
 
-    User(telegramID=56069837, name="Sergey Afonso", alias="@sergei", phone="30001", address="Via Margutta, 3",
+    User(telegramID=324148065, name="Sergey Afonso", alias="@sergei", phone="30001", address="Via Margutta, 3",
          faculty=1)
-    User(telegramID=1011, name="Nadia Teixeira", alias="@nadia", phone="30002", address="Via Sacra, 13", faculty=0)
-    User(telegramID=1100, name="Elvira Espindola", alias="@elvira", phone="30003", address="Via del Corso, 22",
+    User(telegramID=239514818, name="Nadia Teixeira", alias="@nadia", phone="30002", address="Via Sacra, 13", faculty=0)
+    User(telegramID=142289653, name="Elvira Espindola", alias="@elvira", phone="30003", address="Via del Corso, 22",
          faculty=0)
 
     commit()
@@ -125,10 +147,11 @@ def fast_test1():
 @db_session
 def fast_test2():
     fast_test1()
-    MediaCopies.get(copyID="2-1").delete()
-    MediaCopies.get(copyID="2-2").delete()
+    MediaCopies.get(copyID="1-1").delete()
+    MediaCopies.get(copyID="1-2").delete()
     MediaCopies.get(copyID="3-1").delete()
-    User[1011].delete()
+    Media.get(mediaID=3).delete()
+    User[239514818].delete()
     commit()
 
 
@@ -137,140 +160,142 @@ def test1():
     logging.info("Starting Test 1")
     try:
         # Adding media 1
-        client1.send_message(bot_name, "/add_media")
+        flush_db()
+        librarian.send_message(bot_name, "/add_media")
         time.sleep(3)
-        client1.send_message(bot_name, "Book")
+        librarian.send_message(bot_name, "Book")
         time.sleep(3)
-        client1.send_message(bot_name, "Introduction to algorithms (Third edition), 2009")
+        librarian.send_message(bot_name, "Introduction to algorithms (Third edition), 2009")
         time.sleep(3)
-        client1.send_message(bot_name, "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest and Clifford Stein")
+        librarian.send_message(bot_name, "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest and Clifford Stein")
         time.sleep(3)
-        client1.send_message(bot_name, "MIT Press")
+        librarian.send_message(bot_name, "MIT Press")
         time.sleep(3)
-        client1.send_message(bot_name, "1000")
+        librarian.send_message(bot_name, "1000")
         time.sleep(3)
-        client1.send_message(bot_name, "100")
+        librarian.send_message(bot_name, "100")
         time.sleep(3)
-        client1.send_message(bot_name, "3")
+        librarian.send_message(bot_name, "3")
         time.sleep(3)
 
         # Adding media 2
-        client1.send_message(bot_name, "/add_media")
+        librarian.send_message(bot_name, "/add_media")
         time.sleep(3)
-        client1.send_message(bot_name, "Book")
+        librarian.send_message(bot_name, "Book")
         time.sleep(3)
-        client1.send_message(bot_name,
-                             "Design Patterns: Elements of Reusable Object-Oriented Software (First edition), 2003")
+        librarian.send_message(bot_name,
+                               "Design Patterns: Elements of Reusable Object-Oriented Software (First edition), 2003")
         time.sleep(3)
-        client1.send_message(bot_name, "Erich Gamma, Ralph Johnson, John Vlissides, Richard Helm")
+        librarian.send_message(bot_name, "Erich Gamma, Ralph Johnson, John Vlissides, Richard Helm")
         time.sleep(3)
-        client1.send_message(bot_name, "Addison-Wesley Professional")
+        librarian.send_message(bot_name, "Addison-Wesley Professional")
         time.sleep(3)
-        client1.send_message(bot_name, "1000")
+        librarian.send_message(bot_name, "1000")
         time.sleep(3)
-        client1.send_message(bot_name, "100")
+        librarian.send_message(bot_name, "100")
         time.sleep(3)
-        client1.send_message(bot_name, "2")
+        librarian.send_message(bot_name, "2")
         time.sleep(3)
 
         # Adding media 3
-        client1.send_message(bot_name, "/add_media")
+        librarian.send_message(bot_name, "/add_media")
         time.sleep(3)
-        client1.send_message(bot_name, "Book")
+        librarian.send_message(bot_name, "Book")
         time.sleep(3)
-        client1.send_message(bot_name,
-                             "The Mythical Man-month (Second edition), 1995")
+        librarian.send_message(bot_name,
+                               "The Mythical Man-month (Second edition), 1995")
         time.sleep(3)
-        client1.send_message(bot_name, "Brooks,Jr., Frederick P.")
+        librarian.send_message(bot_name, "Brooks,Jr., Frederick P.")
         time.sleep(3)
-        client1.send_message(bot_name, "Addison-Wesley Longman Publishing Co., Inc.")
+        librarian.send_message(bot_name, "Addison-Wesley Longman Publishing Co., Inc.")
         time.sleep(3)
-        client1.send_message(bot_name, "1000")
+        librarian.send_message(bot_name, "1000")
         time.sleep(3)
-        client1.send_message(bot_name, "100")
+        librarian.send_message(bot_name, "100")
         time.sleep(3)
-        client1.send_message(bot_name, "1")
+        librarian.send_message(bot_name, "1")
         time.sleep(3)
 
         # Adding AV 1
-        client1.send_message(bot_name, "/add_media")
+        librarian.send_message(bot_name, "/add_media")
         time.sleep(3)
-        client1.send_message(bot_name, "AV")
+        librarian.send_message(bot_name, "AV")
         time.sleep(3)
-        client1.send_message(bot_name,
-                             "Null References: The Billion Dollar Mistake")
+        librarian.send_message(bot_name,
+                               "Null References: The Billion Dollar Mistake")
         time.sleep(3)
-        client1.send_message(bot_name, "Tony Hoare")
+        librarian.send_message(bot_name, "Tony Hoare")
         time.sleep(3)
-        client1.send_message(bot_name, "None")
+        librarian.send_message(bot_name, "None")
         time.sleep(3)
-        client1.send_message(bot_name, "1000")
+        librarian.send_message(bot_name, "1000")
         time.sleep(3)
-        client1.send_message(bot_name, "100")
+        librarian.send_message(bot_name, "100")
         time.sleep(3)
-        client1.send_message(bot_name, "1")
+        librarian.send_message(bot_name, "1")
         time.sleep(3)
 
         # Adding AV 2
-        client1.send_message(bot_name, "/add_media")
+        librarian.send_message(bot_name, "/add_media")
         time.sleep(3)
-        client1.send_message(bot_name, "AV")
+        librarian.send_message(bot_name, "AV")
         time.sleep(3)
-        client1.send_message(bot_name,
-                             "Information Entropy")
+        librarian.send_message(bot_name,
+                               "Information Entropy")
         time.sleep(3)
-        client1.send_message(bot_name, "Claude Shannon")
+        librarian.send_message(bot_name, "Claude Shannon")
         time.sleep(3)
-        client1.send_message(bot_name, "None")
+        librarian.send_message(bot_name, "None")
         time.sleep(3)
-        client1.send_message(bot_name, "1000")
+        librarian.send_message(bot_name, "1000")
         time.sleep(3)
-        client1.send_message(bot_name, "100")
+        librarian.send_message(bot_name, "100")
         time.sleep(3)
-        client1.send_message(bot_name, "1")
+        librarian.send_message(bot_name, "1")
         time.sleep(3)
 
         # Adding user 1
-        client1.send_message(bot_name, "/add_user")
+        librarian.send_message(bot_name, "/add_user")
         time.sleep(3)
-        client1.send_message(bot_name, "Sergey Afonso")
+        librarian.send_message(bot_name, "Sergey Afonso")
         time.sleep(3)
-        client1.send_message(bot_name, "30001")
+        librarian.send_message(bot_name, "30001")
         time.sleep(3)
-        client1.send_message(bot_name, "Via Margutta, 3")
+        librarian.send_message(bot_name, "Via Margutta, 3")
         time.sleep(3)
-        client1.send_message(bot_name, "1")
+        librarian.send_message(bot_name, "1")
         time.sleep(3)
-        message = client1.get_message_history(bot_name, limit=1).data[0].message
+        message = librarian.get_message_history(bot_name, limit=1).data[0].message
         client1.send_message(bot_name, message)
 
         # Adding user 2
-        client1.send_message(bot_name, "/add_user")
+        librarian.send_message(bot_name, "/add_user")
         time.sleep(3)
-        client1.send_message(bot_name, "Nadia Teixeira")
+        librarian.send_message(bot_name, "Nadia Teixeira")
         time.sleep(3)
-        client1.send_message(bot_name, "30002")
+        librarian.send_message(bot_name, "30002")
         time.sleep(3)
-        client1.send_message(bot_name, "Via Sacra, 13")
+        librarian.send_message(bot_name, "Via Sacra, 13")
         time.sleep(3)
-        client1.send_message(bot_name, "0")
+        librarian.send_message(bot_name, "0")
         time.sleep(3)
-        message = client1.get_message_history(bot_name, limit=1).data[0].message
-        # client2.send_message(bot_name, message)
+        message = librarian.get_message_history(bot_name, limit=1).data[0].message
+        client2.send_message(bot_name, message)
 
         # Adding user 3
-        client1.send_message(bot_name, "/add_user")
+        librarian.send_message(bot_name, "/add_user")
         time.sleep(3)
-        client1.send_message(bot_name, "Elvira Espindola")
+        librarian.send_message(bot_name, "Elvira Espindola")
         time.sleep(3)
-        client1.send_message(bot_name, "30003")
+        librarian.send_message(bot_name, "30003")
         time.sleep(3)
-        client1.send_message(bot_name, "Via del Corso, 22")
+        librarian.send_message(bot_name, "Via del Corso, 22")
         time.sleep(3)
-        client1.send_message(bot_name, "0")
+        librarian.send_message(bot_name, "0")
         time.sleep(3)
-        message = client1.get_message_history(bot_name, limit=1).data[0].message
-        # client3.send_message(bot_name, message)
+        message = librarian.get_message_history(bot_name, limit=1).data[0].message
+        client3.send_message(bot_name, message)
+        time.sleep(3)
 
         assert (len(MediaCopies.select()) == 8 and len(User.select()) == 3)
         logging.info("Test 1 is Successful")
@@ -284,40 +309,40 @@ def test2():
     logging.info("Starting Test 2")
     try:
         # Deleting copy 2-1
-        client1.send_message(bot_name, "/delete_copy 2-1")
+        librarian.send_message(bot_name, "/delete_copy 2-1")
         time.sleep(3)
-        message = client1.get_message_history(bot_name, limit=1).data[0]
-        press_button(client1, bot_name, message, b'{"type": "deleteCopy", "argument": "2-1"}')
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        press_button(librarian, bot_name, message, b'{"type": "deleteCopy", "argument": "2-1"}')
 
         # Deleting copy 2-2
-        client1.send_message(bot_name, "/delete_copy 2-2")
+        librarian.send_message(bot_name, "/delete_copy 2-2")
         time.sleep(3)
-        message = client1.get_message_history(bot_name, limit=1).data[0]
-        press_button(client1, bot_name, message, b'{"type": "deleteCopy", "argument": "2-2"}')
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        press_button(librarian, bot_name, message, b'{"type": "deleteCopy", "argument": "2-2"}')
 
         # Deleting copy 3-1
-        client1.send_message(bot_name, "/delete_copy 3-1")
+        librarian.send_message(bot_name, "/delete_copy 3-1")
         time.sleep(3)
-        message = client1.get_message_history(bot_name, limit=1).data[0]
-        press_button(client1, bot_name, message, b'{"type": "deleteCopy", "argument": "3-1"}')
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        press_button(librarian, bot_name, message, b'{"type": "deleteCopy", "argument": "3-1"}')
 
         # Deleting p2
-        client1.send_message(bot_name, "/users")
+        librarian.send_message(bot_name, "/users")
         time.sleep(3)
 
-        message = client1.get_message_history(bot_name, limit=1).data[0]
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
         next = message.reply_markup.rows[1].buttons[0].data
-        press_button(client1, bot_name, message, next)
+        press_button(librarian, bot_name, message, next)
         time.sleep(3)
 
-        message = client1.get_message_history(bot_name, limit=1).data[0]
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
         delete = message.reply_markup.rows[0].buttons[0].data
-        press_button(client1, bot_name, message, delete)
+        press_button(librarian, bot_name, message, delete)
         time.sleep(3)
 
-        message = client1.get_message_history(bot_name, limit=1).data[0]
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
         delete = message.reply_markup.rows[0].buttons[0].data
-        press_button(client1, bot_name, message, delete)
+        press_button(librarian, bot_name, message, delete)
 
         assert (len(MediaCopies.select()) == 5 and len(User.select()) == 2)
         logging.info("Test 2 is Successful")
@@ -331,33 +356,33 @@ def test3():
     logging.info("Starting Test 3")
     try:
 
-        client1.send_message(bot_name, "/users")
+        librarian.send_message(bot_name, "/users")
         time.sleep(3)
 
-        message = client1.get_message_history(bot_name, limit=1).data[0]
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
         next = message.reply_markup.rows[1].buttons[0].data
 
+        button_bytes = message.reply_markup.rows[0].buttons[0].data
+        user_id = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
+        assert (
+            User.exists(telegramID=user_id) and User[user_id].name == "Elvira Espindola" and User[
+                user_id].phone == "30003" and not User[user_id].faculty)
+        press_button(librarian, bot_name, message, next)
+        time.sleep(3)
+
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        next = message.reply_markup.rows[1].buttons[1].data
+        press_button(librarian, bot_name, message, next)
+        time.sleep(3)
+
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
         button_bytes = message.reply_markup.rows[0].buttons[0].data
         user_id = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
         assert (
             User.exists(telegramID=user_id) and User[user_id].name == "Sergey Afonso" and User[
                 user_id].phone == "30001" and
             User[user_id].faculty)
-        press_button(client1, bot_name, message, next)
-        time.sleep(3)
-
-        message = client1.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[1].buttons[1].data
-        press_button(client1, bot_name, message, next)
-        time.sleep(3)
-
-        message = client1.get_message_history(bot_name, limit=1).data[0]
-        button_bytes = message.reply_markup.rows[0].buttons[0].data
-        user_id = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
-        assert (
-            User.exists(telegramID=user_id) and User[user_id].name == "Elvira Espindola" and User[
-                user_id].phone == "30003" and not User[user_id].faculty)
-        press_button(client1, bot_name, message, next)
+        press_button(librarian, bot_name, message, next)
         time.sleep(3)
 
         logging.info("Test 3 is successful")
@@ -371,27 +396,28 @@ def test4():
     fast_test2()
     logging.info("Starting Test 4")
     try:
-        client1.send_message(bot_name, "/users")
+        librarian.send_message(bot_name, "/users")
         time.sleep(3)
 
         # Getting current user's ID
-        message = client1.get_message_history(bot_name, limit=1).data[0]
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
         button_bytes = message.reply_markup.rows[0].buttons[0].data
         user_id = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
-        assert (user_id != 1011)
+        assert (user_id != 239514818)
 
         # Moving to next user
         next = message.reply_markup.rows[1].buttons[0].data
-        press_button(client1, bot_name, message, next)
+        press_button(librarian, bot_name, message, next)
         time.sleep(3)
 
         # Getting current user's ID
-        message = client1.get_message_history(bot_name, limit=1).data[0]
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
         button_bytes = message.reply_markup.rows[0].buttons[0].data
         user_id = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
         assert (
-            user_id != 1011 and User.exists(telegramID=user_id) and User[user_id].name == "Elvira Espindola" and User[
-                user_id].phone == "30003" and not User[user_id].faculty)
+            User.exists(telegramID=user_id) and User[user_id].name == "Sergey Afonso" and User[
+                user_id].phone == "30001" and
+            User[user_id].faculty)
         logging.info("Test 4 is Successful")
     except AssertionError:
         logging.info("Test 4 is Failed")
@@ -401,17 +427,17 @@ def test5():
     fast_test2()
     logging.info("Starting Test 5")
     try:
-        client1.send_message(bot_name, "/medias")
+        client2.send_message(bot_name, "/medias")
         time.sleep(3)
 
         # Pressing "Book" button
-        message = client1.get_message_history(bot_name, limit=1).data[0]
+        message = client2.get_message_history(bot_name, limit=1).data[0]
         book = message.reply_markup.rows[0].buttons[0].data
-        press_button(client1, bot_name, message, book)
+        press_button(client2, bot_name, message, book)
         time.sleep(3)
 
         # Checking message
-        message = client1.get_message_history(bot_name, limit=1).data[0].message
+        message = client2.get_message_history(bot_name, limit=1).data[0].message
         assert (message == "🤦🏻‍♂️ You're not enrolled into the System. Shame on you! Enroll now! /enroll")
         logging.info("Test 5 is Successful")
     except AssertionError:
@@ -423,7 +449,7 @@ def test6():
     fast_test2()
     logging.info("Starting Test 6")
     try:
-        """
+
         # PART 1 Client 1 takes book 1
         client1.send_message(bot_name, "/medias")
         time.sleep(3)
@@ -438,7 +464,7 @@ def test6():
         time.sleep(3)
         # Moving to next book
         message = client1.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data #TODO: Fix indexes!
+        next = message.reply_markup.rows[1].buttons[0].data
         press_button(client1, bot_name, message, next)
         time.sleep(3)
         # Pressing "Book" button
@@ -453,10 +479,8 @@ def test6():
         # Pressing "Book" button
         message = client3.get_message_history(bot_name, limit=1).data[0]
         book = message.reply_markup.rows[0].buttons[0].data
-        press_button(client1, bot_name, message, book)
+        press_button(client3, bot_name, message, book)
         time.sleep(3)
-
-        """
 
         # Correcting date
         for record in Log.select():
@@ -467,29 +491,31 @@ def test6():
             record.expiry_date = record.expiry_date - delta
             commit()
 
-        """
         # Getting menu with users
-        librarian.send_message(bot_name,"/names")
+        librarian.send_message(bot_name, "/users")
+        time.sleep(1.5)
         # Moving to next user
         message = librarian.get_message_history(bot_name, limit=1).data[0]
         next = message.reply_markup.rows[1].buttons[0].data
         press_button(librarian, bot_name, message, next)
         time.sleep(3)
-        """
-        log_1, log_2, log_3 = select(record for record in Log)
+
+        log_1, log_2 = select(record for record in Log)
 
         # Checking expiry dates
         assert (log_1.expiry_date.day == 2 and log_1.expiry_date.month == 4)
-        assert (log_3.expiry_date.day == 19 and log_1.expiry_date.month == 3)
+        assert (log_2.expiry_date.day == 2 and log_1.expiry_date.month == 4)
         logging.info("Test 6 is Successful")
     except AssertionError:
         logging.info("Test 6 is Failed")
 
 
-def test_7():
+@db_session
+def test7():
     fast_test1()
     logging.info("Starting Test 7")
     try:
+
         # PART 1. Client1 issues b1
         client1.send_message(bot_name, "/medias")
         time.sleep(3)
@@ -504,7 +530,7 @@ def test_7():
         time.sleep(3)
         # Moving to next book
         message = client1.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        next = message.reply_markup.rows[1].buttons[0].data
         press_button(client1, bot_name, message, next)
         time.sleep(3)
         # Pressing "Book" button
@@ -518,12 +544,12 @@ def test_7():
         time.sleep(3)
         # Moving to next book
         message = client1.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        next = message.reply_markup.rows[1].buttons[0].data
         press_button(client1, bot_name, message, next)
         time.sleep(3)
         # Moving to next book
         message = client1.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        next = message.reply_markup.rows[1].buttons[1].data
         press_button(client1, bot_name, message, next)
         time.sleep(3)
         # Pressing "Book" button
@@ -537,17 +563,17 @@ def test_7():
         time.sleep(3)
         # Moving to next book
         message = client1.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        next = message.reply_markup.rows[1].buttons[0].data
         press_button(client1, bot_name, message, next)
         time.sleep(3)
         # Moving to next book
         message = client1.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        next = message.reply_markup.rows[1].buttons[1].data
         press_button(client1, bot_name, message, next)
         time.sleep(3)
         # Moving to next book
         message = client1.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        next = message.reply_markup.rows[1].buttons[1].data
         press_button(client1, bot_name, message, next)
         time.sleep(3)
         # Pressing "Book" button
@@ -571,7 +597,7 @@ def test_7():
         time.sleep(3)
         # Moving to next book
         message = client2.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        next = message.reply_markup.rows[1].buttons[0].data
         press_button(client2, bot_name, message, next)
         time.sleep(3)
         # Pressing "Book" button
@@ -585,22 +611,22 @@ def test_7():
         time.sleep(3)
         # Moving to next book
         message = client2.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        next = message.reply_markup.rows[1].buttons[0].data
         press_button(client2, bot_name, message, next)
         time.sleep(3)
         # Moving to next book
         message = client2.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        next = message.reply_markup.rows[1].buttons[1].data
         press_button(client2, bot_name, message, next)
         time.sleep(3)
         # Moving to next book
         message = client2.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        next = message.reply_markup.rows[1].buttons[1].data
         press_button(client2, bot_name, message, next)
         time.sleep(3)
         # Moving to next book
         message = client2.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
+        next = message.reply_markup.rows[1].buttons[1].data
         press_button(client2, bot_name, message, next)
         time.sleep(3)
         # Pressing "Book" button
@@ -609,9 +635,9 @@ def test_7():
         press_button(client2, bot_name, message, book)
         time.sleep(3)
 
-        """
+
         # Getting menu with users
-        librarian.send_message(bot_name,"/names")
+        librarian.send_message(bot_name, "/users")
         # Moving to next user
         message = librarian.get_message_history(bot_name, limit=1).data[0]
         next = message.reply_markup.rows[1].buttons[0].data
@@ -622,9 +648,24 @@ def test_7():
         next = message.reply_markup.rows[1].buttons[0].data
         press_button(librarian, bot_name, message, next)
         time.sleep(3)
-        """
-        u1_b1, u1_b2, u1_b3, u1_a1, u2_b2, u2_b2, u3_a3 = select(record for record in Log)
-        # TODO: ASSERTS!
+
+        # Correcting date
+        for record in Log.select():
+            fifth_march = record.issue_date.replace(day=5)
+            delta = record.issue_date - fifth_march
+
+            record.issue_date = fifth_march
+            record.expiry_date = record.expiry_date - delta
+            commit()
+
+        u1_b1, u1_b2, u1_a1, u2_b1, u2_b2, u2_a2 = select(record for record in Log)
+        assert (u1_b1.expiry_date.month == 4 and u1_b1.expiry_date.day == 2)
+        assert (u1_b2.expiry_date.month == 4 and u1_b2.expiry_date.day == 2)
+        assert (u1_a1.expiry_date.month == 3 and u1_a1.expiry_date.day == 19)
+        assert (u2_b1.expiry_date.month == 3 and u2_b1.expiry_date.day == 26)
+        assert (u2_b2.expiry_date.month == 3 and u2_b2.expiry_date.day == 19)
+        assert (u2_a2.expiry_date.month == 3 and u2_a2.expiry_date.day == 19)
+        logging.info("Test 7 is Successful")
 
     except AssertionError:
         logging.info("Test 7 is Failed")
@@ -752,4 +793,4 @@ def test9():
         logging.info("Test 9 is Failed")
 
 
-test9()
+test7()
