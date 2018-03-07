@@ -17,8 +17,6 @@ db = Database()
 db.bind(provider='mysql', host=config.db_host, user=config.db_username, passwd=config.db_password, db=config.db_name)
 db.generate_mapping(create_tables=True)
 
-
-
 # API keys are hidden in config_test.py which is not in GitHub
 # because they're personal. You can create your own ones on
 # my.telegram.org
@@ -67,6 +65,7 @@ def update_message(client):
 
 
 def initialize():
+    # Initializing sessions
     RegistrySession(telegramID=56069837, alias="", name="", phone="", address="", edit_media_state="", type="",
                     title="", author="", publisher="")
     RegistrySession(telegramID=client1_telegram_ID, alias="", name="", phone="", address="", edit_media_state="",
@@ -116,7 +115,7 @@ def fast_test1():
           authors="Erich Gamma, Ralph Johnson, John Vlissides, Richard Helm",
           publisher="Addison-Wesley Professional", cost=1000, fine=100, availability=1, bestseller=1)
     Media(mediaID=3, name="The Mythical Man-month (Second edition), 1995",
-          type="Book",
+          type="Reference book",
           authors="Brooks,Jr., Frederick P.",
           publisher="Addison-Wesley Longman Publishing Co., Inc.", cost=1000, fine=100, availability=0, bestseller=0)
     Media(mediaID=4, name="Null References: The Billion Dollar Mistake",
@@ -142,8 +141,56 @@ def fast_test1():
     User(telegramID=239514818, name="Nadia Teixeira", alias="@nadia", phone="30002", address="Via Sacra, 13", faculty=0)
     User(telegramID=142289653, name="Elvira Espindola", alias="@elvira", phone="30003", address="Via del Corso, 22",
          faculty=0)
-
     commit()
+
+    assert (Media[1].name == "Introduction to algorithms (Third edition), 2009")
+    assert (Media[1].authors == "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest and Clifford Stein")
+    assert (Media[1].type == "Book")
+    assert (Media[1].publisher == "MIT Press")
+
+    assert (Media[2].name == "Design Patterns: Elements of Reusable Object-Oriented Software (First edition), 2003")
+    assert (Media[2].authors == "Erich Gamma, Ralph Johnson, John Vlissides, Richard Helm")
+    assert (Media[2].type == "Book")
+    assert (Media[2].publisher == "Addison-Wesley Professional")
+
+    assert (Media[3].name == "The Mythical Man-month (Second edition), 1995")
+    assert (Media[3].authors == "Brooks,Jr., Frederick P.")
+    assert (Media[3].type == "Reference book")
+    assert (Media[3].publisher == "Addison-Wesley Longman Publishing Co., Inc.")
+
+    assert (Media[4].name == "Null References: The Billion Dollar Mistake")
+    assert (Media[4].authors == "Tony Hoare.")
+    assert (Media[4].type == "AV")
+    assert (Media[4].publisher == "None")
+
+    assert (Media[5].name == "Information Entropy")
+    assert (Media[5].authors == "Claude Shannon")
+    assert (Media[5].type == "AV")
+    assert (Media[5].publisher == "None")
+
+    assert (User[324148065].name == "Sergey Afonso")
+    assert (User[324148065].alias == "@sergei")
+    assert (User[324148065].phone == "30001")
+    assert (User[324148065].address == "Via Margutta, 3")
+
+    assert (User[142289653].name == "Elvira Espindola")
+    assert (User[142289653].alias == "@elvira")
+    assert (User[142289653].phone == "30003")
+    assert (User[142289653].address == "Via del Corso, 22")
+
+    assert (User[239514818].name == "Nadia Teixeira")
+    assert (User[239514818].alias == "@nadia")
+    assert (User[239514818].phone == "30002")
+    assert (User[239514818].address == "Via Sacra, 13")
+
+    assert (MediaCopies.get(copyID="1-1") is not None)
+    assert (MediaCopies.get(copyID="1-2") is not None)
+    assert (MediaCopies.get(copyID="1-3") is not None)
+    assert (MediaCopies.get(copyID="2-1") is not None)
+    assert (MediaCopies.get(copyID="2-2") is not None)
+    assert (MediaCopies.get(copyID="3-1") is not None)
+    assert (MediaCopies.get(copyID="4-1") is not None)
+    assert (MediaCopies.get(copyID="5-1") is not None)
 
 
 @db_session
@@ -154,6 +201,12 @@ def fast_test2():
     MediaCopies.get(copyID="3-1").delete()
     Media.get(mediaID=3).delete()
     User[239514818].delete()
+
+    assert (MediaCopies.get(copyID="1-1") is None)
+    assert (MediaCopies.get(copyID="1-2") is None)
+    assert (MediaCopies.get(copyID="3-1") is None)
+    assert (Media.get(mediaID=3) is None)
+    assert (User.get(telegramID=239514818) is None)
     commit()
 
 
@@ -740,13 +793,5 @@ def test9():
     except AssertionError:
         logging.info("Test 9 is Failed")
 
-test1()
-test2()
-test3()
-test4()
-test5()
-test6()
-test7()
-test8()
-test9()
 
+fast_test2()
