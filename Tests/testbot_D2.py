@@ -17,6 +17,8 @@ db = Database()
 db.bind(provider='mysql', host=config.db_host, user=config.db_username, passwd=config.db_password, db=config.db_name)
 db.generate_mapping(create_tables=True)
 
+
+
 # API keys are hidden in config_test.py which is not in GitHub
 # because they're personal. You can create your own ones on
 # my.telegram.org
@@ -635,7 +637,6 @@ def test7():
         press_button(client2, bot_name, message, book)
         time.sleep(3)
 
-
         # Getting menu with users
         librarian.send_message(bot_name, "/users")
         # Moving to next user
@@ -676,98 +677,45 @@ def test8():
     fast_test1()
     logging.info("Starting Test 8")
     try:
-        """
-        # PART 1.1. Client1 issues b1
-        client1.send_message(bot_name, "/medias")
-        time.sleep(3)
-        # Pressing "Book" button
-        message = client1.get_message_history(bot_name, limit=1).data[0]
-        book = message.reply_markup.rows[0].buttons[0].data
-        press_button(client1, bot_name, message, book)
-        time.sleep(3)
+        delta = datetime.datetime.now() - datetime.datetime.now().replace(day=5).replace(month=3)
+        Log(libID=client1_telegram_ID, mediaID='1-1', issue_date=datetime.datetime(2018, 2, 9, 12, 0, 0),
+            expiry_date=datetime.datetime(2018, 2, 9, 12, 0, 0) + datetime.timedelta(weeks=4) + delta, returned=False,
+            renewed=False)
+        Log(libID=client1_telegram_ID, mediaID='2-1', issue_date=datetime.datetime(2018, 2, 2, 12, 0, 0),
+            expiry_date=datetime.datetime(2018, 2, 2, 12, 0, 0) + datetime.timedelta(weeks=4) + delta, returned=False,
+            renewed=False)
 
-        # PART 1.2 Client1 takes book 2
-        client1.send_message(bot_name, "/medias")
-        time.sleep(3)
-        # Moving to next book
-        message = client1.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
-        press_button(client1, bot_name, message, next)
-        time.sleep(3)
-        # Pressing "Book" button
-        message = client1.get_message_history(bot_name, limit=1).data[0]
-        book = message.reply_markup.rows[0].buttons[0].data
-        press_button(client1, bot_name, message, book)
-        time.sleep(3)
+        Log(libID=client2_telegram_ID, mediaID='1-2', issue_date=datetime.datetime(2018, 2, 5, 12, 0, 0),
+            expiry_date=datetime.datetime(2018, 2, 5, 12, 0, 0) + datetime.timedelta(weeks=3) + delta, returned=False,
+            renewed=False)
+        Log(libID=client2_telegram_ID, mediaID='4-1', issue_date=datetime.datetime(2018, 2, 17, 12, 0, 0),
+            expiry_date=datetime.datetime(2018, 2, 17, 12, 0, 0) + datetime.timedelta(weeks=2) + delta, returned=False,
+            renewed=False)
 
-        # PART 2.1 Client1 takes book 1
-        client1.send_message(bot_name, "/medias")
-        time.sleep(3)
-        # Pressing "Book" button
-        message = client1.get_message_history(bot_name, limit=1).data[0]
-        book = message.reply_markup.rows[0].buttons[0].data
-        press_button(client1, bot_name, message, book)
-        time.sleep(3)
-
-        # PART 2.2 Client2 takes AV1
-        client2.send_message(bot_name, "/medias")
-        time.sleep(3)
-        # Moving to next book
-        message = client2.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
-        press_button(client2, bot_name, message, next)
-        time.sleep(3)
-        # Moving to next book
-        message = client2.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
-        press_button(client2, bot_name, message, next)
-        time.sleep(3)
-        # Moving to next book
-        message = client2.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[2].buttons[0].data  # TODO: Fix indexes!
-        press_button(client2, bot_name, message, next)
-        time.sleep(3)
-        # Pressing "Book" button
-        message = client2.get_message_history(bot_name, limit=1).data[0]
-        book = message.reply_markup.rows[0].buttons[0].data
-        press_button(client2, bot_name, message, book)
-        time.sleep(3)
-        """
-        # Fixing dates
-        u1_b1, u1_b2, u2_b1, u2_a1 = select(record for record in Log)
-
-        delta = u1_b1.issue_date - u1_b1.issue_date.replace(month=2).replace(day=9)
-        u1_b1.issue_date = u1_b1.issue_date.replace(month=2).replace(day=9)
-        u1_b1.expiry_date = u1_b1.expiry_date - delta
-
-        delta = u1_b2.issue_date - u1_b2.issue_date.replace(month=2).replace(day=2)
-        u1_b2.issue_date = u1_b2.issue_date.replace(month=2).replace(day=2)
-        u1_b2.expiry_date = u1_b2.expiry_date - delta
-
-        delta = u2_b1.issue_date - u2_b1.issue_date.replace(month=2).replace(day=5)
-        u2_b1.issue_date = u2_b1.issue_date.replace(month=2).replace(day=5)
-        u2_b1.expiry_date = u2_b1.expiry_date - delta
-
-        delta = u2_a1.issue_date - u2_a1.issue_date.replace(month=2).replace(day=17)
-        u2_a1.issue_date = u2_a1.issue_date.replace(month=2).replace(day=17)
-        u2_a1.expiry_date = u2_a1.expiry_date - delta
         commit()
 
-        """
         # Getting menu with users
-        librarian.send_message(bot_name,"/names")
+        librarian.send_message(bot_name, "/users")
+        time.sleep(1.5)
         # Moving to next user
         message = librarian.get_message_history(bot_name, limit=1).data[0]
         next = message.reply_markup.rows[1].buttons[0].data
         press_button(librarian, bot_name, message, next)
         time.sleep(3)
+
         # Moving to next user
         message = librarian.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[1].buttons[0].data
+        assert ("OVERDUE: 7 days!" in message.message)
+        assert ("OVERDUE: 2 days!" in message.message)
+        next = message.reply_markup.rows[1].buttons[1].data
         press_button(librarian, bot_name, message, next)
         time.sleep(3)
-        """
-        logging.info("Test 8 is Failed")
+
+        # Moving to next user
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        assert ("OVERDUE: 3 days!" in message.message)
+
+        logging.info("Test 8 is Successful")
     except AssertionError:
         logging.info("Test 8 is Failed")
 
@@ -777,7 +725,7 @@ def test9():
     fast_test1()
     logging.info("Starting Test 9")
     try:
-        client1.send_message(bot_name, "/reboot")
+        librarian.send_message(bot_name, "/reboot")
         time.sleep(25)
         assert (len(MediaCopies.select(lambda c: c.copyID.startswith("1"))) >= 1)
         assert (len(MediaCopies.select(lambda c: c.copyID.startswith("2"))) >= 2)
@@ -792,5 +740,13 @@ def test9():
     except AssertionError:
         logging.info("Test 9 is Failed")
 
-
+test1()
+test2()
+test3()
+test4()
+test5()
+test6()
 test7()
+test8()
+test9()
+
