@@ -619,18 +619,45 @@ def test6():
             record.expiry_date = record.expiry_date - delta
             commit()
 
+        # Get logs with records about checked out materials
+        log_1, log_2 = select(record for record in Log)
         # Getting menu with users
         librarian.send_message(bot_name, "/users")
         time.sleep(1.5)
+        # Get first user's id
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        button_bytes = message.reply_markup.rows[0].buttons[0].data
+        user_id_1 = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
         # Moving to next user
         message = librarian.get_message_history(bot_name, limit=1).data[0]
         next = message.reply_markup.rows[1].buttons[0].data
         press_button(librarian, bot_name, message, next)
         time.sleep(3)
+        # Get second user's id
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        button_bytes = message.reply_markup.rows[0].buttons[0].data
+        user_id_2 = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
 
-        log_1, log_2 = select(record for record in Log)
+        # Get lists of book for each user
+        first_user_books = User[user_id_1].medias
+        second_user_books = User[user_id_2].medias
+        b1_mediaid = 1
+        b2_mediaid = 2
+        # Checking users' information
+        assert (User.exists(telegramID=user_id_1))
+        assert (User[user_id_2].name == "Sergey Afonso")
+        assert (User[user_id_2].phone == "30001")
+        assert (User[user_id_2].address == "Via Margutta, 3")
+        assert User[user_id_2].faculty
+        assert (first_user_books[0].mediaID == b1_mediaid)
 
-        # Checking expiry dates
+        assert (User.exists(telegramID=user_id_2))
+        assert (User[user_id_2].name == "Elvira Espindola")
+        assert (User[user_id_2].phone == "30003")
+        assert (User[user_id_2].address == "Via del Corso, 22")
+        assert not User[user_id_2].faculty
+        assert (second_user_books[0].mediaID == b2_mediaid)
+
         assert (log_1.expiry_date.day == 2 and log_1.expiry_date.month == 4)
         assert (log_2.expiry_date.day == 2 and log_1.expiry_date.month == 4)
         logging.info("Test 6 is Successful")
@@ -765,16 +792,19 @@ def test7():
 
         # Getting menu with users
         librarian.send_message(bot_name, "/users")
+        # Get first user's id
+        message = librarian.get_message_history(bot_name, limit=1).data[0]
+        button_bytes = message.reply_markup.rows[0].buttons[0].data
+        user_id_1 = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
         # Moving to next user
         message = librarian.get_message_history(bot_name, limit=1).data[0]
         next = message.reply_markup.rows[1].buttons[0].data
         press_button(librarian, bot_name, message, next)
         time.sleep(3)
-        # Moving to next user
+        # Get second user's id
         message = librarian.get_message_history(bot_name, limit=1).data[0]
-        next = message.reply_markup.rows[1].buttons[0].data
-        press_button(librarian, bot_name, message, next)
-        time.sleep(3)
+        button_bytes = message.reply_markup.rows[0].buttons[0].data
+        user_id_2 = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
 
         # Correcting date
         for record in Log.select():
@@ -784,6 +814,35 @@ def test7():
             record.issue_date = fifth_march
             record.expiry_date = record.expiry_date - delta
             commit()
+
+        # Users' books
+        first_user_books = User[user_id_1].medias
+        third_user_books = User[user_id_2].medias
+
+        # Medias' ID
+        b1_mediaid = 1
+        b2_mediaid = 2
+        b3_mediaid = 3
+        av1_mediaid = 4
+        # Check users' information
+        assert (User.exists(telegramID=user_id_1))
+        assert (User[user_id_1].name == "Sergey Afonso")
+        assert (User[user_id_1].phone == "30001")
+        assert (User[user_id_1].address == "Via Margutta, 3")
+        assert User[user_id_1].faculty
+        assert (first_user_books[0].mediaID == b1_mediaid)
+        assert (first_user_books[1].mediaID == b2_mediaid)
+        assert (first_user_books[2].mediaID == b3_mediaid)
+        assert (first_user_books[3].mediaID == av1_mediaid)
+
+        assert (User.exists(telegramID=user_id_2))
+        assert (User[user_id_2].name == "Nadia Teixeira")
+        assert (User[user_id_2].phone == "30002")
+        assert (User[user_id_2].address == "Via Sacra, 13")
+        assert not User[user_id_2].faculty
+        assert (third_user_books[0].mediaID == b1_mediaid)
+        assert (third_user_books[1].mediaID == b2_mediaid)
+        assert (third_user_books[2].mediaID == av1_mediaid)
 
         u1_b1, u1_b2, u1_a1, u2_b1, u2_b2, u2_a2 = select(record for record in Log)
         assert (u1_b1.expiry_date.month == 4 and u1_b1.expiry_date.day == 2)
