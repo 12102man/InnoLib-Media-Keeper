@@ -639,24 +639,22 @@ def test6():
         user_id_2 = int(json.loads(button_bytes.decode('utf8').replace("'", '"'))["argument"])
 
         # Get lists of book for each user
-        first_user_books = User[user_id_1].medias
-        second_user_books = User[user_id_2].medias
-        b1_mediaid = 1
-        b2_mediaid = 2
+        first_user_books = list(Log.select(lambda c: c.libID == client1_telegram_ID))
+
         # Checking users' information
         assert (User.exists(telegramID=user_id_1))
         assert (User[user_id_2].name == "Sergey Afonso")
         assert (User[user_id_2].phone == "30001")
         assert (User[user_id_2].address == "Via Margutta, 3")
         assert User[user_id_2].faculty
-        assert (first_user_books[0].mediaID == b1_mediaid)
+        assert (first_user_books[0].mediaID.startswith("1"))
+        assert (first_user_books[1].mediaID.startswith("2"))
 
-        assert (User.exists(telegramID=user_id_2))
-        assert (User[user_id_2].name == "Elvira Espindola")
-        assert (User[user_id_2].phone == "30003")
-        assert (User[user_id_2].address == "Via del Corso, 22")
-        assert not User[user_id_2].faculty
-        assert (second_user_books[0].mediaID == b2_mediaid)
+        assert (User.exists(telegramID=user_id_1))
+        assert (User[user_id_1].name == "Elvira Espindola")
+        assert (User[user_id_1].phone == "30003")
+        assert (User[user_id_1].address == "Via del Corso, 22")
+        assert not User[user_id_1].faculty
 
         assert (log_1.expiry_date.day == 2 and log_1.expiry_date.month == 4)
         assert (log_2.expiry_date.day == 2 and log_1.expiry_date.month == 4)
@@ -816,8 +814,8 @@ def test7():
             commit()
 
         # Users' books
-        first_user_books = User[user_id_1].medias
-        third_user_books = User[user_id_2].medias
+        first_user_books = list(User.select(lambda c: c.libID == client1_telegram_ID))
+        second_user_books = list(User.select(lambda c: c.libID == client2_telegram_ID))
 
         # Medias' ID
         b1_mediaid = 1
@@ -830,19 +828,19 @@ def test7():
         assert (User[user_id_1].phone == "30001")
         assert (User[user_id_1].address == "Via Margutta, 3")
         assert User[user_id_1].faculty
-        assert (first_user_books[0].mediaID == b1_mediaid)
-        assert (first_user_books[1].mediaID == b2_mediaid)
-        assert (first_user_books[2].mediaID == b3_mediaid)
-        assert (first_user_books[3].mediaID == av1_mediaid)
+        assert (first_user_books[0].mediaID.startswith("1"))
+        assert (first_user_books[1].mediaID.startswith("2"))
+        assert (first_user_books[2].mediaID.startswith("3"))
+        assert (first_user_books[3].mediaID.startswith("4"))
 
         assert (User.exists(telegramID=user_id_2))
-        assert (User[user_id_2].name == "Nadia Teixeira")
+        assert (User[user_id_2].name == "Elvira Es")
         assert (User[user_id_2].phone == "30002")
         assert (User[user_id_2].address == "Via Sacra, 13")
         assert not User[user_id_2].faculty
-        assert (third_user_books[0].mediaID == b1_mediaid)
-        assert (third_user_books[1].mediaID == b2_mediaid)
-        assert (third_user_books[2].mediaID == av1_mediaid)
+        assert (second_user_books[0].mediaID.startswith("1"))
+        assert (second_user_books[1].mediaID.startswith("2"))
+        assert (second_user_books[2].mediaID.startswith("5"))
 
         u1_b1, u1_b2, u1_a1, u2_b1, u2_b2, u2_a2 = select(record for record in Log)
         assert (u1_b1.expiry_date.month == 4 and u1_b1.expiry_date.day == 2)
@@ -965,4 +963,4 @@ def test9():
         logging.info("Test 9 is Failed")
 
 
-test2()
+test6()
