@@ -105,7 +105,7 @@ def flush_db():
 
 
 @db_session
-def fast_test1():
+def test1():
     flush_db()
     Media(mediaID=1, name="Introduction to algorithms (Third edition), 2009", type="Book",
           authors="Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest and Clifford Stein",
@@ -194,8 +194,8 @@ def fast_test1():
 
 
 @db_session
-def fast_test2():
-    fast_test1()
+def test2():
+    test1()
     MediaCopies.get(copyID="1-1").delete()
     MediaCopies.get(copyID="1-2").delete()
     MediaCopies.get(copyID="3-1").delete()
@@ -211,7 +211,11 @@ def fast_test2():
 
 
 @db_session
-def test1():
+def gui_test1():
+    """
+    Test 1 using Telegram users
+    :return: Test procedured in Telegram
+    """
     logging.info("Starting Test 1")
     try:
         # Adding media 1
@@ -353,14 +357,66 @@ def test1():
         time.sleep(3)
 
         assert (len(MediaCopies.select()) == 8 and len(User.select()) == 3)
+        assert (Media[1].name == "Introduction to algorithms (Third edition), 2009")
+        assert (Media[1].authors == "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest and Clifford Stein")
+        assert (Media[1].type == "Book")
+        assert (Media[1].publisher == "MIT Press")
+
+        assert (Media[2].name == "Design Patterns: Elements of Reusable Object-Oriented Software (First edition), 2003")
+        assert (Media[2].authors == "Erich Gamma, Ralph Johnson, John Vlissides, Richard Helm")
+        assert (Media[2].type == "Book")
+        assert (Media[2].publisher == "Addison-Wesley Professional")
+
+        assert (Media[3].name == "The Mythical Man-month (Second edition), 1995")
+        assert (Media[3].authors == "Brooks,Jr., Frederick P.")
+        assert (Media[3].type == "Reference book")
+        assert (Media[3].publisher == "Addison-Wesley Longman Publishing Co., Inc.")
+
+        assert (Media[4].name == "Null References: The Billion Dollar Mistake")
+        assert (Media[4].authors == "Tony Hoare.")
+        assert (Media[4].type == "AV")
+        assert (Media[4].publisher == "None")
+
+        assert (Media[5].name == "Information Entropy")
+        assert (Media[5].authors == "Claude Shannon")
+        assert (Media[5].type == "AV")
+        assert (Media[5].publisher == "None")
+
+        assert (User[324148065].name == "Sergey Afonso")
+        assert (User[324148065].alias == "@sergei")
+        assert (User[324148065].phone == "30001")
+        assert (User[324148065].address == "Via Margutta, 3")
+
+        assert (User[142289653].name == "Elvira Espindola")
+        assert (User[142289653].alias == "@elvira")
+        assert (User[142289653].phone == "30003")
+        assert (User[142289653].address == "Via del Corso, 22")
+
+        assert (User[239514818].name == "Nadia Teixeira")
+        assert (User[239514818].alias == "@nadia")
+        assert (User[239514818].phone == "30002")
+        assert (User[239514818].address == "Via Sacra, 13")
+
+        assert (MediaCopies.get(copyID="1-1") is not None)
+        assert (MediaCopies.get(copyID="1-2") is not None)
+        assert (MediaCopies.get(copyID="1-3") is not None)
+        assert (MediaCopies.get(copyID="2-1") is not None)
+        assert (MediaCopies.get(copyID="2-2") is not None)
+        assert (MediaCopies.get(copyID="3-1") is not None)
+        assert (MediaCopies.get(copyID="4-1") is not None)
+        assert (MediaCopies.get(copyID="5-1") is not None)
         logging.info("Test 1 is Successful")
     except AssertionError:
         logging.info("Test 1 is Failed")
 
 
 @db_session
-def test2():
-    fast_test1()
+def gui_test2():
+    """
+    Test 2 using Telegram users
+    :return: Test procedured in Telegram
+    """
+    test1()
     logging.info("Starting Test 2")
     try:
         # Deleting copy 2-1
@@ -400,6 +456,10 @@ def test2():
         press_button(librarian, bot_name, message, delete)
 
         assert (len(MediaCopies.select()) == 5 and len(User.select()) == 2)
+        assert (MediaCopies.get(copyID="1-1") is None)
+        assert (MediaCopies.get(copyID="1-2") is None)
+        assert (MediaCopies.get(copyID="3-1") is None)
+        assert (User.get(telegramID=239514818) is None)
         logging.info("Test 2 is Successful")
     except AssertionError:
         logging.info("Test 2 is Failed")
@@ -407,7 +467,7 @@ def test2():
 
 @db_session
 def test3():
-    fast_test1()
+    test1()
     logging.info("Starting Test 3")
     try:
 
@@ -448,7 +508,7 @@ def test3():
 
 @db_session
 def test4():
-    fast_test2()
+    test2()
     logging.info("Starting Test 4")
     try:
         librarian.send_message(bot_name, "/users")
@@ -479,7 +539,7 @@ def test4():
 
 
 def test5():
-    fast_test2()
+    test2()
     logging.info("Starting Test 5")
     try:
         client2.send_message(bot_name, "/medias")
@@ -501,7 +561,7 @@ def test5():
 
 @db_session
 def test6():
-    fast_test2()
+    test2()
     logging.info("Starting Test 6")
     try:
 
@@ -567,7 +627,7 @@ def test6():
 
 @db_session
 def test7():
-    fast_test1()
+    test1()
     logging.info("Starting Test 7")
     try:
 
@@ -727,7 +787,7 @@ def test7():
 
 @db_session
 def test8():
-    fast_test1()
+    test1()
     logging.info("Starting Test 8")
     try:
         delta = datetime.datetime.now() - datetime.datetime.now().replace(day=5).replace(month=3)
@@ -775,7 +835,7 @@ def test8():
 
 @db_session
 def test9():
-    fast_test1()
+    test1()
     logging.info("Starting Test 9")
     try:
         librarian.send_message(bot_name, "/reboot")
@@ -794,4 +854,4 @@ def test9():
         logging.info("Test 9 is Failed")
 
 
-fast_test2()
+test2()
