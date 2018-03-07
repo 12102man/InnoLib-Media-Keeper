@@ -202,7 +202,7 @@ def test1():
         # Adding media 3
         librarian.send_message(bot_name, "/add_media")
         time.sleep(3)
-        librarian.send_message(bot_name, "Book")
+        librarian.send_message(bot_name, "Reference book")
         time.sleep(3)
         librarian.send_message(bot_name,
                                "The Mythical Man-month (Second edition), 1995")
