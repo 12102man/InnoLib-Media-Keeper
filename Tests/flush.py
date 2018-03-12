@@ -1,9 +1,10 @@
 from pony.orm import *
-import Config.config as config
+
+import config as config
 
 db1 = Database()
 db1.bind(provider='mysql', host=config.db_host, user=config.db_username, passwd=config.db_password,
-        db=config.db_name)
+         db=config.db_name)
 db1.generate_mapping(create_tables=True)
 db1.disconnect()
 

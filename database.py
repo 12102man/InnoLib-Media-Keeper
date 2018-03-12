@@ -1,7 +1,7 @@
 from pony.orm import *
 import datetime
 
-import Config.config as config
+import config as config
 
 db = Database()
 # MySQL

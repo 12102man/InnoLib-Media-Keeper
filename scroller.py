@@ -1,10 +1,10 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-import Config.config as config
+import config as config
 import logging
 from pony.orm import *
-import Core.database as database
+import database as database
 import json
-from Core.button_actions import convert_to_emoji
+from button_actions import convert_to_emoji
 import datetime
 
 db = Database()

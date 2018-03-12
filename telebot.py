@@ -3,13 +3,13 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ConversationHandler, MessageHandler, CallbackQueryHandler
 from telegram.ext import Filters
 from telegram.ext import CommandHandler
-from Core.database import *
+from database import *
 import logging
-import Config.config as config
-from Core.scroller import Scroller
+import config as config
+from scroller import Scroller
 import json
-from Core.button_actions import *
-from Core.key_generator import generate_key
+from button_actions import *
+from key_generator import generate_key
 import os
 
 # MySQL

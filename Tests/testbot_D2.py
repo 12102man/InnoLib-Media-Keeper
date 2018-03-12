@@ -1,14 +1,12 @@
+import json
+import logging
+import time
+
 from telethon import TelegramClient
 from telethon.tl.functions.messages import *
-import time
-from pony.orm import *
-import logging
-import Config.config as config
-import Config.config_test as config_test
-from Core.database import *
-import os
-import json
-import pickle
+
+import config_test as config_test
+from database import *
 
 bot_name = 'ILMKbot'
 # MySQL

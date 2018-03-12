@@ -1,6 +1,6 @@
 from pony.orm import *
 
-import Core.database as database
+import database as database
 import datetime
 
 db = Database()
