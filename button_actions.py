@@ -132,7 +132,10 @@ def add_in_line(bot, update):
     session = database.RegistrySession[telegram_id]
     media = list(database.Media.select())[session.media_c]
     user = database.User[telegram_id]
-    if user.is_in_line(media) == 0:
+    a = list(database.Log.select(
+            lambda c: c.libID == telegram_id and c.mediaID.startswith(str(media.mediaID))))
+    if not user.is_in_line(media) and len(list(database.Log.select(
+            lambda c: c.libID == telegram_id and c.mediaID.startswith(str(media.mediaID))))) == 0:
         user.add_to_queue(media)
         bot.edit_message_text(text="You have been successfully added to the line!",
                               chat_id=query.message.chat_id,
@@ -142,12 +145,11 @@ def add_in_line(bot, update):
                               chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
 
-
-"""
-def make_return_request(media, patron, issue_date)
-
-This function generates expiry date based on type of media and user.
-"""
+    """
+    def make_return_request(media, patron, issue_date)
+    
+    This function generates expiry date based on type of media and user.
+    """
 
 
 def make_return_request(bot, update, copy_id):
@@ -190,13 +192,16 @@ def accept_return(bot, update, request_id):
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.message.chat_id)
     else:
-        user = media.pop()
+        user = media.pop().user
         # Making a record in log
-        database.Log(libID=user.telegram_id, mediaID=copy_id,
+        database.Log(libID=user.telegramID, mediaID=copy_id,
                      expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
-        bot.send_message(text="Dear %s, media #%s is available now! You can take it from library, time starts now!", chat_id=user.telegram_id)
-
-
+        bot.send_message(text="Media %s has been successfully returned" % copy_id, chat_id=user_id)
+        bot.edit_message_text(text="Media %s has been successfully returned" % copy_id,
+                              message_id=update.callback_query.message.message_id,
+                              chat_id=update.callback_query.message.chat_id)
+        bot.send_message(text="Dear %s, media #%s is available now! You can take it from library, time starts now!" % (user.name, copy_id),
+                         chat_id=user.telegramID)
 
 
 def reject_return(bot, update, request_id):

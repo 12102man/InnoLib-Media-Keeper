@@ -18,7 +18,7 @@ db.generate_mapping(create_tables=True)
 # API keys are hidden in config_test.py which is not in GitHub
 # because they're personal. You can create your own ones on
 # my.telegram.org
-
+"""
 api_id_lib = config_test.api_id_lib
 api_hash_lib = config_test.api_hash_lib
 librarian = TelegramClient('session_name_lib', api_id_lib, api_hash_lib)
@@ -42,7 +42,8 @@ api_hash_3 = config_test.api_hash_3
 client3 = TelegramClient('session_name_3', api_id_3, api_hash_3)
 client3_telegram_ID = config_test.client3_telegram_ID
 client3.start()
-
+"""
+client2_telegram_ID = config_test.client2_telegram_ID
 logging.basicConfig(level=logging.INFO)
 
 
@@ -66,15 +67,11 @@ def initialize():
     # Initializing sessions
     RegistrySession(telegramID=56069837, alias="", name="", phone="", address="", edit_media_state="", type="",
                     title="", author="", publisher="")
-    RegistrySession(telegramID=client1_telegram_ID, alias="", name="", phone="", address="", edit_media_state="",
-                    type="",
-                    title="", author="", publisher="")
+
     RegistrySession(telegramID=client2_telegram_ID, alias="", name="", phone="", address="", edit_media_state="",
                     type="",
                     title="", author="", publisher="")
-    RegistrySession(telegramID=client3_telegram_ID, alias="", name="", phone="", address="", edit_media_state="",
-                    type="",
-                    title="", author="", publisher="")
+
     commit()
 
 
@@ -968,21 +965,19 @@ def eee():
     flush_db()
     Media(mediaID=1, name="Introduction to algorithms (Third edition), 2009", type="Book",
           authors="Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest and Clifford Stein",
-          publisher="MIT Press", cost=1000, fine=100, availability=0, bestseller=0)
-    MediaCopies(mediaID=1, copyID="5-1", available=0)
-    MediaCopies(mediaID=1, copyID="5-2", available=0)
+          publisher="MIT Press", cost=1000, fine=100, availability=1, bestseller=0)
+    MediaCopies(mediaID=1, copyID="1-1", available=1)
 
     u1 = User(telegramID=56069837, name="Sergey Afonso", alias="@sergei", phone="30001", address="Via Margutta, 3",
          faculty=1, priority=3)
-    u2 = User(telegramID=2, name="Nadia Teixeira", alias="@nadia", phone="30002", address="Via Sacra, 13", faculty=0, priority=2)
+    u2 = User(telegramID=client2_telegram_ID, name="Nadia Teixeira", alias="@nadia", phone="30002", address="Via Sacra, 13", faculty=0, priority=2)
     u3 = User(telegramID=3, name="Elvira Espindola", alias="@elvira", phone="30003", address="Via del Corso, 22",
          faculty=0, priority=1)
 
-    u1.add_to_queue(Media[1])
-    u2.add_to_queue(Media[1])
-    u3.add_to_queue(Media[1])
 
-    print(u1.get_number_in_line(Media[1]))
+
+
+
 
 
 

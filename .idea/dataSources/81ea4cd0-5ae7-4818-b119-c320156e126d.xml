@@ -377,10 +377,12 @@
     <column id="93" parent="18" name="my_medias_c">
       <Position>14</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
     </column>
     <column id="94" parent="18" name="return_c">
       <Position>15</Position>
       <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
     </column>
     <column id="95" parent="18" name="users_c">
       <Position>16</Position>

@@ -194,8 +194,17 @@ Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.pho
                 user = database.User[self.__telegram_id]
                 if user.is_in_line(self.list[self.__cursor]):
                     button = json.dumps({'type': 'get_out_of_line', 'argument': 0})
+                    place = user.get_number_in_line(self.list[self.__cursor])
+                    if place == 1:
+                        place = "1st"
+                    elif place == 2:
+                        place = "2nd"
+                    elif place == 3:
+                        place = "3rd"
+                    else:
+                        place = str(place)+"th"
                     up_row.append(InlineKeyboardButton(
-                        "Get out of line (%s)" % str(user.get_number_in_line(self.list[self.__cursor])),
+                        "Get out of line (%s)" % place,
                         callback_data=button))
                 else:
                     button = json.dumps({'type': 'get_in_line', 'argument': 0})
