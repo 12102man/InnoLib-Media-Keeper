@@ -189,8 +189,19 @@ Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.pho
                 mid_row.append(InlineKeyboardButton("Copy", callback_data=json.dumps(
                     {'type': 'media_add_copy', 'argument': self.list[self.__cursor].mediaID})))
 
-            book = json.dumps({'type': 'book', 'argument': 0})
-            up_row.append(InlineKeyboardButton("Book", callback_data=book))
+            if not self.list[self.__cursor].availability:
+                user = database.User[self.__telegram_id]
+                if user.is_in_line(self.list[self.__cursor]):
+                    button = json.dumps({'type': 'get_out_of_line', 'argument': 0})
+                    up_row.append(InlineKeyboardButton(
+                        "Get out of line (%s)" % str(user.get_number_in_line(self.list[self.__cursor])),
+                        callback_data=button))
+                else:
+                    button = json.dumps({'type': 'get_in_line', 'argument': 0})
+                    up_row.append(InlineKeyboardButton("Get in line", callback_data=button))
+            else:
+                button = json.dumps({'type': 'book', 'argument': 0})
+                up_row.append(InlineKeyboardButton("Book", callback_data=button))
 
         elif self.state == 'bookingRequest':
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'bookingRequest'})

@@ -126,6 +126,23 @@ def book_media(bot, update):
                               message_id=query.message.message_id)
 
 
+def add_in_line(bot, update):
+    query = update.callback_query
+    telegram_id = query.message.chat_id
+    session = database.RegistrySession[telegram_id]
+    media = list(database.Media.select())[session.media_c]
+    user = database.User[telegram_id]
+    if user.is_in_line(media) == 0:
+        user.add_to_queue(media)
+        bot.edit_message_text(text="You have been successfully added to the line!",
+                              chat_id=query.message.chat_id,
+                              message_id=query.message.message_id)
+    else:
+        bot.edit_message_text(text="Sorry, mate, but you are already in line!",
+                              chat_id=query.message.chat_id,
+                              message_id=query.message.message_id)
+
+
 """
 def make_return_request(media, patron, issue_date)
 
@@ -150,22 +167,36 @@ def accept_return(bot, update, request_id):
     request = database.ReturnRequest[request_id]
     copy_id = request.copyID
     user_id = request.telegramID
+    media = database.MediaCopies.get(copyID=copy_id).mediaID
 
     #   Setting log.return to 1
     log_record = database.Log.select(lambda c: c.mediaID == request.copyID and not c.returned)
     log_record.returned = True
 
-    #   Correcting user medias
-    media_copy = database.MediaCopies.get(copyID=copy_id)
-    media_copy.available = True
+    if media.queue.is_empty():
+        #   Setting log.return to 1
+        log_record = database.Log.select(lambda c: c.mediaID == request.copyID and not c.returned)
+        log_record.returned = True
 
-    request.delete()
+        #   Correcting user medias
+        media_copy = database.MediaCopies.get(copyID=copy_id)
+        media_copy.available = True
 
-    commit()
-    bot.send_message(text="Media %s has been successfully returned" % copy_id, chat_id=user_id)
-    bot.edit_message_text(text="Media %s has been successfully returned" % copy_id,
-                          message_id=update.callback_query.message.message_id,
-                          chat_id=update.callback_query.message.chat_id)
+        request.delete()
+
+        commit()
+        bot.send_message(text="Media %s has been successfully returned" % copy_id, chat_id=user_id)
+        bot.edit_message_text(text="Media %s has been successfully returned" % copy_id,
+                              message_id=update.callback_query.message.message_id,
+                              chat_id=update.callback_query.message.chat_id)
+    else:
+        user = media.pop()
+        # Making a record in log
+        database.Log(libID=user.telegram_id, mediaID=copy_id,
+                     expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
+        bot.send_message(text="Dear %s, media #%s is available now! You can take it from library, time starts now!", chat_id=user.telegram_id)
+
+
 
 
 def reject_return(bot, update, request_id):
@@ -192,15 +223,16 @@ def ask_for_return(bot, update, copy_id, user_id):
     bot.send_message(
         text="""Hello, %s! 
 You recently took a book %s by %s (%s). Library and librarians need it ASAP. Could you please bring it back? Thank you!""" % (
-        user.name,
-        abstract_media.name,
-        abstract_media.authors,
-        copy_id),
+            user.name,
+            abstract_media.name,
+            abstract_media.authors,
+            copy_id),
 
         chat_id=user_id)
     bot.edit_message_text(text="Message to %s(@%s) has been sent" % (user.name, user.alias),
                           message_id=update.callback_query.message.message_id,
                           chat_id=update.callback_query.message.chat_id)
+
 
 """
 def generate_expiry_date(self, media, patron, issue_date)
