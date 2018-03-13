@@ -1,10 +1,11 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-import Config.config as config
+import database as database
+import json
 import logging
 from pony.orm import *
-import Core.database as database
-import json
-from Core.button_actions import convert_to_emoji
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+
+import config as config
+from button_actions import convert_to_emoji
 
 db = Database()
 # MySQL

@@ -1,7 +1,7 @@
+import datetime
 from pony.orm import *
 
-import Core.database as database
-import datetime
+import database as database
 
 db = Database()
 # MySQL
