@@ -8,7 +8,6 @@ db = Database()
 db.bind(provider='mysql', host=config.db_host, user=config.db_username, passwd=config.db_password, db=config.db_name)
 
 
-
 class User(db.Entity):
     telegramID = PrimaryKey(int)
     name = Required(str)
@@ -125,4 +124,3 @@ class LibrarianEnrollment(db.Entity):
 
 
 db.generate_mapping(create_tables=True)
-
