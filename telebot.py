@@ -1121,6 +1121,26 @@ def cancel_process(bot, update):
 
 
 @db_session
+def renew_media(bot, update, argument):
+    # select log and extend expiry date
+    media_id = MediaCopies.get(copyID=argument).mediaID.mediaID
+    telegram_id = update.callback_query.message.chat_id
+    log = Log.get(mediaID=argument, libID=telegram_id)
+    if not log.renewed:
+        log.expiry_date = generate_expiry_date(media=Media.get(mediaID=media_id),
+                                               patron=User.get(telegramID=telegram_id),
+                                               issue_date=log.expiry_date)
+        log.renewed = 1
+        bot.edit_message_text(text="You successfully renewed the media!",
+                              chat_id=telegram_id,
+                              message_id=update.callback_query.message.message_id)
+    else:
+        bot.edit_message_text(text="You are already renewed this media!",
+                              chat_id=telegram_id,
+                              message_id=update.callback_query.message.message_id)
+        
+        
+@db_session
 def confirm_user(bot, update, args):
     """
     This function confirms user by his/her key
