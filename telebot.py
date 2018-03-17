@@ -926,23 +926,22 @@ def edit_field(bot, update):
     last_value = ""
     try:
         user = User[telegram_id]
-
-    except UnboundLocalError:
+    except ObjectNotFound:
         media = Media.get(mediaID=media_id)
-    if field == 'title':
-        last_value = media.name
-    elif field == 'author':
-        last_value = media.authors
-    elif field == 'fine':
-        last_value = str(media.fine)
-    elif field == 'price':
-        last_value = str(media.cost)
-    elif field == 'name':
-        last_value = user.name
-    elif field == 'addr':
-        last_value = user.address
-    elif field == 'phone':
-        last_value = str(user.phone)
+        if field == 'title':
+            last_value = media.name
+        elif field == 'author':
+            last_value = media.authors
+        elif field == 'fine':
+            last_value = str(media.fine)
+        elif field == 'price':
+            last_value = str(media.cost)
+        elif field == 'name':
+            last_value = user.name
+        elif field == 'addr':
+            last_value = user.address
+        elif field == 'phone':
+            last_value = str(user.phone)
 
     session = RegistrySession[telegram_id]
     session.edit_media_cursor = media_id

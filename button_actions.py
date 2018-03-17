@@ -146,12 +146,11 @@ def add_in_line(bot, update):
         bot.edit_message_text(text="Sorry, mate, but you are already in line!",
                               chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
-
- """
- def make_return_request(media, patron, issue_date)
+    """
+    def make_return_request(media, patron, issue_date)
     
- This function generates expiry date based on type of media and user.
- """
+    This function generates expiry date based on type of media and user.
+    """
 
 
 def make_return_request(bot, update, copy_id):

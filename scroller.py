@@ -1,13 +1,11 @@
-
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-import config as config
-import logging
-from pony.orm import *
 import database as database
 import json
-from button_actions import convert_to_emoji
-import datetime
+import logging
+from pony.orm import *
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
+import config as config
+from button_actions import convert_to_emoji
 
 db = Database()
 # MySQL
@@ -24,7 +22,6 @@ class Scroller:
         self.list = list_update
         self.__length = len(list_update)
         self.__cursor = 0
-
 
     @db_session
     def create_message(self):
@@ -114,7 +111,7 @@ Renewed: %s
             self.__cursor = database.RegistrySession[self.__telegram_id].my_medias_c
             log_record = self.list[self.__cursor]
             message = """ Your media #️⃣%s :
-
+            
 What: "%s" by %s
 Issue date: %s
 Expiry date: %s
@@ -138,24 +135,12 @@ CopyID: %s
 From: %s (@%s)""" % (str(request.id), media.name, media.authors, request.copyID, patron.name, patron.alias)
             return message
         elif self.state == 'users':
-            medias_str = ""
             self.__cursor = database.RegistrySession[self.__telegram_id].users_c
             patron = self.list[self.__cursor]
-            list_of_user_medias = database.Log.select(lambda c: c.libID == patron.telegramID and not c.returned)
-            for item in list_of_user_medias:
-                abstract_media = database.MediaCopies.get(copyID=item.mediaID).mediaID
-                medias_str += "     ID: " + item.mediaID + "\n" + \
-                              "         " + abstract_media.name + " by " + abstract_media.authors + "\n" + \
-                              "     Issued: " + item.issue_date.strftime("%H:%M %d %h %Y") + "\n" + \
-                              "     Expiry: " + item.expiry_date.strftime("%H:%M %d %h %Y") + "\n"
-                if item.expiry_date < datetime.datetime.now():
-                    delta = datetime.datetime.now() - item.expiry_date
-                    medias_str += "OVERDUE: " + str(delta.days) + " days! \n"
-                medias_str += "\n"
             message = """ User %s information:
 Address: %s
 Alias: @%s
-Telephone number: %s \nMedias:\n%s""" % (patron.name, patron.address, patron.alias, patron.phone, medias_str)
+Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.phone)
             return message
 
     def create_keyboard(self):
@@ -167,7 +152,6 @@ Telephone number: %s \nMedias:\n%s""" % (patron.name, patron.address, patron.ali
         low_row = []  # Keyboard is a converted three-dimensional array.
         mid_row = []  # Our keyboard has three levels: 'low', 'mid' and 'up'
         up_row = []
-
 
         callback_next = 0  # Callback data for buttons 'Next' and 'Prev' (replaced by arrows)
         callback_prev = 0
@@ -201,7 +185,6 @@ Telephone number: %s \nMedias:\n%s""" % (patron.name, patron.address, patron.ali
                 mid_row.append(InlineKeyboardButton("Copy", callback_data=json.dumps(
                     {'type': 'media_add_copy', 'argument': self.list[self.__cursor].mediaID})))
 
-
             if not self.list[self.__cursor].availability:
                 user = database.User[self.__telegram_id]
                 if user.is_in_line(self.list[self.__cursor]):
@@ -214,7 +197,7 @@ Telephone number: %s \nMedias:\n%s""" % (patron.name, patron.address, patron.ali
                     elif place == 3:
                         place = "3rd"
                     else:
-                        place = str(place)+"th"
+                        place = str(place) + "th"
                     up_row.append(InlineKeyboardButton(
                         "Get out of line (%s)" % place,
                         callback_data=button))
@@ -224,7 +207,6 @@ Telephone number: %s \nMedias:\n%s""" % (patron.name, patron.address, patron.ali
             else:
                 button = json.dumps({'type': 'book', 'argument': 0})
                 up_row.append(InlineKeyboardButton("Book", callback_data=button))
-
 
         elif self.state == 'bookingRequest':
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'bookingRequest'})
@@ -248,8 +230,9 @@ Telephone number: %s \nMedias:\n%s""" % (patron.name, patron.address, patron.ali
         elif self.state == 'user_medias':
             up_row.append(InlineKeyboardButton("Return", callback_data=json.dumps(
                 {'type': 'returnMedia', 'argument': self.list[self.__cursor].mediaID})))
-            up_row.append(InlineKeyboardButton("Renew", callback_data=json.dumps(
-                {'type': 'renewMedia', 'argument': self.list[self.__cursor].mediaID})))
+            if not self.list[self.__cursor].renewed:
+                up_row.append(InlineKeyboardButton("Renew", callback_data=json.dumps(
+                    {'type': 'renewMedia', 'argument': self.list[self.__cursor].mediaID})))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'my_medias'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'my_medias'})
 
@@ -266,7 +249,7 @@ Telephone number: %s \nMedias:\n%s""" % (patron.name, patron.address, patron.ali
 
         elif self.state == 'users':
             log_record = self.list[self.__cursor].telegramID
-            delete_user = json.dumps({'type': 'user_delete', 'argument': log_record})
+            delete_user = json.dumps({'type': 'accept', 'argument': 'users', 'id': log_record})
             up_row.append(InlineKeyboardButton("Delete", callback_data=delete_user))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'users'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'users'})
