@@ -68,6 +68,7 @@ def callback_query_selector(bot, update):
         reject_request(bot, update)
     elif query_type == 'book':
         book_media(bot, update)
+
     elif query_type == 'get_in_line':
         add_in_line(bot, update)
     elif query_type == 'get_out_of_line':
@@ -171,6 +172,10 @@ def callback_query_selector(bot, update):
             reject_return(bot, update, parsed_query['id'])
     elif query_type == 'ask_for_return':
         ask_for_return(bot, update, argument, parsed_query['user'])
+
+    # Renew media
+    elif query_type == 'renewMedia':
+        renew_media(bot, update, argument)
 
     # Arrows for switching between cards
     # Selectors for 'next' arrows
@@ -289,6 +294,7 @@ Please, write your first and last name""")
         return PHONE_NUMBER
 
 
+
 @db_session
 def ask_phone(bot, update):
     """
@@ -305,6 +311,7 @@ def ask_phone(bot, update):
     bot.send_message(chat_id=update.message.chat_id, text="Please, write your phone number")
     commit()
     return ADDRESS
+
 
 
 @db_session
@@ -327,6 +334,7 @@ def ask_address(bot, update):
         bot.send_message(chat_id=update.message.chat_id, text="Oops, this is not a phone number, try again")
 
 
+
 @db_session
 def ask_faculty(bot, update):
     """
@@ -341,6 +349,7 @@ def ask_faculty(bot, update):
     session_user.address = update.message.text
     commit()
 
+
     #   Buttons for answering Yes or No. callback_data is what bot gets as a query (see callback_query_selector())
     reply = InlineKeyboardMarkup(
         [[InlineKeyboardButton("Yes", callback_data=json.dumps({'type': 'Faculty', 'argument': 0})),
@@ -348,6 +357,7 @@ def ask_faculty(bot, update):
 
     bot.send_message(chat_id=update.message.chat_id, text="Are you a faculty member?", reply_markup=reply)
     return register_conversation.END
+
 
 
 @db_session
@@ -385,8 +395,10 @@ and allows to perform some actions (add, delete, modify)
 """
 
 
+
 @db_session
 def create_request_card(bot, update):
+
     """
     Creates request menu card
     :param bot: bot object
@@ -405,6 +417,7 @@ def create_request_card(bot, update):
 
 @db_session
 def create_media_card(bot, update):
+
     """
     Creates media menu card
     :param bot: bot object
@@ -419,6 +432,7 @@ def create_media_card(bot, update):
                          reply_markup=media_card.create_keyboard())
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+
 
 
 @db_session
@@ -459,6 +473,7 @@ def create_booking_request_card(bot, update):
 
 @db_session
 def create_log_card(bot, update):
+
     """
     Creates log menu card
     :param bot: bot object
@@ -493,6 +508,7 @@ def create_return_media_card(bot, update):
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
 
+
 """
 This section of functions edits already created cards
 """
@@ -517,6 +533,7 @@ def edit_request_card(bot, update):
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
+
 
 
 @db_session
@@ -640,6 +657,7 @@ def edit_my_medias_card(bot, update):
                               message_id=query.message.message_id)
 
 
+
 @db_session
 def librarian_authentication(user_id):
     """
@@ -658,6 +676,7 @@ def librarian_authentication(user_id):
 
 @db_session
 def librarian_interface(bot, update):
+
     """
     Prints out librarian's menu wih all features
     :param bot: bot object
@@ -701,6 +720,7 @@ def me(bot, update):
     delete_button = InlineKeyboardButton("Delete",
                                          callback_data=json.dumps(
                                              {'type': 'user_delete', 'argument': my_user.telegramID}))
+
     my_medias_button = InlineKeyboardButton("My medias",
                                             callback_data=json.dumps({'type': 'my_medias', 'argument': 0}))
 
@@ -709,6 +729,7 @@ def me(bot, update):
     message = "Hello, %s! \nHere is information about you: \n👨‍🎓: %s (@%s) \n🏠: %s \n☎️: %s \n🎓: %s" % (
         my_user.name, my_user.name, my_user.alias, my_user.address, my_user.phone, convert_to_emoji(my_user.faculty))
     bot.send_message(text=message, chat_id=telegram_id, reply_markup=keyboard)
+
 
 
 @db_session
@@ -744,6 +765,7 @@ def delete_media(bot, update, media_id):
 
 @db_session
 def delete_copy(bot, update, args):
+
     """
     Asks librarian if it still wants to delete a particular copy
     :param bot: bot object
@@ -884,8 +906,11 @@ def edit_user(bot, update, telegram_id):
                      reply_markup=keyboard)
 
 
+
+
 @db_session
 def edit_field(bot, update):
+
     """
     Function which interacts with a certain field
     :param bot: bot object
@@ -1102,6 +1127,20 @@ def cancel_process(bot, update):
 
 
 @db_session
+def renew_media(bot, update, argument):
+    # select log and extend expiry date
+    user = User.get(telegramID=update.callback_query.message.chat_id)
+    renewed = user.renew_copy(argument)
+    if renewed:
+        bot.edit_message_text(text="You successfully renewed the media!",
+                              chat_id=update.callback_query.message.chat_id,
+                              message_id=update.callback_query.message.message_id)
+    else:
+        bot.edit_message_text(text="You are already renewed this media!",
+                              chat_id=update.callback_query.message.chat_id,
+                              message_id=update.callback_query.message.message_id)
+
+@db_session
 def confirm_user(bot, update, args):
     """
     This function confirms user by his/her key
@@ -1124,7 +1163,7 @@ def confirm_user(bot, update, args):
     enroll_request.delete()
     commit()
 
-
+    
 @db_session
 def reboot(bot, update):
     """
@@ -1175,6 +1214,7 @@ edit_conv = ConversationHandler(entry_points=[CallbackQueryHandler(edit_field, p
 
                                 fallbacks=[CommandHandler('cancel', cancel_process)])
 
+
 """
 This part connects commands, queries and any other input information to features
 in code. These are handlers.
@@ -1183,6 +1223,7 @@ dispatcher.add_handler(register_conversation)
 dispatcher.add_handler(new_media_conversation)
 dispatcher.add_handler(new_user_conversation)
 dispatcher.add_handler(edit_conv)
+
 
 search_query_handler = CallbackQueryHandler(callback_query_selector)
 dispatcher.add_handler(CommandHandler('requests', create_request_card))

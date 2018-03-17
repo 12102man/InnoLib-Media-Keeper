@@ -1,7 +1,8 @@
-import datetime
+
 from pony.orm import *
 
 import database as database
+import datetime
 
 db = Database()
 # MySQL
@@ -126,6 +127,7 @@ def book_media(bot, update):
                               message_id=query.message.message_id)
 
 
+
 def add_in_line(bot, update):
     query = update.callback_query
     telegram_id = query.message.chat_id
@@ -145,11 +147,11 @@ def add_in_line(bot, update):
                               chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
 
-    """
-    def make_return_request(media, patron, issue_date)
+ """
+ def make_return_request(media, patron, issue_date)
     
-    This function generates expiry date based on type of media and user.
-    """
+ This function generates expiry date based on type of media and user.
+ """
 
 
 def make_return_request(bot, update, copy_id):
@@ -174,6 +176,7 @@ def accept_return(bot, update, request_id):
     #   Setting log.return to 1
     log_record = database.Log.select(lambda c: c.mediaID == request.copyID and not c.returned)
     log_record.returned = True
+
 
     if media.queue.is_empty():
         #   Setting log.return to 1
@@ -204,6 +207,7 @@ def accept_return(bot, update, request_id):
                          chat_id=user.telegramID)
 
 
+
 def reject_return(bot, update, request_id):
     request = database.ReturnRequest[request_id]
     copy_id = request.copyID
@@ -228,10 +232,12 @@ def ask_for_return(bot, update, copy_id, user_id):
     bot.send_message(
         text="""Hello, %s! 
 You recently took a book %s by %s (%s). Library and librarians need it ASAP. Could you please bring it back? Thank you!""" % (
+
             user.name,
             abstract_media.name,
             abstract_media.authors,
             copy_id),
+
 
         chat_id=user_id)
     bot.edit_message_text(text="Message to %s(@%s) has been sent" % (user.name, user.alias),
