@@ -16,6 +16,19 @@ class User(db.Entity):
     alias = Required(str)
     phone = Required(str)
     faculty = Required(bool)
+    
+    def renew_copy(self, copy_id):
+    # select log and extend expiry date
+        media = MediaCopies.get(copyID=copy_id).mediaID
+        log = Log.get(mediaID=copy_id, libID=self.telegramID)
+        if not log.renewed:
+            log.expiry_date = generate_expiry_date(media=media,
+                                               patron=self,
+                                               issue_date=log.expiry_date)
+            log.renewed = 1
+            return 1
+        else:
+            return 0
 
 
 class Media(db.Entity):
