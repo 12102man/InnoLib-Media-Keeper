@@ -222,6 +222,8 @@ Telephone number: %s \nMedias:\n%s""" % (patron.name, patron.address, patron.ali
         elif self.state == 'user_medias':
             up_row.append(InlineKeyboardButton("Return", callback_data=json.dumps(
                 {'type': 'returnMedia', 'argument': self.list[self.__cursor].mediaID})))
+            up_row.append(InlineKeyboardButton("Renew", callback_data=json.dumps(
+                {'type': 'renewMedia', 'argument': self.list[self.__cursor].mediaID})))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'my_medias'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'my_medias'})
 
