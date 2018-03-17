@@ -1,6 +1,6 @@
 from pony.orm import *
+from button_actions import generate_expiry_date
 import datetime
-
 import config as config
 
 db = Database()
@@ -16,7 +16,8 @@ class User(db.Entity):
     alias = Required(str)
     phone = Required(str)
     faculty = Required(bool)
-    
+
+    @db_session
     def renew_copy(self, copy_id):
     # select log and extend expiry date
         media = MediaCopies.get(copyID=copy_id).mediaID
