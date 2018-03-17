@@ -69,6 +69,18 @@ def callback_query_selector(bot, update):
     elif query_type == 'book':
         book_media(bot, update)
 
+    elif query_type == 'get_in_line':
+        add_in_line(bot, update)
+    elif query_type == 'get_out_of_line':
+        query = update.callback_query
+        telegram_id = query.message.chat_id
+        session = database.RegistrySession[telegram_id]
+        media = list(database.Media.select())[session.media_c]
+        MediaQueue.select(lambda c: c.user == User[telegram_id] and c.mediaID == media).delete()
+        bot.edit_message_text(text="You got out of the line!",
+                              chat_id=query.message.chat_id,
+                              message_id=query.message.message_id)
+
     # 'Delete' states
 
     #   Requests for deleting
@@ -164,7 +176,7 @@ def callback_query_selector(bot, update):
     # Renew media
     elif query_type == 'renewMedia':
         renew_media(bot, update, argument)
-        
+
     # Arrows for switching between cards
     # Selectors for 'next' arrows
     elif query_type == 'nextItem':
@@ -238,14 +250,12 @@ def callback_query_selector(bot, update):
             edit_users_card(bot, update)
 
 
-
 """  Registration process   """
 
 
 # Filter for phone
 def all_numbers(input_string):
     return all(char.isdigit() for char in input_string)
-
 
 
 @db_session
@@ -481,7 +491,6 @@ def create_log_card(bot, update):
 
 
 @db_session
-
 def create_return_media_card(bot, update):
     """
     Creates return media menu card
@@ -545,7 +554,6 @@ def edit_media_card(bot, update):
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
-
 
 
 @db_session
@@ -694,7 +702,6 @@ Here's a list of useful commands, which are only allowed to librarians:
 
 
 @db_session
-
 def me(bot, update):
     """
     Prints out user's menu with information and features
@@ -711,7 +718,9 @@ def me(bot, update):
     edit_button = InlineKeyboardButton("Edit",
                                        callback_data=json.dumps({'type': 'user_edit', 'argument': my_user.telegramID}))
     delete_button = InlineKeyboardButton("Delete",
-                                         callback_data=json.dumps({'type': 'user_delete', 'argument': my_user.telegramID}))
+                                         callback_data=json.dumps(
+                                             {'type': 'user_delete', 'argument': my_user.telegramID}))
+
     my_medias_button = InlineKeyboardButton("My medias",
                                             callback_data=json.dumps({'type': 'my_medias', 'argument': 0}))
 
@@ -788,7 +797,6 @@ def delete_copy(bot, update, args):
 
 @db_session
 def delete_user(bot, update, telegram_id):
-
     """
     Asks librarian if it still wants to delete a particular
     user
@@ -817,7 +825,6 @@ def delete_user(bot, update, telegram_id):
     bot.send_message(text=message, chat_id=current_telegram_id, reply_markup=keyboard)
 
 
-
 @db_session
 def add_copy(bot, update, media_id):
     """
@@ -838,7 +845,6 @@ def add_copy(bot, update, media_id):
 
 @db_session
 def edit_media(bot, update, media_id):
-
     """
     Starting menu for media editing
     :param bot: bot object
@@ -871,7 +877,6 @@ def edit_media(bot, update, media_id):
                      reply_markup=keyboard)
 
 
-
 @db_session
 def edit_user(bot, update, telegram_id):
     """
@@ -899,6 +904,7 @@ def edit_user(bot, update, telegram_id):
 
     bot.send_message(text="What do you want to change?", chat_id=update.callback_query.message.chat_id,
                      reply_markup=keyboard)
+
 
 
 
@@ -952,7 +958,6 @@ def edit_field(bot, update):
 
 @db_session
 def change_value(bot, update):
-
     """
     Changes certain value
     :param bot: bot object
@@ -993,7 +998,6 @@ def change_value(bot, update):
 
 
 @db_session
-
 def create_new_media(bot, update):
     """
     Menu for adding a new media
@@ -1063,7 +1067,6 @@ def create_new_media(bot, update):
 
 @db_session
 def create_new_user(bot, update):
-
     """
     Menu for adding a new user
     :param bot: bot object
@@ -1114,7 +1117,6 @@ def create_new_user(bot, update):
 
 
 def cancel_process(bot, update):
-
     """
     Cancel conversations
     :param bot: bot object
@@ -1137,8 +1139,7 @@ def renew_media(bot, update, argument):
         bot.edit_message_text(text="You are already renewed this media!",
                               chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
-        
-        
+
 @db_session
 def confirm_user(bot, update, args):
     """
@@ -1162,6 +1163,7 @@ def confirm_user(bot, update, args):
     enroll_request.delete()
     commit()
 
+    
 @db_session
 def reboot(bot, update):
     """
@@ -1176,7 +1178,6 @@ def reboot(bot, update):
     bot.send_message(text="Rebooting...",
                      chat_id=update.message.chat_id)
     os.system("reboot")
-
 
 
 """

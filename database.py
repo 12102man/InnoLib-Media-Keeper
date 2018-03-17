@@ -1,6 +1,8 @@
 from pony.orm import *
+
 from button_actions import generate_expiry_date
 import datetime
+
 import config as config
 
 db = Database()
@@ -17,6 +19,22 @@ class User(db.Entity):
     phone = Required(str)
     faculty = Required(bool)
 
+    priority = Optional(int, default=4)
+    queue = Set('MediaQueue')
+
+    def add_to_queue(self, media_id):
+        MediaQueue(user=self, mediaID=media_id)
+        commit()
+
+    def is_in_line(self, media):
+        return not len(list(MediaQueue.select(lambda c: c.user == self and c.mediaID == media))) == 0
+
+    def get_number_in_line(self, media):
+        order_of_users = media.get_queue()
+        user_place = list(filter(lambda o: o.user == self, order_of_users))
+        return order_of_users.index(user_place[0]) + 1
+
+
     @db_session
     def renew_copy(self, copy_id):
     # select log and extend expiry date
@@ -32,10 +50,10 @@ class User(db.Entity):
             return 0
 
 
+
 class Media(db.Entity):
     mediaID = PrimaryKey(int, auto=True)
     name = Required(str)
-
     type = Required(str)
     authors = Required(str)
     publisher = Required(str)
@@ -45,6 +63,18 @@ class Media(db.Entity):
     cost = Required(int)
     image = Set('Images')
     copies = Set('MediaCopies')
+
+    queue = Set('MediaQueue')
+
+    def get_queue(self):
+        return list(MediaQueue.select().order_by(MediaQueue.id).order_by(lambda c: desc(c.user.priority)))
+
+    def pop(self):
+        return_value = self.get_queue()[0]
+        return_value.delete()
+        return return_value
+
+
 
 
 class Request(db.Entity):
@@ -135,6 +165,18 @@ class LibrarianEnrollment(db.Entity):
     faculty = Required(bool)
     address = Required(str)
     registrykey = PrimaryKey(str, max_len=100)
+
+
+
+class MediaQueue(db.Entity):
+    mediaID = Required(Media)
+    user = Required(User)
+    requestDate = Required(datetime.datetime,
+                           default=datetime.datetime.utcnow)
+
+    def is_empty(self):
+        return len(list(MediaQueue.select(lambda c: c.mediaID == media))) == 0
+
 
 
 db.generate_mapping(create_tables=True)

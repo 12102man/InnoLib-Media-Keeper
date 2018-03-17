@@ -1,3 +1,4 @@
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import config as config
 import logging
@@ -6,6 +7,7 @@ import database as database
 import json
 from button_actions import convert_to_emoji
 import datetime
+
 
 db = Database()
 # MySQL
@@ -22,6 +24,7 @@ class Scroller:
         self.list = list_update
         self.__length = len(list_update)
         self.__cursor = 0
+
 
     @db_session
     def create_message(self):
@@ -165,6 +168,7 @@ Telephone number: %s \nMedias:\n%s""" % (patron.name, patron.address, patron.ali
         mid_row = []  # Our keyboard has three levels: 'low', 'mid' and 'up'
         up_row = []
 
+
         callback_next = 0  # Callback data for buttons 'Next' and 'Prev' (replaced by arrows)
         callback_prev = 0
 
@@ -197,8 +201,30 @@ Telephone number: %s \nMedias:\n%s""" % (patron.name, patron.address, patron.ali
                 mid_row.append(InlineKeyboardButton("Copy", callback_data=json.dumps(
                     {'type': 'media_add_copy', 'argument': self.list[self.__cursor].mediaID})))
 
-            book = json.dumps({'type': 'book', 'argument': 0})
-            up_row.append(InlineKeyboardButton("Book", callback_data=book))
+
+            if not self.list[self.__cursor].availability:
+                user = database.User[self.__telegram_id]
+                if user.is_in_line(self.list[self.__cursor]):
+                    button = json.dumps({'type': 'get_out_of_line', 'argument': 0})
+                    place = user.get_number_in_line(self.list[self.__cursor])
+                    if place == 1:
+                        place = "1st"
+                    elif place == 2:
+                        place = "2nd"
+                    elif place == 3:
+                        place = "3rd"
+                    else:
+                        place = str(place)+"th"
+                    up_row.append(InlineKeyboardButton(
+                        "Get out of line (%s)" % place,
+                        callback_data=button))
+                else:
+                    button = json.dumps({'type': 'get_in_line', 'argument': 0})
+                    up_row.append(InlineKeyboardButton("Get in line", callback_data=button))
+            else:
+                button = json.dumps({'type': 'book', 'argument': 0})
+                up_row.append(InlineKeyboardButton("Book", callback_data=button))
+
 
         elif self.state == 'bookingRequest':
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'bookingRequest'})
