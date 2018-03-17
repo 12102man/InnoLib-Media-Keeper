@@ -161,6 +161,10 @@ def callback_query_selector(bot, update):
     elif query_type == 'ask_for_return':
         ask_for_return(bot, update, argument, parsed_query['user'])
 
+    # Renew media
+    elif query_type == 'renewMedia':
+        renew_media(bot, update, argument)
+        
     # Arrows for switching between cards
     # Selectors for 'next' arrows
     elif query_type == 'nextItem':
