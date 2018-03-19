@@ -79,6 +79,8 @@ def book_media(bot, update):
         session = database.RegistrySession[telegram_id]
         media = list(database.Media.select())[session.media_c]
 
+
+
         # If media can't be booked, then reject booking
         if media.availability == 0:
             bot.edit_message_text(text="🤦🏻‍♂️ Media can't be booked. This item is not available now",

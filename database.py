@@ -34,21 +34,18 @@ class User(db.Entity):
         user_place = list(filter(lambda o: o.user == self, order_of_users))
         return order_of_users.index(user_place[0]) + 1
 
-
-    @db_session
     def renew_copy(self, copy_id):
-    # select log and extend expiry date
+        # select log and extend expiry date
         media = MediaCopies.get(copyID=copy_id).mediaID
         log = Log.get(mediaID=copy_id, libID=self.telegramID)
         if not log.renewed:
             log.expiry_date = generate_expiry_date(media=media,
-                                               patron=self,
-                                               issue_date=log.expiry_date)
+                                                   patron=self,
+                                                   issue_date=log.expiry_date)
             log.renewed = 1
             return 1
         else:
             return 0
-
 
 
 class Media(db.Entity):
@@ -73,8 +70,6 @@ class Media(db.Entity):
         return_value = self.get_queue()[0]
         return_value.delete()
         return return_value
-
-
 
 
 class Request(db.Entity):
@@ -167,7 +162,6 @@ class LibrarianEnrollment(db.Entity):
     registrykey = PrimaryKey(str, max_len=100)
 
 
-
 class MediaQueue(db.Entity):
     mediaID = Required(Media)
     user = Required(User)
@@ -176,7 +170,6 @@ class MediaQueue(db.Entity):
 
     def is_empty(self):
         return len(list(MediaQueue.select(lambda c: c.mediaID == media))) == 0
-
 
 
 db.generate_mapping(create_tables=True)
