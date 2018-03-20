@@ -10,6 +10,9 @@ from scroller import Scroller
 import json
 from button_actions import *
 from key_generator import generate_key
+from telegram.ext import jobqueue
+from datetime import datetime, date, time
+
 import os
 
 # MySQL
@@ -176,6 +179,9 @@ def callback_query_selector(bot, update):
     # Renew media
     elif query_type == 'renewMedia':
         renew_media(bot, update, argument)
+
+    elif query_type == 'my_balance':
+        print_balance(bot, update, argument)
 
     # Arrows for switching between cards
     # Selectors for 'next' arrows
@@ -491,6 +497,27 @@ def create_log_card(bot, update):
 
 
 @db_session
+def check_media_balance(bot, job):
+
+    """
+    checks the penalty for all media in log
+    :param bot: bot object
+    :param update: update object
+    :return: log balance
+    """
+
+    log = Log.get()
+    for item in log:
+        cost = MediaCopies.get(copyID=log.mediaID).cost
+        if log.balance + 100 <= cost:
+            log.balance += 100
+
+morning = time(7, 00)
+j = updater.job_queue
+j.run_daily(check_media_balance, morning)
+
+
+@db_session
 def create_return_media_card(bot, update):
     """
     Creates return media menu card
@@ -723,8 +750,9 @@ def me(bot, update):
 
     my_medias_button = InlineKeyboardButton("My medias",
                                             callback_data=json.dumps({'type': 'my_medias', 'argument': 0}))
-
-    keyboard = [[edit_button, delete_button], [my_medias_button]]
+    my_balance_button = InlineKeyboardButton("My balance",
+                                             callback_data=json.dumps({'type': 'my_balance', 'argument': my_user.telegramID}))
+    keyboard = [[edit_button, delete_button], [my_medias_button], [my_balance_button]]
     keyboard = InlineKeyboardMarkup(keyboard)
     message = "Hello, %s! \nHere is information about you: \n👨‍🎓: %s (@%s) \n🏠: %s \n☎️: %s \n🎓: %s" % (
         my_user.name, my_user.name, my_user.alias, my_user.address, my_user.phone, convert_to_emoji(my_user.faculty))
@@ -898,8 +926,10 @@ def edit_user(bot, update, telegram_id):
     faculty = InlineKeyboardButton("Faculty",
                                    callback_data=json.dumps({'type': 'inverseFaculty', 'argument': telegram_id}))
 
+
     up_row = [name, address]
     low_row = [phone, faculty]
+
     keyboard = InlineKeyboardMarkup([up_row, low_row])
 
     bot.send_message(text="What do you want to change?", chat_id=update.callback_query.message.chat_id,
