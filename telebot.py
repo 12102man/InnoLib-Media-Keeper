@@ -3,13 +3,14 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ConversationHandler, MessageHandler, CallbackQueryHandler
 from telegram.ext import Filters
 from telegram.ext import CommandHandler
-from Core.database import *
+from database import *
 import logging
-import Config.config as config
-from Core.scroller import Scroller
+import config as config
+from scroller import Scroller
 import json
-from Core.button_actions import *
-from Core.key_generator import generate_key
+from button_actions import *
+from key_generator import generate_key
+import os
 
 # MySQL
 db = Database()
@@ -68,6 +69,18 @@ def callback_query_selector(bot, update):
     elif query_type == 'book':
         book_media(bot, update)
 
+    elif query_type == 'get_in_line':
+        add_in_line(bot, update)
+    elif query_type == 'get_out_of_line':
+        query = update.callback_query
+        telegram_id = query.message.chat_id
+        session = database.RegistrySession[telegram_id]
+        media = list(database.Media.select())[session.media_c]
+        MediaQueue.select(lambda c: c.user == User[telegram_id] and c.mediaID == media).delete()
+        bot.edit_message_text(text="You got out of the line!",
+                              chat_id=query.message.chat_id,
+                              message_id=query.message.message_id)
+
     # 'Delete' states
 
     #   Requests for deleting
@@ -98,6 +111,9 @@ def callback_query_selector(bot, update):
         commit()
         bot.send_message(text="User has been successfully deleted!",
                          chat_id=update.callback_query.from_user.id)
+        session = RegistrySession[update.callback_query.from_user.id]
+        session.users_c = 0
+        commit()
     elif query_type == 'cancelDeleteUser':
         bot.send_message(text="User hasn't been deleted!",
                          chat_id=update.callback_query.from_user.id)
@@ -156,6 +172,10 @@ def callback_query_selector(bot, update):
             reject_return(bot, update, parsed_query['id'])
     elif query_type == 'ask_for_return':
         ask_for_return(bot, update, argument, parsed_query['user'])
+
+    # Renew media
+    elif query_type == 'renewMedia':
+        renew_media(bot, update, argument)
 
     # Arrows for switching between cards
     # Selectors for 'next' arrows
@@ -230,14 +250,12 @@ def callback_query_selector(bot, update):
             edit_users_card(bot, update)
 
 
-
 """  Registration process   """
 
 
 # Filter for phone
 def all_numbers(input_string):
     return all(char.isdigit() for char in input_string)
-
 
 
 @db_session
@@ -473,7 +491,6 @@ def create_log_card(bot, update):
 
 
 @db_session
-
 def create_return_media_card(bot, update):
     """
     Creates return media menu card
@@ -537,7 +554,6 @@ def edit_media_card(bot, update):
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
-
 
 
 @db_session
@@ -686,7 +702,6 @@ Here's a list of useful commands, which are only allowed to librarians:
 
 
 @db_session
-
 def me(bot, update):
     """
     Prints out user's menu with information and features
@@ -703,7 +718,9 @@ def me(bot, update):
     edit_button = InlineKeyboardButton("Edit",
                                        callback_data=json.dumps({'type': 'user_edit', 'argument': my_user.telegramID}))
     delete_button = InlineKeyboardButton("Delete",
-                                         callback_data=json.dumps({'type': 'user_delete', 'argument': my_user.telegramID}))
+                                         callback_data=json.dumps(
+                                             {'type': 'user_delete', 'argument': my_user.telegramID}))
+
     my_medias_button = InlineKeyboardButton("My medias",
                                             callback_data=json.dumps({'type': 'my_medias', 'argument': 0}))
 
@@ -756,7 +773,7 @@ def delete_copy(bot, update, args):
     :param args: copy ID
     :return: message with confirmation
     """
-    telegram_id = update.callback_query.message.chat_id
+    telegram_id = update.message.chat_id
 
     #   If user is not a librarian, exit
     if not librarian_authentication(telegram_id):
@@ -780,7 +797,6 @@ def delete_copy(bot, update, args):
 
 @db_session
 def delete_user(bot, update, telegram_id):
-
     """
     Asks librarian if it still wants to delete a particular
     user
@@ -809,7 +825,6 @@ def delete_user(bot, update, telegram_id):
     bot.send_message(text=message, chat_id=current_telegram_id, reply_markup=keyboard)
 
 
-
 @db_session
 def add_copy(bot, update, media_id):
     """
@@ -830,7 +845,6 @@ def add_copy(bot, update, media_id):
 
 @db_session
 def edit_media(bot, update, media_id):
-
     """
     Starting menu for media editing
     :param bot: bot object
@@ -863,7 +877,6 @@ def edit_media(bot, update, media_id):
                      reply_markup=keyboard)
 
 
-
 @db_session
 def edit_user(bot, update, telegram_id):
     """
@@ -894,6 +907,7 @@ def edit_user(bot, update, telegram_id):
 
 
 
+
 @db_session
 def edit_field(bot, update):
 
@@ -912,23 +926,22 @@ def edit_field(bot, update):
     last_value = ""
     try:
         user = User[telegram_id]
-
-    except UnboundLocalError:
+    except ObjectNotFound:
         media = Media.get(mediaID=media_id)
-    if field == 'title':
-        last_value = media.name
-    elif field == 'author':
-        last_value = media.authors
-    elif field == 'fine':
-        last_value = str(media.fine)
-    elif field == 'price':
-        last_value = str(media.cost)
-    elif field == 'name':
-        last_value = user.name
-    elif field == 'addr':
-        last_value = user.address
-    elif field == 'phone':
-        last_value = str(user.phone)
+        if field == 'title':
+            last_value = media.name
+        elif field == 'author':
+            last_value = media.authors
+        elif field == 'fine':
+            last_value = str(media.fine)
+        elif field == 'price':
+            last_value = str(media.cost)
+        elif field == 'name':
+            last_value = user.name
+        elif field == 'addr':
+            last_value = user.address
+        elif field == 'phone':
+            last_value = str(user.phone)
 
     session = RegistrySession[telegram_id]
     session.edit_media_cursor = media_id
@@ -944,7 +957,6 @@ def edit_field(bot, update):
 
 @db_session
 def change_value(bot, update):
-
     """
     Changes certain value
     :param bot: bot object
@@ -985,7 +997,6 @@ def change_value(bot, update):
 
 
 @db_session
-
 def create_new_media(bot, update):
     """
     Menu for adding a new media
@@ -993,7 +1004,7 @@ def create_new_media(bot, update):
     :param update: update object
     :return: media added
     """
-    session = RegistrySession.get(telegram_ID=update.message.chat_id)
+    session = RegistrySession.get(telegramID=update.message.chat_id)
     if session is not None:
         if session.type == "":
             if update.message.text == "/add_media":
@@ -1048,14 +1059,13 @@ def create_new_media(bot, update):
                              chat_id=update.message.chat_id)
             return new_media_conversation.END
     else:
-        RegistrySession(telegram_ID=update.message.chat_id)
+        RegistrySession(telegramID=update.message.chat_id)
         bot.send_message(text="Please, enter Title: ", chat_id=update.message.chat_id)
         return NOT_FINISHED
 
 
 @db_session
 def create_new_user(bot, update):
-
     """
     Menu for adding a new user
     :param bot: bot object
@@ -1106,7 +1116,6 @@ def create_new_user(bot, update):
 
 
 def cancel_process(bot, update):
-
     """
     Cancel conversations
     :param bot: bot object
@@ -1115,6 +1124,20 @@ def cancel_process(bot, update):
     """
     bot.send_message(text="Process has been cancelled.", chat_id=update.message.chat_id)
 
+
+@db_session
+def renew_media(bot, update, argument):
+    # select log and extend expiry date
+    user = User.get(telegramID=update.callback_query.message.chat_id)
+    renewed = user.renew_copy(argument)
+    if renewed:
+        bot.edit_message_text(text="You successfully renewed the media!",
+                              chat_id=update.callback_query.message.chat_id,
+                              message_id=update.callback_query.message.message_id)
+    else:
+        bot.edit_message_text(text="You are already renewed this media!",
+                              chat_id=update.callback_query.message.chat_id,
+                              message_id=update.callback_query.message.message_id)
 
 @db_session
 def confirm_user(bot, update, args):
@@ -1138,6 +1161,22 @@ def confirm_user(bot, update, args):
                      chat_id=update.message.chat_id)
     enroll_request.delete()
     commit()
+
+    
+@db_session
+def reboot(bot, update):
+    """
+    This function reboots system (for TC9)
+    :param bot: bot object
+    :param update: update object
+    :return: rebooted system
+    """
+    telegram_id = update.message.chat_id
+    if not librarian_authentication(telegram_id):
+        return 0
+    bot.send_message(text="Rebooting...",
+                     chat_id=update.message.chat_id)
+    os.system("reboot")
 
 
 """
@@ -1187,6 +1226,7 @@ dispatcher.add_handler(edit_conv)
 
 search_query_handler = CallbackQueryHandler(callback_query_selector)
 dispatcher.add_handler(CommandHandler('requests', create_request_card))
+dispatcher.add_handler(CommandHandler('reboot', reboot))
 dispatcher.add_handler(CommandHandler('return', create_return_media_card))
 dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', create_booking_request_card))

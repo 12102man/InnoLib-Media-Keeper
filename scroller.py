@@ -1,16 +1,16 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-import Config.config as config
+import database as database
+import json
 import logging
 from pony.orm import *
-import Core.database as database
-import json
-from Core.button_actions import convert_to_emoji
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+
+import config as config
+from button_actions import convert_to_emoji
 
 db = Database()
 # MySQL
 
 db.bind(provider='mysql', host=config.db_host, user=config.db_username, passwd=config.db_password, db=config.db_name)
-
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -22,8 +22,6 @@ class Scroller:
         self.list = list_update
         self.__length = len(list_update)
         self.__cursor = 0
-
-
 
     @db_session
     def create_message(self):
@@ -145,7 +143,6 @@ Alias: @%s
 Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.phone)
             return message
 
-
     def create_keyboard(self):
         """
         This function creates buttons under the message for navigation
@@ -155,7 +152,6 @@ Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.pho
         low_row = []  # Keyboard is a converted three-dimensional array.
         mid_row = []  # Our keyboard has three levels: 'low', 'mid' and 'up'
         up_row = []
-
 
         callback_next = 0  # Callback data for buttons 'Next' and 'Prev' (replaced by arrows)
         callback_prev = 0
@@ -189,8 +185,28 @@ Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.pho
                 mid_row.append(InlineKeyboardButton("Copy", callback_data=json.dumps(
                     {'type': 'media_add_copy', 'argument': self.list[self.__cursor].mediaID})))
 
-            book = json.dumps({'type': 'book', 'argument': 0})
-            up_row.append(InlineKeyboardButton("Book", callback_data=book))
+            if not self.list[self.__cursor].availability:
+                user = database.User[self.__telegram_id]
+                if user.is_in_line(self.list[self.__cursor]):
+                    button = json.dumps({'type': 'get_out_of_line', 'argument': 0})
+                    place = user.get_number_in_line(self.list[self.__cursor])
+                    if place == 1:
+                        place = "1st"
+                    elif place == 2:
+                        place = "2nd"
+                    elif place == 3:
+                        place = "3rd"
+                    else:
+                        place = str(place) + "th"
+                    up_row.append(InlineKeyboardButton(
+                        "Get out of line (%s)" % place,
+                        callback_data=button))
+                else:
+                    button = json.dumps({'type': 'get_in_line', 'argument': 0})
+                    up_row.append(InlineKeyboardButton("Get in line", callback_data=button))
+            else:
+                button = json.dumps({'type': 'book', 'argument': 0})
+                up_row.append(InlineKeyboardButton("Book", callback_data=button))
 
         elif self.state == 'bookingRequest':
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'bookingRequest'})
@@ -214,6 +230,9 @@ Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.pho
         elif self.state == 'user_medias':
             up_row.append(InlineKeyboardButton("Return", callback_data=json.dumps(
                 {'type': 'returnMedia', 'argument': self.list[self.__cursor].mediaID})))
+            if not self.list[self.__cursor].renewed:
+                up_row.append(InlineKeyboardButton("Renew", callback_data=json.dumps(
+                    {'type': 'renewMedia', 'argument': self.list[self.__cursor].mediaID})))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'my_medias'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'my_medias'})
 
