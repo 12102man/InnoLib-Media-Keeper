@@ -12,6 +12,7 @@ from button_actions import *
 from key_generator import generate_key
 from telegram.ext import jobqueue
 from datetime import datetime, date, time
+
 import os
 
 # MySQL
@@ -512,7 +513,7 @@ def check_media_balance(bot, job):
             log.balance += 100
 
 morning = time(7, 00)
-j = jobqueue
+j = updater.job_queue
 j.run_daily(check_media_balance, morning)
 
 
@@ -749,7 +750,6 @@ def me(bot, update):
 
     my_medias_button = InlineKeyboardButton("My medias",
                                             callback_data=json.dumps({'type': 'my_medias', 'argument': 0}))
-
     my_balance_button = InlineKeyboardButton("My balance",
                                              callback_data=json.dumps({'type': 'my_balance', 'argument': my_user.telegramID}))
     keyboard = [[edit_button, delete_button], [my_medias_button], [my_balance_button]]
@@ -929,7 +929,7 @@ def edit_user(bot, update, telegram_id):
 
     up_row = [name, address]
     low_row = [phone, faculty]
-    #how to put?
+
     keyboard = InlineKeyboardMarkup([up_row, low_row])
 
     bot.send_message(text="What do you want to change?", chat_id=update.callback_query.message.chat_id,

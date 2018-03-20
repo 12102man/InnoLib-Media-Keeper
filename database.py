@@ -18,7 +18,6 @@ class User(db.Entity):
     alias = Required(str)
     phone = Required(str)
     faculty = Required(bool)
-
     balance = Optional(int)
     priority = Optional(int, default=4)
     queue = Set('MediaQueue')
@@ -47,6 +46,7 @@ class User(db.Entity):
             return 1
         else:
             return 0
+
     def check_balance(self):
         #returns sum of
         balance = Log.get(libID=self.telegramID).balance
@@ -54,6 +54,7 @@ class User(db.Entity):
         for i in balance:
             sum += int(i)
         return balance
+
 
 
 class Media(db.Entity):

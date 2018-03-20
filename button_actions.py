@@ -177,6 +177,7 @@ def accept_return(bot, update, request_id):
     #   Setting log.return to 1
     log_record = database.Log.select(lambda c: c.mediaID == request.copyID and not c.returned)
     log_record.returned = True
+
     log_record.balance = 0
 
 
@@ -308,6 +309,7 @@ def convert_to_emoji(state):
         return "📀"
     else:
         return state
+
 
 def print_balance(bot, update, telegram_id)
     user = database.User[telegram_id]
