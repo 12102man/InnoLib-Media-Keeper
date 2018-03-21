@@ -170,9 +170,13 @@ def callback_query_selector(bot, update):
     elif query_type == 'accept':
         if argument == 'return_request':
             accept_return(bot, update, parsed_query['id'])
+            session = RegistrySession[update.callback_query.from_user.id]
+            session.return_c = 0
     elif query_type == 'reject':
         if argument == 'return_request':
             reject_return(bot, update, parsed_query['id'])
+            session = RegistrySession[update.callback_query.from_user.id]
+            session.return_c = 0
     elif query_type == 'ask_for_return':
         ask_for_return(bot, update, argument, parsed_query['user'])
 

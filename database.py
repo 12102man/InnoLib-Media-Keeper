@@ -1,6 +1,6 @@
 from pony.orm import *
 
-from button_actions import generate_expiry_date
+from button_actions import generate_expiry_date, check_copy
 import datetime
 
 import config as config
@@ -55,6 +55,25 @@ class User(db.Entity):
         self.balance = balance
         return balance
 
+    def book_media(self, media_item):
+        if not media_item.availability:
+            return -1
+        if not check_copy(media_item.mediaID, self.telegramID):
+            return -2
+
+        copies_to_book = list(
+            MediaCopies.select(lambda c: c.copyID.startswith(str(media_item.mediaID)) and c.available))
+        item = copies_to_book[0]
+
+        Log(libID=self.telegramID, mediaID=item.copyID,
+            expiry_date=generate_expiry_date(media_item, self, datetime.datetime.now()))
+
+        item.available = False
+
+        if len(copies_to_book) == 1:
+            media_item.availability = False
+
+        return 0
 
 
 class Media(db.Entity):
@@ -99,6 +118,45 @@ class MediaRequest(db.Entity):
 class Librarian(db.Entity):
     telegramID = Required(int)
     name = Required(str)
+
+    def check_return(self, copy_id):
+        record = list(Log.select(lambda c: c.mediaID == copy_id and not c.returned))[0]
+        if record.balance != 0:
+            return [0, record.balance]
+        else:
+            return [1, 1]
+
+    def accept_return(self, copy_id):
+        if self.check_return(copy_id)[0] == 1:
+            record = Log.select(lambda c: c.mediaID == copy_id and not c.returned)
+            copy = MediaCopies.get(copyID=copy_id)
+            copy.available = True
+            record.returned = True
+            ReturnRequest.get(copyID=copy_id).delete()
+            media = copy.mediaID
+            if not media.queue.is_empty:
+                user = media.pop().user
+                copy.available = False
+                Log(libID=user.telegramID, mediaID=copy_id,
+                    expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
+                return [2, user.telegramID]
+            return [1, 1]
+        else:
+            return [-1, self.check_return(copy_id)[1]]
+
+    def reject_return(self, copy_id):
+        record = ReturnRequest.get(copyID=copy_id)
+        record.delete()
+
+    def change_balance(self, copy_id, amount):
+        record = Log.select(lambda c: c.mediaID == copy_id and not c.returned)
+        balance = record.balance
+        user_balance = User[record.libID].balance
+        if amount >= balance:
+            improve_balance = amount - balance
+            user_balance += improve_balance
+        else:
+            balance -= amount
 
 
 class Images(db.Entity):
