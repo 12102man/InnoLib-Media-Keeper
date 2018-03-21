@@ -177,6 +177,7 @@ def accept_return(bot, update, request_id):
     #   Setting log.return to 1
     log_record = database.Log.select(lambda c: c.mediaID == request.copyID and not c.returned)
     log_record.returned = True
+    log_record.balance = 0
 
 
     if media.queue.is_empty():
@@ -307,3 +308,22 @@ def convert_to_emoji(state):
         return "📀"
     else:
         return state
+
+def print_balance(bot, update, telegram_id)
+    user = database.User[telegram_id]
+    user.check_balance()
+    overdue = Log.select(lambda c: c.libID == user.telegramID and c.expiry_date <=datetime.datetime.now())
+    elements = ""
+    for element in overdue:
+        elements += """ /"% s/" by % s( % s) \n» """ % (
+            MediaCopies.get[element.mediaID].name, MediaCopies.get[element.mediaID].authors, element.mediaID)
+    if Log.get(libID=user.telegramID) == []:
+        bot.edit_message_text(text="""Your balance is: &s""" & (user.balance),
+                          message_id=update.callback_query.message.message_id,
+                          chat_id=update.callback_query.message.chat_id)
+    else:
+        bot.edit_message_text(text=""""Your balance is: &s
+        Overdue medias: \"&s\"""" & (user.balance, elements),
+                              message_id=update.callback_query.message.message_id,
+                              chat_id=update.callback_query.message.chat_id)
+

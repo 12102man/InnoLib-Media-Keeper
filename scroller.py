@@ -140,7 +140,8 @@ From: %s (@%s)""" % (str(request.id), media.name, media.authors, request.copyID,
             message = """ User %s information:
 Address: %s
 Alias: @%s
-Telephone number: %s""" % (patron.name, patron.address, patron.alias, patron.phone)
+Telephone number: %s
+Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patron.balance)
             return message
 
     def create_keyboard(self):
