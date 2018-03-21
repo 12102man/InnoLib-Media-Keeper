@@ -48,11 +48,11 @@ class User(db.Entity):
             return 0
 
     def check_balance(self):
-        #returns sum of
-        balance = Log.get(libID=self.telegramID).balance
-        sum = 0
-        for i in balance:
-            sum += int(i)
+        balance = 0
+        log_records = Log.select(lambda c: c.libID == self.telegramID)
+        for record in log_records:
+            balance += record.balance
+        self.balance = balance
         return balance
 
 

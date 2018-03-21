@@ -1,4 +1,3 @@
-
 from pony.orm import *
 
 import database as database
@@ -79,8 +78,6 @@ def book_media(bot, update):
         session = database.RegistrySession[telegram_id]
         media = list(database.Media.select())[session.media_c]
 
-
-
         # If media can't be booked, then reject booking
         if media.availability == 0:
             bot.edit_message_text(text="🤦🏻‍♂️ Media can't be booked. This item is not available now",
@@ -129,7 +126,6 @@ def book_media(bot, update):
                               message_id=query.message.message_id)
 
 
-
 def add_in_line(bot, update):
     query = update.callback_query
     telegram_id = query.message.chat_id
@@ -137,7 +133,7 @@ def add_in_line(bot, update):
     media = list(database.Media.select())[session.media_c]
     user = database.User[telegram_id]
     a = list(database.Log.select(
-            lambda c: c.libID == telegram_id and c.mediaID.startswith(str(media.mediaID))))
+        lambda c: c.libID == telegram_id and c.mediaID.startswith(str(media.mediaID))))
     if not user.is_in_line(media) and len(list(database.Log.select(
             lambda c: c.libID == telegram_id and c.mediaID.startswith(str(media.mediaID))))) == 0:
         user.add_to_queue(media)
@@ -180,7 +176,6 @@ def accept_return(bot, update, request_id):
 
     log_record.balance = 0
 
-
     if media.queue.is_empty():
         #   Setting log.return to 1
         log_record = database.Log.select(lambda c: c.mediaID == request.copyID and not c.returned)
@@ -206,9 +201,9 @@ def accept_return(bot, update, request_id):
         bot.edit_message_text(text="Media %s has been successfully returned" % copy_id,
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.message.chat_id)
-        bot.send_message(text="Dear %s, media #%s is available now! You can take it from library, time starts now!" % (user.name, copy_id),
+        bot.send_message(text="Dear %s, media #%s is available now! You can take it from library, time starts now!" % (
+            user.name, copy_id),
                          chat_id=user.telegramID)
-
 
 
 def reject_return(bot, update, request_id):
@@ -240,7 +235,6 @@ You recently took a book %s by %s (%s). Library and librarians need it ASAP. Cou
             abstract_media.name,
             abstract_media.authors,
             copy_id),
-
 
         chat_id=user_id)
     bot.edit_message_text(text="Message to %s(@%s) has been sent" % (user.name, user.alias),
@@ -311,21 +305,24 @@ def convert_to_emoji(state):
         return state
 
 
-def print_balance(bot, update, telegram_id)
+def print_balance(bot, update, telegram_id):
     user = database.User[telegram_id]
     user.check_balance()
-    overdue = Log.select(lambda c: c.libID == user.telegramID and c.expiry_date <=datetime.datetime.now())
+    overdue = database.Log.select(lambda c: c.libID == user.telegramID and c.expiry_date <= datetime.datetime.now())
     elements = ""
-    for element in overdue:
-        elements += """ /"% s/" by % s( % s) \n» """ % (
-            MediaCopies.get[element.mediaID].name, MediaCopies.get[element.mediaID].authors, element.mediaID)
-    if Log.get(libID=user.telegramID) == []:
-        bot.edit_message_text(text="""Your balance is: &s""" & (user.balance),
-                          message_id=update.callback_query.message.message_id,
-                          chat_id=update.callback_query.message.chat_id)
+    if len(overdue) == 0:
+        element = "None"
     else:
-        bot.edit_message_text(text=""""Your balance is: &s
-        Overdue medias: \"&s\"""" & (user.balance, elements),
+        for element in overdue:
+            overdue_days = str((datetime.datetime.now() - element.expiry_date).days)
+            elements += """ \"%s\" by %s (%s) for %s day(s)\n""" % (
+                database.MediaCopies.get(copyID=element.mediaID).mediaID.name, database.MediaCopies.get(copyID=element.mediaID).mediaID.authors,
+                element.mediaID, overdue_days)
+    if len(overdue) == 0:
+        bot.edit_message_text(text="""Your balance is: %s""" % (user.balance),
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.message.chat_id)
-
+    else:
+        bot.edit_message_text(text="""Your balance is: %s \nOverdue medias: \n%s""" % (user.balance, elements),
+                              message_id=update.callback_query.message.message_id,
+                              chat_id=update.callback_query.message.chat_id)
