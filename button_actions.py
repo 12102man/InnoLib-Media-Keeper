@@ -2,6 +2,8 @@ from pony.orm import *
 
 import database as database
 import datetime
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+import json
 
 db = Database()
 # MySQL
@@ -152,19 +154,11 @@ def accept_return(bot, update, request_id):
     status = database.Librarian.get(telegramID=update.callback_query.message.chat_id).accept_return(copy_id)
 
     if status[0] == 1:
-        #   Setting log.return to 1
-        log_record = database.Log.select(lambda c: c.mediaID == request.copyID and not c.returned)
-        log_record.returned = True
-        log_record.balance = 0
-
-        #   Correcting user medias
-        media_copy = database.MediaCopies.get(copyID=copy_id)
-        media_copy.available = True
-
         request.delete()
-
         commit()
         bot.send_message(text="Media %s has been successfully returned" % copy_id, chat_id=user_id)
+        user = database.RegistrySession(telegramID=user_id)
+        user.my_medias_c = 0
         bot.edit_message_text(text="Media %s has been successfully returned" % copy_id,
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.message.chat_id)
@@ -185,7 +179,7 @@ def accept_return(bot, update, request_id):
     elif status[0] == -1:
         bot.edit_message_text(text="This user needs to pay %s rubles to return this media item." % status[1],
                               message_id=update.callback_query.message.message_id,
-                              chat_id=update.callback_query.message.chat_id)
+                              chat_id=update.callback_query.message.chat_id, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Pay",callback_data=json.dumps({'type': 'pay','argument': user_id,'media': media.mediaID}))]]))
 
     else:
         bot.edit_message_text(text="Sorry, error has been occurred",
@@ -295,7 +289,7 @@ def convert_to_emoji(state):
 def print_balance(bot, update, telegram_id):
     user = database.User[telegram_id]
     user.check_balance()
-    overdue = database.Log.select(lambda c: c.libID == user.telegramID and c.expiry_date <= datetime.datetime.now())
+    overdue = database.Log.select(lambda c: c.libID == user.telegramID and c.expiry_date <= datetime.datetime.now() and not c.returned)
     elements = ""
     if len(overdue) == 0:
         element = "None"

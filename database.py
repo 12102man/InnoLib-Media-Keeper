@@ -128,7 +128,7 @@ class Librarian(db.Entity):
 
     def accept_return(self, copy_id):
         if self.check_return(copy_id)[0] == 1:
-            record = Log.select(lambda c: c.mediaID == copy_id and not c.returned)
+            record = list(Log.select(lambda c: c.mediaID == copy_id and not c.returned))[0]
             copy = MediaCopies.get(copyID=copy_id)
             copy.available = True
             record.returned = True
@@ -203,8 +203,8 @@ class RegistrySession(db.Entity):
     log_c = Optional(int, default=0)
     edit_media_cursor = Optional(int, default=0)
     edit_media_state = Optional(str)
-    my_medias_c = Optional(int)
-    return_c = Optional(int)
+    my_medias_c = Optional(int, default=0)
+    return_c = Optional(int, default=0)
     users_c = Optional(int, default=0)
 
     # Fields for media adding
