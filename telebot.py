@@ -261,6 +261,18 @@ def callback_query_selector(bot, update):
             session.users_c -= 1
             commit()
             edit_users_card(bot, update)
+    elif query_type == 'outstanding_request':
+            librarian = Librarian.get(telegramID=update.callback_query.from_user.id)
+            status = librarian.outstanding_request(argument)
+            if status[0] == 1:
+                bot.edit_message_text(text="Queue has been deleted",
+                                      message_id=update.callback_query.message.message_id,
+                                      chat_id=update.callback_query.message.chat_id)
+                title = Media[argument].name
+                queue = status[1]
+                for element in queue:
+                    bot.send_message(text="Sorry, you have been deleted from the queue for the following media: %s" % title, chat_id=element.user.telegramID)
+
 
 
 """  Registration process   """

@@ -157,10 +157,11 @@ class Librarian(db.Entity):
     def change_balance(self, copy_id, amount):
         record = Log.select(lambda c: c.mediaID == copy_id and not c.returned)
         record.balance = 0
-
-    def outstanding_request(self, media):
+    def outstanding_request(self, media_id):
+        media = Media[media_id]
+        queue = list(media.queue)
         media.delete_queue()
-        return 1
+        return [1, queue]
 
 class Images(db.Entity):
     mediaID = Required(Media)

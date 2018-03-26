@@ -187,6 +187,8 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
                     {'type': 'media_delete', 'argument': self.list[self.__cursor].mediaID})))
                 mid_row.append(InlineKeyboardButton("Copy", callback_data=json.dumps(
                     {'type': 'media_add_copy', 'argument': self.list[self.__cursor].mediaID})))
+                mid_row.append(InlineKeyboardButton("Outstanding request", callback_data=json.dumps(
+                    {'type': 'outstanding_request', 'argument': self.list[self.__cursor].mediaID})))
 
             if not self.list[self.__cursor].availability:
                 user = database.User[self.__telegram_id]
