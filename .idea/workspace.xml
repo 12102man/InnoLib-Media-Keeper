@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d78e4202-0a47-4043-8125-c51b11caa892" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database.py" afterPath="$PROJECT_DIR$/database.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scroller.py" afterPath="$PROJECT_DIR$/scroller.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,7 +32,7 @@
       <file leaf-file-name="scroller.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scroller.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3077">
+            <state relative-caret-position="17">
               <caret line="188" column="95" lean-forward="false" selection-start-line="188" selection-start-column="95" selection-end-line="188" selection-end-column="95" />
               <folding>
                 <element signature="e#0#27#0" expanded="true" />
@@ -239,7 +237,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522062978444</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="delete_queue for outstanding request is added">
+      <created>1522066169821</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1522066169822</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -278,7 +283,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added improved return mechanism for fine" />
     <MESSAGE value="Small changes in return mechanism for fine" />
-    <option name="LAST_COMMIT_MESSAGE" value="Small changes in return mechanism for fine" />
+    <MESSAGE value="delete_queue for outstanding request is added" />
+    <option name="LAST_COMMIT_MESSAGE" value="delete_queue for outstanding request is added" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -608,7 +614,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/scroller.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3077">
+        <state relative-caret-position="17">
           <caret line="188" column="95" lean-forward="false" selection-start-line="188" selection-start-column="95" selection-end-line="188" selection-end-column="95" />
           <folding>
             <element signature="e#0#27#0" expanded="true" />
