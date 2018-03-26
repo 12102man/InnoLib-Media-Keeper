@@ -12,6 +12,7 @@ from button_actions import *
 from key_generator import generate_key
 from telegram.ext import jobqueue
 from datetime import datetime, date, time
+import datetime as dt
 
 import os
 
@@ -228,6 +229,11 @@ def callback_query_selector(bot, update):
             session.users_c += 1
             commit()
             edit_users_card(bot, update)
+        elif argument == 'debtors': # воть тут
+            session = RegistrySession[update.callback_query.from_user.id]
+            session.debtors_c += 1
+            commit()
+            edit_debt_card(bot, update)
 
     # Selectors for 'prev' arrows
     elif query_type == 'prevItem':
@@ -261,6 +267,11 @@ def callback_query_selector(bot, update):
             session.users_c -= 1
             commit()
             edit_users_card(bot, update)
+        elif argument == 'debtors': # воть тут
+            session = RegistrySession[update.callback_query.from_user.id]
+            session.debtors_c -= 1
+            commit()
+            edit_debt_card(bot, update)
     elif query_type == 'outstanding_request':
             librarian = Librarian.get(telegramID=update.callback_query.from_user.id)
             status = librarian.outstanding_request(argument)
@@ -513,6 +524,23 @@ def create_log_card(bot, update):
                          reply_markup=log.create_keyboard())
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+@db_session
+def create_debt_card(bot, update): #воть тут
+
+    """
+    Creates log menu card
+    :param bot: bot object
+    :param update: update object
+    :return: debtor card
+    """
+
+    registry = list(Log.select(lambda c: c.returned == 0 and c.expiry_date < dt.datetime.now()))
+    log = Scroller('debtors', registry, update.message.chat_id)
+    try:
+        bot.send_message(text=log.create_message(), chat_id=update.message.chat_id, reply_markup=log.create_keyboard())
+    except (FileNotFoundError, IndexError) as e:
+        database.RegistrySession[update.message.chat_id].debtors_c = 0
+        bot.send_message(text="Sorry, " + e.args[0] + ". Please, try again", chat_id=update.message.chat_id)
 
 
 @db_session
@@ -664,6 +692,23 @@ def edit_log_card(bot, update):
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
+
+@db_session
+def edit_debt_card(bot, update): #воть тут
+    """
+    Edits log menu card
+    :param bot: bot object
+    :param update: update object
+    :return: debtor card
+    """
+
+    query = update.callback_query
+    registry = list(Log.select(lambda c: c.returned == 0 and c.expiry_date < dt.datetime.now()))
+    log = Scroller('debtors', registry, query.message.chat_id)
+    message = log.create_message()
+    bot.edit_message_text(text=message, chat_id=query.message.chat_id,
+                              message_id=query.message.message_id, reply_markup=log.create_keyboard())
+
 
 
 @db_session
@@ -1291,6 +1336,7 @@ dispatcher.add_handler(CommandHandler('return', create_return_media_card))
 dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', create_booking_request_card))
 dispatcher.add_handler(CommandHandler('log', create_log_card))
+dispatcher.add_handler(CommandHandler('debtors', create_debt_card)) #воть тут
 dispatcher.add_handler(CommandHandler('me', me))
 dispatcher.add_handler(CommandHandler('start', confirm_user, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True))

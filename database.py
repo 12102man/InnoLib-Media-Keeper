@@ -219,6 +219,7 @@ class RegistrySession(db.Entity):
     fine = Optional(int, default=-1)
     publisher = Optional(str, default="")
     no_of_copies = Optional(int)
+    debtors_c = Optional(int, default=0)
 
 
 class ReturnRequest(db.Entity):
