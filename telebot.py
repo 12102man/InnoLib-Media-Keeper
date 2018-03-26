@@ -186,6 +186,9 @@ def callback_query_selector(bot, update):
 
     elif query_type == 'my_balance':
         print_balance(bot, update, argument)
+        
+    elif query_type == 'pay':
+        pay_for_media(bot, update, argument, parsed_query['media'])
 
     # Arrows for switching between cards
     # Selectors for 'next' arrows
@@ -510,11 +513,12 @@ def check_media_balance(bot, job):
     :return: log balance
     """
 
-    log = Log.get()
+    log = Log.select(lambda c: c.expiry_date < datetime.datetime.now())
     for item in log:
-        cost = MediaCopies.get(copyID=log.mediaID).cost
-        if log.balance + 100 <= cost:
-            log.balance += 100
+        cost = MediaCopies.get(copyID=item.mediaID).cost
+        if item.balance + 100 <= cost:
+            item.balance += 100
+
 
 morning = time(7, 00)
 j = updater.job_queue
@@ -1211,6 +1215,16 @@ def reboot(bot, update):
     bot.send_message(text="Rebooting...",
                      chat_id=update.message.chat_id)
     os.system("reboot")
+
+
+@db_session
+def pay_for_media(bot, update, user_id, copy_id):
+    query = update.callback_query
+    record = list(Log.select(lambda c: c.libID == user_id and c.mediaID == copy_id and not c.returned))[0]
+    record.balance = 0
+    bot.edit_message_text(text="Fines for this Media have been returned", chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
 
 
 """

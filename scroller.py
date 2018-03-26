@@ -31,7 +31,7 @@ class Scroller:
         :return: Card with required information
         """
 
-        if self.__cursor < 0 or self.__cursor >= self.__length:
+        if self.__cursor < 0 or self.__cursor > self.__length:
             self.__cursor = 0
             raise UnboundLocalError("Cursor is not in bound")
         if len(self.list) == 0:
@@ -239,11 +239,17 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'my_medias'})
 
         elif self.state == 'return_request':
-            log_record = self.list[self.__cursor].id
-            button_accept = json.dumps({'type': 'accept', 'argument': 'return_request', 'id': log_record})
-            button_reject = json.dumps({'type': 'reject', 'argument': 'return_request', 'id': log_record})
+            return_record = self.list[self.__cursor]
+            log_record = list(database.Log.select(lambda c: c.libID == return_record.telegramID and c.mediaID == return_record.copyID))[0]
 
-            up_row.append(InlineKeyboardButton("✅", callback_data=button_accept))
+            button_accept = json.dumps({'type': 'accept', 'argument': 'return_request', 'id': return_record.id})
+            button_reject = json.dumps({'type': 'reject', 'argument': 'return_request', 'id': return_record.id})
+            button_pay = json.dumps({'type': 'pay','argument': return_record.telegramID,'media': return_record.copyID})
+
+            if log_record.balance != 0:
+                up_row.append(InlineKeyboardButton("💵", callback_data=button_pay))
+            else:
+                up_row.append(InlineKeyboardButton("✅", callback_data=button_accept))
             up_row.append(InlineKeyboardButton("🚫", callback_data=button_reject))
 
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'return_request'})
