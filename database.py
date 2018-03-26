@@ -99,6 +99,10 @@ class Media(db.Entity):
         return_value.delete()
         return return_value
 
+    def delete_queue(self):
+        for element in self.queue:
+            element.delete()
+        return 0
 
 class Request(db.Entity):
     telegramID = Required(int)
@@ -154,6 +158,9 @@ class Librarian(db.Entity):
         record = Log.select(lambda c: c.mediaID == copy_id and not c.returned)
         record.balance = 0
 
+    def outstanding_request(self, media):
+        media.delete_queue()
+        return 1
 
 class Images(db.Entity):
     mediaID = Required(Media)

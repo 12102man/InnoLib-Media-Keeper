@@ -180,6 +180,7 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
             #   Buttons for editing (only for librarian)
 
             if database.Librarian.get(telegramID=self.__telegram_id) is not None:
+
                 mid_row.append(InlineKeyboardButton("Edit", callback_data=json.dumps(
                     {'type': 'media_edit', 'argument': self.list[self.__cursor].mediaID})))
                 mid_row.append(InlineKeyboardButton("Delete", callback_data=json.dumps(
