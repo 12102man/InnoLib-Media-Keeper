@@ -140,6 +140,8 @@ class Librarian(db.Entity):
                 Log(libID=user.telegramID, mediaID=copy_id,
                     expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
                 return [2, user.telegramID]
+            if not copy.mediaID.availability:
+                copy.mediaID.availability = True
             return [1, 1]
         else:
             return [-1, self.check_return(copy_id)[1]]
@@ -150,13 +152,7 @@ class Librarian(db.Entity):
 
     def change_balance(self, copy_id, amount):
         record = Log.select(lambda c: c.mediaID == copy_id and not c.returned)
-        balance = record.balance
-        user_balance = User[record.libID].balance
-        if amount >= balance:
-            improve_balance = amount - balance
-            user_balance += improve_balance
-        else:
-            balance -= amount
+        record.balance = 0
 
 
 class Images(db.Entity):
