@@ -38,7 +38,7 @@ class User(db.Entity):
         # select log and extend expiry date
         media = MediaCopies.get(copyID=copy_id).mediaID
         log = Log.get(mediaID=copy_id, libID=self.telegramID)
-        if not log.renewed:
+        if (not log.renewed) or (User.priority == 3 and len(media.get_queue) == 0):
             log.expiry_date = generate_expiry_date(media=media,
                                                    patron=self,
                                                    issue_date=log.expiry_date)
@@ -241,7 +241,7 @@ class MediaQueue(db.Entity):
                            default=datetime.datetime.utcnow)
 
     def is_empty(self):
-        return len(list(MediaQueue.select(lambda c: c.mediaID == media))) == 0
+        return len(list(MediaQueue.select(lambda c: c.mediaID == Media))) == 0
 
 
 db.generate_mapping(create_tables=True)
