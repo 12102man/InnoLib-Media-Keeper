@@ -1,8 +1,9 @@
-
 from pony.orm import *
 
 import database as database
 import datetime
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+import json
 
 db = Database()
 # MySQL
@@ -79,55 +80,31 @@ def book_media(bot, update):
         session = database.RegistrySession[telegram_id]
         media = list(database.Media.select())[session.media_c]
 
-
-
-        # If media can't be booked, then reject booking
-        if media.availability == 0:
-            bot.edit_message_text(text="🤦🏻‍♂️ Media can't be booked. This item is not available now",
+        status = user.book_media(media)
+        if status == -1:
+            bot.edit_message_text(text="This media is unavailable :( ",
                                   chat_id=query.message.chat_id,
                                   message_id=query.message.message_id)
-        # Else: book an item
-        else:
-            # If user already has a copy, reject request
-            if not check_copy(str(media.mediaID), telegram_id):
-                bot.edit_message_text(text="🤦🏻‍♂ Sorry, but you already have a copy of this book :( ",
-                                      chat_id=query.message.chat_id,
-                                      message_id=query.message.message_id)
-                return 0
+        elif status == -2:
+            bot.edit_message_text(text="You already have this media copy 🤦🏻‍♂",
+                                  chat_id=query.message.chat_id,
+                                  message_id=query.message.message_id)
 
-            # Taking copies list
-            copies_list = list(media.copies)
-            i = 0
-            # Searching for an appropriate copy
-            while not copies_list[i].available and i < len(copies_list):
-                i += 1
-            # Making a record in log
-            database.Log(libID=telegram_id, mediaID=copies_list[i].copyID,
-                         expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
-            copies_list[i].available = False
-
-            # If media has no copies left, set status to False
-            available_list = [x for x in copies_list if x.available]
-
-            # Save mediacopies set
-            if len(available_list) == 0:
-                media.availability = 0
-            copies_list = set(copies_list)
-            media.copies = copies_list
-
+        elif status == 0:
+            bot.edit_message_text(text="🤘 Media has been successfully booked. Please visit the library to get it.",
+                                  chat_id=query.message.chat_id,
+                                  message_id=query.message.message_id)
             # Media cursor - to 0
             session.media_c = 0
-            # Save changes
-            commit()
 
-            bot.edit_message_text(text="🤘 Media has been successfully booked. Please visit the library to get it.",
+        else:
+            bot.edit_message_text(text="Sorry, error has been occurred",
                                   chat_id=query.message.chat_id,
                                   message_id=query.message.message_id)
     else:
         bot.edit_message_text(text="🤦🏻‍♂️ You're not enrolled into the System. Shame on you! Enroll now! /enroll",
                               chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
-
 
 
 def add_in_line(bot, update):
@@ -137,7 +114,7 @@ def add_in_line(bot, update):
     media = list(database.Media.select())[session.media_c]
     user = database.User[telegram_id]
     a = list(database.Log.select(
-            lambda c: c.libID == telegram_id and c.mediaID.startswith(str(media.mediaID))))
+        lambda c: c.libID == telegram_id and c.mediaID.startswith(str(media.mediaID))))
     if not user.is_in_line(media) and len(list(database.Log.select(
             lambda c: c.libID == telegram_id and c.mediaID.startswith(str(media.mediaID))))) == 0:
         user.add_to_queue(media)
@@ -174,31 +151,20 @@ def accept_return(bot, update, request_id):
     user_id = request.telegramID
     media = database.MediaCopies.get(copyID=copy_id).mediaID
 
-    #   Setting log.return to 1
-    log_record = database.Log.select(lambda c: c.mediaID == request.copyID and not c.returned)
-    log_record.returned = True
+    status = database.Librarian.get(telegramID=update.callback_query.message.chat_id).accept_return(copy_id)
 
-    log_record.balance = 0
-
-
-    if media.queue.is_empty():
-        #   Setting log.return to 1
-        log_record = database.Log.select(lambda c: c.mediaID == request.copyID and not c.returned)
-        log_record.returned = True
-
-        #   Correcting user medias
-        media_copy = database.MediaCopies.get(copyID=copy_id)
-        media_copy.available = True
-
+    if status[0] == 1:
         request.delete()
-
         commit()
         bot.send_message(text="Media %s has been successfully returned" % copy_id, chat_id=user_id)
+        user = database.RegistrySession(telegramID=user_id)
+        user.my_medias_c = 0
         bot.edit_message_text(text="Media %s has been successfully returned" % copy_id,
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.message.chat_id)
-    else:
-        user = media.pop().user
+
+    elif status[0] == 2:
+        user = status[1]
         # Making a record in log
         database.Log(libID=user.telegramID, mediaID=copy_id,
                      expiry_date=generate_expiry_date(media, user, datetime.datetime.now()))
@@ -206,9 +172,19 @@ def accept_return(bot, update, request_id):
         bot.edit_message_text(text="Media %s has been successfully returned" % copy_id,
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.message.chat_id)
-        bot.send_message(text="Dear %s, media #%s is available now! You can take it from library, time starts now!" % (user.name, copy_id),
+        bot.send_message(text="Dear %s, media #%s is available now! You can take it from library, time starts now!" % (
+            user.name, copy_id),
                          chat_id=user.telegramID)
 
+    elif status[0] == -1:
+        bot.edit_message_text(text="This user needs to pay %s rubles to return this media item." % status[1],
+                              message_id=update.callback_query.message.message_id,
+                              chat_id=update.callback_query.message.chat_id, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Pay",callback_data=json.dumps({'type': 'pay','argument': user_id,'media': media.mediaID}))]]))
+
+    else:
+        bot.edit_message_text(text="Sorry, error has been occurred",
+                              chat_id=update.callback_query.message.chat_id,
+                              message_id=update.callback_query.message.message_id)
 
 
 def reject_return(bot, update, request_id):
@@ -240,7 +216,6 @@ You recently took a book %s by %s (%s). Library and librarians need it ASAP. Cou
             abstract_media.name,
             abstract_media.authors,
             copy_id),
-
 
         chat_id=user_id)
     bot.edit_message_text(text="Message to %s(@%s) has been sent" % (user.name, user.alias),
@@ -282,8 +257,8 @@ Function checks the number of copies of a particular media and returns True if t
 """
 
 
-def check_copy(copy_id, user_id):
-    a = copy_id.split('-')[0]
+def check_copy(media_id, user_id):
+    a = str(media_id)
     number_of_copies = len(
         database.Log.select(lambda c: c.libID == user_id and not c.returned and c.mediaID.startswith(a)))
     if number_of_copies == 0:
@@ -311,21 +286,25 @@ def convert_to_emoji(state):
         return state
 
 
-def print_balance(bot, update, telegram_id)
+def print_balance(bot, update, telegram_id):
     user = database.User[telegram_id]
     user.check_balance()
-    overdue = Log.select(lambda c: c.libID == user.telegramID and c.expiry_date <=datetime.datetime.now())
+    overdue = database.Log.select(lambda c: c.libID == user.telegramID and c.expiry_date <= datetime.datetime.now() and not c.returned)
     elements = ""
-    for element in overdue:
-        elements += """ /"% s/" by % s( % s) \n» """ % (
-            MediaCopies.get[element.mediaID].name, MediaCopies.get[element.mediaID].authors, element.mediaID)
-    if Log.get(libID=user.telegramID) == []:
-        bot.edit_message_text(text="""Your balance is: &s""" & (user.balance),
-                          message_id=update.callback_query.message.message_id,
-                          chat_id=update.callback_query.message.chat_id)
+    if len(overdue) == 0:
+        element = "None"
     else:
-        bot.edit_message_text(text=""""Your balance is: &s
-        Overdue medias: \"&s\"""" & (user.balance, elements),
+        for element in overdue:
+            overdue_days = str((datetime.datetime.now() - element.expiry_date).days)
+            elements += """ \"%s\" by %s (%s) for %s day(s)\n""" % (
+                database.MediaCopies.get(copyID=element.mediaID).mediaID.name,
+                database.MediaCopies.get(copyID=element.mediaID).mediaID.authors,
+                element.mediaID, overdue_days)
+    if len(overdue) == 0:
+        bot.edit_message_text(text="""Your balance is: %s""" % (user.balance),
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.message.chat_id)
-
+    else:
+        bot.edit_message_text(text="""Your balance is: %s \nOverdue medias: \n%s""" % (user.balance, elements),
+                              message_id=update.callback_query.message.message_id,
+                              chat_id=update.callback_query.message.chat_id)
