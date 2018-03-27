@@ -77,10 +77,6 @@ def callback_query_selector(bot, update):
                               chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
 
-    elif query_type == 'librarianEnrolls':
-        session = RegistrySession.get(telegramID=update.message.chat_id)
-        session.faculty = argument
-        create_new_user(bot, update)
     # 'Delete' states
 
     #   Requests for deleting
@@ -374,11 +370,11 @@ def ask_priority(bot, update):
 
     #   Buttons for answering Yes or No. callback_data is what bot gets as a query (see callback_query_selector())
     reply = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("Student", callback_data=json.dumps({'type': 'priority', 'argument': 0})),
-          InlineKeyboardButton("Instructor", callback_data=json.dumps({'type': 'priority', 'argument': 1}))],
-         [InlineKeyboardButton("TA", callback_data=json.dumps({'type': 'priority', 'argument': 2})),
-          InlineKeyboardButton("Professor", callback_data=json.dumps({'type': 'priority', 'argument': 4}))],
-         [InlineKeyboardButton("Visiting Professor", callback_data=json.dumps({'type': 'priority', 'argument': 3}))]])
+        [[InlineKeyboardButton("Student", callback_data=json.dumps({'type': 'priority', 'argument': 5})),
+          InlineKeyboardButton("Instructor", callback_data=json.dumps({'type': 'priority', 'argument': 4}))],
+         [InlineKeyboardButton("TA", callback_data=json.dumps({'type': 'priority', 'argument': 3})),
+          InlineKeyboardButton("Professor", callback_data=json.dumps({'type': 'priority', 'argument': 1}))],
+         [InlineKeyboardButton("Visiting Professor", callback_data=json.dumps({'type': 'priority', 'argument': 2}))]])
 
     bot.send_message(chat_id=update.message.chat_id, text="Choose your status:", reply_markup=reply)
     return register_conversation.END
@@ -1003,15 +999,15 @@ def edit_field(bot, update):
     if field == 'priority':
         keyboard = InlineKeyboardMarkup(
             [[InlineKeyboardButton("Student",
-                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 0})),
+                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 5})),
               InlineKeyboardButton("Instructor",
-                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 1}))],
-             [InlineKeyboardButton("TA",
-                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 2})),
-              InlineKeyboardButton("Professor",
                                    callback_data=json.dumps({'type': 'priorityEdited', 'argument': 4}))],
+             [InlineKeyboardButton("TA",
+                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 3})),
+              InlineKeyboardButton("Professor",
+                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 1}))],
              [InlineKeyboardButton("Visiting Professor",
-                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 3}))]])
+                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 2}))]])
 
         bot.edit_message_text(text="Your was %s. \nChoose your new status:",
                               message_id=update.callback_query.message.message_id,
@@ -1163,37 +1159,47 @@ def create_new_user(bot, update):
             session.address = update.message.text
             keyboard = InlineKeyboardMarkup(
                 [[InlineKeyboardButton("Student",
-                                       callback_data=json.dumps({'type': 'librarianEnrolls', 'argument': 0})),
+                                       callback_data=json.dumps({'type': 'setState', 'argument': 5})),
                   InlineKeyboardButton("Instructor",
-                                       callback_data=json.dumps({'type': 'librarianEnrolls', 'argument': 1}))],
+                                       callback_data=json.dumps({'type': 'setState', 'argument': 4}))],
                  [InlineKeyboardButton("TA",
-                                       callback_data=json.dumps({'type': 'librarianEnrolls', 'argument': 2})),
+                                       callback_data=json.dumps({'type': 'setState', 'argument': 3})),
                   InlineKeyboardButton("Professor",
-                                       callback_data=json.dumps({'type': 'librarianEnrolls', 'argument': 4}))],
+                                       callback_data=json.dumps({'type': 'setState', 'argument': 1}))],
                  [InlineKeyboardButton("Visiting Professor",
-                                       callback_data=json.dumps({'type': 'librarianEnrolls', 'argument': 3}))]])
+                                       callback_data=json.dumps({'type': 'setState', 'argument': 2}))]])
             bot.send_message(text="Choose his/her status", chat_id=update.message.chat_id,
                              reply_markup=keyboard)
             commit()
-            return NOT_FINISHED
-        elif session.faculty is not None:
-            key = generate_key()
-
-            LibrarianEnrollment(name=session.name, phone=session.phone,
-                                address=session.address, faculty=session.faculty, registrykey=key)
-
-            session.name = ""
-            session.phone = ""
-            session.address = ""
-            commit()
-            bot.send_message(text="User was added. Please, ask User to send the following command:",
-                             chat_id=update.message.chat_id)
-            bot.send_message(text="/start %s" % key,
-                             chat_id=update.message.chat_id)
-            db.execute("UPDATE registrysession SET faculty = NULL WHERE telegramid = %s;" % str(update.message.chat_id))
-            commit()
-
             return new_user_conversation.END
+
+
+@db_session
+def create_user_set_status(bot, update):
+
+    # To get data from pressed button
+    query = update.callback_query.data
+    parsed_query = json.loads(query)
+    argument = parsed_query['argument']
+
+    # Set priority value as in argument
+    session = RegistrySession.get(telegramID=update.callback_query.from_user.id)
+    session.faculty = argument
+    key = generate_key()
+
+    LibrarianEnrollment(name=session.name, phone=session.phone,
+                        address=session.address, faculty=session.faculty, registrykey=key)
+
+    session.name = ""
+    session.phone = ""
+    session.address = ""
+    commit()
+    bot.send_message(text="User was added. Please, ask User to send the following command:",
+                     chat_id=update.callback_query.from_user.id)
+    bot.send_message(text="/start %s" % key,
+                     chat_id=update.callback_query.from_user.id)
+    db.execute("UPDATE registrysession SET faculty = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
+    commit()
 
 
 def cancel_process(bot, update):
@@ -1219,6 +1225,7 @@ def renew_media(bot, update, argument):
         bot.edit_message_text(text="You are already renewed this media!",
                               chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
+
 
 @db_session
 def confirm_user(bot, update, args):
@@ -1304,6 +1311,8 @@ edit_conv = ConversationHandler(entry_points=[CallbackQueryHandler(edit_field, p
 
                                 fallbacks=[CommandHandler('cancel', cancel_process)])
 
+end_create_user = CallbackQueryHandler(create_user_set_status, pattern="^{\"type\": \"setState")
+
 
 """
 This part connects commands, queries and any other input information to features
@@ -1313,6 +1322,7 @@ dispatcher.add_handler(register_conversation)
 dispatcher.add_handler(new_media_conversation)
 dispatcher.add_handler(new_user_conversation)
 dispatcher.add_handler(edit_conv)
+dispatcher.add_handler(end_create_user)
 
 
 search_query_handler = CallbackQueryHandler(callback_query_selector)

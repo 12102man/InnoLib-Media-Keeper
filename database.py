@@ -17,7 +17,6 @@ class User(db.Entity):
     medias = Set('MediaCopies')
     alias = Required(str)
     phone = Required(str)
-    faculty = Required(bool)
     balance = Optional(int)
     priority = Optional(int, default=4)
     queue = Set('MediaQueue')
