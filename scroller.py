@@ -144,6 +144,29 @@ Telephone number: %s
 Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patron.balance)
 
             return message
+        elif self.state == 'debtors': # воть тут
+            self.__cursor = database.RegistrySession[self.__telegram_id].debtors_c
+            debt = self.list[self.__cursor]
+            user = database.User.get(telegramID=debt.libID)
+            message = """ Debtors:
+        Customer: %s
+        What: %s
+        Issue date: %s
+        Expiry date: %s
+        Debt: %s
+        Returned: %s
+        Renewed: %s
+                    """ % (user.name + " (@" + user.alias + ")",
+                           database.MediaCopies.get(copyID=debt.mediaID).mediaID.name + " (" + debt.mediaID + ")",
+                           debt.issue_date.strftime("%d %h %Y, %H:%M "),
+                           debt.expiry_date.strftime("%d %h %Y, %H:%M "),
+                           list(database.Log.select(lambda c: c.mediaID == debt.mediaID and not c.returned))[0].balance, # воть тут
+                           convert_to_emoji(debt.returned),
+                           convert_to_emoji(debt.renewed))
+
+            return message
+
+
 
     def create_keyboard(self):
         """
@@ -264,6 +287,13 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
             up_row.append(InlineKeyboardButton("Delete", callback_data=delete_user))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'users'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'users'})
+        elif self.state == 'debtors': # воть тут
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'debtors'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'debtors'})
+
+            debt = self.list[self.__cursor]
+            up_row.append(InlineKeyboardButton("Ask for return", callback_data=json.dumps(
+                    {'type': 'ask_for_return', 'argument': debt.mediaID, 'user': debt.libID})))
 
         """ If cursor is on the edge position (0 or length of list with records),
 

@@ -109,6 +109,7 @@ class Request(db.Entity):
     name = Required(str)
     address = Required(str)
     phone = Required(str)
+
     faculty = Required(int)
     status = Optional(bool, default=False)
 
@@ -218,6 +219,8 @@ class RegistrySession(db.Entity):
     fine = Optional(int, default=-1)
     publisher = Optional(str, default="")
     no_of_copies = Optional(int)
+    debtors_c = Optional(int, default=0)
+
 
 
 class ReturnRequest(db.Entity):
