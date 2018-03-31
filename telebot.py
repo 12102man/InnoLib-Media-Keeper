@@ -30,7 +30,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 # States for switching between handlers
 
-NAME, FACULTY, PHONE_NUMBER, ADDRESS, END_OF_SIGNUP, BOOK_SEARCH, ARTICLE_SEARCH, AV_SEARCH, NOT_FINISHED, ENTER_VALUE = range(
+
+NAME, PRIORITY, PHONE_NUMBER, ADDRESS, END_OF_SIGNUP, BOOK_SEARCH, ARTICLE_SEARCH, AV_SEARCH, NOT_FINISHED, ENTER_VALUE = range(
     10)
 
 
@@ -52,17 +53,10 @@ def callback_query_selector(bot, update):
     argument = parsed_query['argument']
 
     #
-    if query_type == 'Faculty':
+    if query_type == 'priority':
 
         session_user = RegistrySession[update.callback_query.from_user.id]
-        session_user.faculty = True
-        commit()
-        end_of_registration(bot, update)
-
-    elif query_type == 'NotFaculty':
-
-        session_user = RegistrySession[update.callback_query.from_user.id]
-        session_user.faculty = False
+        session_user.faculty = argument
         commit()
         end_of_registration(bot, update)
 
@@ -143,12 +137,14 @@ def callback_query_selector(bot, update):
             str(last_state), str(not last_state)),
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.from_user.id)
-    elif query_type == 'inverseFaculty':
-        user = User[argument]
-        user.faculty = not user.faculty
+
+
+    elif query_type == 'priorityEdited':
+        user = User.get(telegramID=update.callback_query.from_user.id)
+        user.priority = argument
         commit()
-        bot.edit_message_text(text="User's faculty state has been changed from %s to %s" % (
-            str(not user.faculty), str(user.faculty)),
+        bot.edit_message_text(text="Status was successfully changed!",
+
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.from_user.id)
 
@@ -315,7 +311,7 @@ def ask_name(bot, update):
         elif session.address is None:
             ask_address(bot, update)
         elif session.faculty is None:
-            ask_faculty(bot, update)
+            ask_priority(bot, update)
     else:
         RegistrySession(telegramID=message.chat_id, alias=message.chat.username)
         bot.send_message(chat_id=update.message.chat_id, text="""Let's start the enrolling process into Innopolis University Library!
@@ -356,7 +352,7 @@ def ask_address(bot, update):
     This is the third handler. It asks for address.
     :param bot: bot object
     :param update: update object
-    :return: FACULTY statement
+    :return: PRIORITY statement
     """
     session_user = RegistrySession[update.message.chat_id]
     message = update.message.text
@@ -365,17 +361,17 @@ def ask_address(bot, update):
         session_user.phone = update.message.text
         bot.send_message(chat_id=update.message.chat_id, text="Please, write your address")
         commit()
-        return FACULTY
+        return PRIORITY
     else:
         bot.send_message(chat_id=update.message.chat_id, text="Oops, this is not a phone number, try again")
 
 
 
 @db_session
-def ask_faculty(bot, update):
+def ask_priority(bot, update):
     """
     This is the fourth handler. It asks user's status
-    (faculty member or not)
+    (who is this user)
     :param bot: bot object
     :param update: update object
     :return: end register_conversation
@@ -388,10 +384,13 @@ def ask_faculty(bot, update):
 
     #   Buttons for answering Yes or No. callback_data is what bot gets as a query (see callback_query_selector())
     reply = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("Yes", callback_data=json.dumps({'type': 'Faculty', 'argument': 0})),
-          InlineKeyboardButton("No", callback_data=json.dumps({'type': 'Faculty', 'argument': 0}))]])
+        [[InlineKeyboardButton("Student", callback_data=json.dumps({'type': 'priority', 'argument': 5})),
+          InlineKeyboardButton("Instructor", callback_data=json.dumps({'type': 'priority', 'argument': 4}))],
+         [InlineKeyboardButton("TA", callback_data=json.dumps({'type': 'priority', 'argument': 3})),
+          InlineKeyboardButton("Professor", callback_data=json.dumps({'type': 'priority', 'argument': 1}))],
+         [InlineKeyboardButton("Visiting Professor", callback_data=json.dumps({'type': 'priority', 'argument': 2}))]])
 
-    bot.send_message(chat_id=update.message.chat_id, text="Are you a faculty member?", reply_markup=reply)
+    bot.send_message(chat_id=update.message.chat_id, text="Choose your status:", reply_markup=reply)
     return register_conversation.END
 
 
@@ -524,6 +523,7 @@ def create_log_card(bot, update):
                          reply_markup=log.create_keyboard())
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+
 @db_session
 def create_debt_card(bot, update): #воть тут
 
@@ -820,7 +820,7 @@ def me(bot, update):
     keyboard = [[edit_button, delete_button], [my_medias_button], [my_balance_button]]
     keyboard = InlineKeyboardMarkup(keyboard)
     message = "Hello, %s! \nHere is information about you: \n👨‍🎓: %s (@%s) \n🏠: %s \n☎️: %s \n🎓: %s" % (
-        my_user.name, my_user.name, my_user.alias, my_user.address, my_user.phone, convert_to_emoji(my_user.faculty))
+        my_user.name, my_user.name, my_user.alias, my_user.address, my_user.phone, convert_to_emoji(my_user.priority))
     bot.send_message(text=message, chat_id=telegram_id, reply_markup=keyboard)
 
 
@@ -988,18 +988,19 @@ def edit_user(bot, update, telegram_id):
     phone = InlineKeyboardButton("Phone",
                                  callback_data=json.dumps(
                                      {'type': 'editPhone', 'argument': telegram_id, 'field': 'phone'}))
-    faculty = InlineKeyboardButton("Faculty",
-                                   callback_data=json.dumps({'type': 'inverseFaculty', 'argument': telegram_id}))
-
+    priority = InlineKeyboardButton("Priority",
+                                    callback_data=json.dumps(
+                                        {'type': 'editStat', 'argument': telegram_id, 'field': 'priority'}))
 
     up_row = [name, address]
-    low_row = [phone, faculty]
+    low_row = [phone, priority]
 
     keyboard = InlineKeyboardMarkup([up_row, low_row])
 
-    bot.send_message(text="What do you want to change?", chat_id=update.callback_query.message.chat_id,
-                     reply_markup=keyboard)
-
+    bot.edit_message_text(text="What do you want to change?",
+                          message_id=update.callback_query.message.message_id,
+                          chat_id=update.callback_query.message.chat_id,
+                          reply_markup=keyboard)
 
 
 
@@ -1037,15 +1038,36 @@ def edit_field(bot, update):
             last_value = user.address
         elif field == 'phone':
             last_value = str(user.phone)
+        elif field == 'priority':
+            last_value = user.priority
 
     session = RegistrySession[telegram_id]
     session.edit_media_cursor = media_id
     session.edit_media_state = field
     commit()
 
-    bot.edit_message_text(text="Last value: %s \nPlease, enter new value:" % last_value,
-                          message_id=update.callback_query.message.message_id,
-                          chat_id=update.callback_query.message.chat_id)
+
+    if field == 'priority':
+        keyboard = InlineKeyboardMarkup(
+            [[InlineKeyboardButton("Student",
+                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 5})),
+              InlineKeyboardButton("Instructor",
+                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 4}))],
+             [InlineKeyboardButton("TA",
+                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 3})),
+              InlineKeyboardButton("Professor",
+                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 1}))],
+             [InlineKeyboardButton("Visiting Professor",
+                                   callback_data=json.dumps({'type': 'priorityEdited', 'argument': 2}))]])
+
+        bot.edit_message_text(text="Your was %s. \nChoose your new status:",
+                              message_id=update.callback_query.message.message_id,
+                              chat_id=update.callback_query.message.chat_id,
+                              reply_markup=keyboard)
+    else:
+        bot.edit_message_text(text="Last value: %s \nPlease, enter new value:" % last_value,
+                              message_id=update.callback_query.message.message_id,
+                              chat_id=update.callback_query.message.chat_id)
 
     return ENTER_VALUE
 
@@ -1186,28 +1208,50 @@ def create_new_user(bot, update):
             return NOT_FINISHED
         elif session.address == "":
             session.address = update.message.text
-            bot.send_message(text="Is he/she a faculty member?", chat_id=update.message.chat_id)
+            keyboard = InlineKeyboardMarkup(
+                [[InlineKeyboardButton("Student",
+                                       callback_data=json.dumps({'type': 'setState', 'argument': 5})),
+                  InlineKeyboardButton("Instructor",
+                                       callback_data=json.dumps({'type': 'setState', 'argument': 4}))],
+                 [InlineKeyboardButton("TA",
+                                       callback_data=json.dumps({'type': 'setState', 'argument': 3})),
+                  InlineKeyboardButton("Professor",
+                                       callback_data=json.dumps({'type': 'setState', 'argument': 1}))],
+                 [InlineKeyboardButton("Visiting Professor",
+                                       callback_data=json.dumps({'type': 'setState', 'argument': 2}))]])
+            bot.send_message(text="Choose his/her status", chat_id=update.message.chat_id,
+                             reply_markup=keyboard)
             commit()
-            return NOT_FINISHED
-        elif session.faculty is None:
-            session.faculty = update.message.text
-            key = generate_key()
-
-            LibrarianEnrollment(name=session.name, phone=session.phone,
-                                address=session.address, faculty=session.faculty, registrykey=key)
-
-            session.name = ""
-            session.phone = ""
-            session.address = ""
-            commit()
-            bot.send_message(text="User was added. Please, ask User to send the following command:",
-                             chat_id=update.message.chat_id)
-            bot.send_message(text="/start %s" % key,
-                             chat_id=update.message.chat_id)
-            db.execute("UPDATE registrysession SET faculty = NULL WHERE telegramid = %s;" % str(update.message.chat_id))
-            commit()
-
             return new_user_conversation.END
+
+
+@db_session
+def create_user_set_status(bot, update):
+
+    # To get data from pressed button
+    query = update.callback_query.data
+    parsed_query = json.loads(query)
+    argument = parsed_query['argument']
+
+    # Set priority value as in argument
+    session = RegistrySession.get(telegramID=update.callback_query.from_user.id)
+    session.faculty = argument
+    key = generate_key()
+
+    LibrarianEnrollment(name=session.name, phone=session.phone,
+                        address=session.address, faculty=session.faculty, registrykey=key)
+
+    session.name = ""
+    session.phone = ""
+    session.address = ""
+    commit()
+    bot.send_message(text="User was added. Please, ask User to send the following command:",
+                     chat_id=update.callback_query.from_user.id)
+    bot.send_message(text="/start %s" % key,
+                     chat_id=update.callback_query.from_user.id)
+    db.execute("UPDATE registrysession SET faculty = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
+    commit()
+
 
 
 def cancel_process(bot, update):
@@ -1234,6 +1278,7 @@ def renew_media(bot, update, argument):
                               chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
 
+
 @db_session
 def confirm_user(bot, update, args):
     """
@@ -1251,7 +1296,7 @@ def confirm_user(bot, update, args):
         return 0
 
     User(name=enroll_request.name, address=enroll_request.address, phone=enroll_request.phone,
-         faculty=enroll_request.faculty, telegramID=update.message.chat_id, alias=update.message.from_user.username)
+         priority=enroll_request.faculty, telegramID=update.message.chat_id, alias=update.message.from_user.username)
     bot.send_message(text="Hello %s! You have been successfully enrolled" % enroll_request.name,
                      chat_id=update.message.chat_id)
     enroll_request.delete()
@@ -1294,7 +1339,8 @@ register_conversation = ConversationHandler(entry_points=[CommandHandler("enroll
                                             states={
                                                 PHONE_NUMBER: [MessageHandler(Filters.text, ask_phone)],
                                                 ADDRESS: [MessageHandler(Filters.text, ask_address)],
-                                                FACULTY: [MessageHandler(Filters.text, ask_faculty)]
+                                                PRIORITY: [MessageHandler(Filters.text, ask_priority)]
+
                                             },
 
                                             fallbacks=[CommandHandler('cancel', cancel_process)])
@@ -1318,6 +1364,8 @@ edit_conv = ConversationHandler(entry_points=[CallbackQueryHandler(edit_field, p
 
                                 fallbacks=[CommandHandler('cancel', cancel_process)])
 
+end_create_user = CallbackQueryHandler(create_user_set_status, pattern="^{\"type\": \"setState")
+
 
 """
 This part connects commands, queries and any other input information to features
@@ -1327,6 +1375,8 @@ dispatcher.add_handler(register_conversation)
 dispatcher.add_handler(new_media_conversation)
 dispatcher.add_handler(new_user_conversation)
 dispatcher.add_handler(edit_conv)
+dispatcher.add_handler(end_create_user)
+
 
 
 search_query_handler = CallbackQueryHandler(callback_query_selector)

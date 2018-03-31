@@ -294,6 +294,7 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
             debt = self.list[self.__cursor]
             up_row.append(InlineKeyboardButton("Ask for return", callback_data=json.dumps(
                     {'type': 'ask_for_return', 'argument': debt.mediaID, 'user': debt.libID})))
+
         """ If cursor is on the edge position (0 or length of list with records),
 
         then don't append one of arrows."""

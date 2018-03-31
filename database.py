@@ -17,7 +17,6 @@ class User(db.Entity):
     medias = Set('MediaCopies')
     alias = Required(str)
     phone = Required(str)
-    faculty = Required(bool)
     balance = Optional(int)
     priority = Optional(int, default=4)
     queue = Set('MediaQueue')
@@ -110,7 +109,8 @@ class Request(db.Entity):
     name = Required(str)
     address = Required(str)
     phone = Required(str)
-    faculty = Required(bool)
+
+    faculty = Required(int)
     status = Optional(bool, default=False)
 
 
@@ -198,7 +198,7 @@ class RegistrySession(db.Entity):
     name = Optional(str, default="")
     phone = Optional(str, default="")
     address = Optional(str, default="")
-    faculty = Optional(bool)
+    faculty = Optional(int, default="4")
 
     # Cursors for different tables
     request_c = Optional(int, default=0)
@@ -222,6 +222,7 @@ class RegistrySession(db.Entity):
     debtors_c = Optional(int, default=0)
 
 
+
 class ReturnRequest(db.Entity):
     telegramID = Required(int)
     copyID = Required(str)
@@ -230,7 +231,7 @@ class ReturnRequest(db.Entity):
 class LibrarianEnrollment(db.Entity):
     name = Required(str)
     phone = Required(str)
-    faculty = Required(bool)
+    faculty = Required(int)
     address = Required(str)
     registrykey = PrimaryKey(str, max_len=100)
 
