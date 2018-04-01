@@ -17,7 +17,6 @@ class User(db.Entity):
     medias = Set('MediaCopies')
     alias = Required(str)
     phone = Required(str)
-    faculty = Required(bool)
     balance = Optional(int)
     priority = Optional(int, default=4)
     queue = Set('MediaQueue')
@@ -110,7 +109,8 @@ class Request(db.Entity):
     name = Required(str)
     address = Required(str)
     phone = Required(str)
-    faculty = Required(bool)
+
+    faculty = Required(int)
     status = Optional(bool, default=False)
 
 
@@ -198,7 +198,7 @@ class RegistrySession(db.Entity):
     name = Optional(str, default="")
     phone = Optional(str, default="")
     address = Optional(str, default="")
-    faculty = Optional(bool)
+    faculty = Optional(int, default="4")
 
     # Cursors for different tables
     request_c = Optional(int, default=0)
@@ -219,6 +219,8 @@ class RegistrySession(db.Entity):
     fine = Optional(int, default=-1)
     publisher = Optional(str, default="")
     no_of_copies = Optional(int)
+    debtors_c = Optional(int, default=0)
+
 
 
 class ReturnRequest(db.Entity):
@@ -229,7 +231,7 @@ class ReturnRequest(db.Entity):
 class LibrarianEnrollment(db.Entity):
     name = Required(str)
     phone = Required(str)
-    faculty = Required(bool)
+    faculty = Required(int)
     address = Required(str)
     registrykey = PrimaryKey(str, max_len=100)
 
@@ -241,7 +243,6 @@ class MediaQueue(db.Entity):
                            default=datetime.datetime.utcnow)
 
     def is_empty(self):
-        return len(list(MediaQueue.select(lambda c: c.mediaID == Media))) == 0
-
+        return len(list(MediaQueue.select(lambda c: c.mediaID == self.mediaID))) == 0
 
 db.generate_mapping(create_tables=True)
