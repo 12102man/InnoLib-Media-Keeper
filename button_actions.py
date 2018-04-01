@@ -235,7 +235,7 @@ def generate_expiry_date(media, patron, issue_date):
     date = issue_date
 
     if type_of_media == 'Book':
-        if media.bestseller and patron.faculty != 1:
+        if media.bestseller and patron.priority == 5 and patron.priority == 2:
             date += datetime.timedelta(weeks=2)
         elif patron.faculty:
             date += datetime.timedelta(weeks=4)
@@ -292,7 +292,7 @@ def print_balance(bot, update, telegram_id):
     overdue = database.Log.select(lambda c: c.libID == user.telegramID and c.expiry_date <= datetime.datetime.now() and not c.returned)
     elements = ""
     if len(overdue) == 0:
-        element = "None"
+        elements = "None"
     else:
         for element in overdue:
             overdue_days = str((datetime.datetime.now() - element.expiry_date).days)
