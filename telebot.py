@@ -305,7 +305,11 @@ def ask_name(bot, update):
     if user is not None:
         bot.send_message(text="🎓 Sorry, you have already been registered", chat_id=message.chat_id)
         return register_conversation.END
-    elif session is not None:
+    elif session is not None and message != "/enroll":
+        if session.name is None:
+            bot.send_message(chat_id=update.message.chat_id, text="""Let's start the enrolling process into Innopolis University Library!
+Please, write your first and last name""")
+            return PHONE_NUMBER
         if session.phone is None:
             ask_phone(bot, update)
         elif session.address is None:
@@ -405,6 +409,9 @@ def end_of_registration(bot, update):
     :return: end register_conversation
     """
     session_user = RegistrySession[update.callback_query.from_user.id]
+    if Request.get(telegramID=session_user.telegramID) is not None:
+        bot.send_message(chat_id=update.callback_query.from_user.id, text="You have already applied for enrollment!")
+        return register_conversation.END
     Request(
         telegramID=session_user.telegramID,
 
@@ -413,6 +420,15 @@ def end_of_registration(bot, update):
         address=session_user.address,
         alias=session_user.alias,
         faculty=session_user.faculty)
+    db.execute(
+        "UPDATE registrysession SET name = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
+    db.execute(
+        "UPDATE registrysession SET phone = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
+    db.execute(
+        "UPDATE registrysession SET address = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
+    db.execute(
+        "UPDATE registrysession SET faculty = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
+    commit()
     commit()
     bot.send_message(chat_id=update.callback_query.from_user.id, text="Application was sent to library!")
     return register_conversation.END
@@ -1192,7 +1208,7 @@ def create_new_user(bot, update):
 
     session = RegistrySession.get(telegramID=update.message.chat_id)
     if session is not None:
-        if session.name == "":
+        if session.name is None:
             if update.message.text == "/add_user":
                 bot.send_message(text="Let's add a new User! Please, enter new user's name",
                                  chat_id=update.message.chat_id)
@@ -1201,12 +1217,12 @@ def create_new_user(bot, update):
             bot.send_message(text="Please, enter new user's phone", chat_id=update.message.chat_id)
             commit()
             return NOT_FINISHED
-        elif session.phone == "":
+        elif session.phone is None:
             session.phone = update.message.text
             bot.send_message(text="Please, enter new user's address", chat_id=update.message.chat_id)
             commit()
             return NOT_FINISHED
-        elif session.address == "":
+        elif session.address is None:
             session.address = update.message.text
             keyboard = InlineKeyboardMarkup(
                 [[InlineKeyboardButton("Student",
@@ -1238,18 +1254,22 @@ def create_user_set_status(bot, update):
     session.faculty = argument
     key = generate_key()
 
-    LibrarianEnrollment(name=session.name, phone=session.phone,
-                        address=session.address, faculty=session.faculty, registrykey=key)
+    LibrarianEnrollment(name=session.name, phone=session.phone,address=session.address, faculty=session.faculty, registrykey=key)
 
-    session.name = ""
-    session.phone = ""
-    session.address = ""
+    db.execute(
+        "UPDATE registrysession SET name = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
+    db.execute(
+        "UPDATE registrysession SET phone = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
+    db.execute(
+        "UPDATE registrysession SET address = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
+    db.execute(
+        "UPDATE registrysession SET faculty = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
     commit()
     bot.send_message(text="User was added. Please, ask User to send the following command:",
                      chat_id=update.callback_query.from_user.id)
     bot.send_message(text="/start %s" % key,
                      chat_id=update.callback_query.from_user.id)
-    db.execute("UPDATE registrysession SET faculty = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
+
     commit()
 
 
@@ -1290,6 +1310,9 @@ def confirm_user(bot, update, args):
     """
 
     key = "".join(args).strip()
+    if not key:
+        bot.send_message(text="Please, enter enrolling key after /start", chat_id=update.message.chat_id)
+        return 0
     enroll_request = LibrarianEnrollment.get(registrykey=key)
     if enroll_request is None:
         bot.send_message(text="Error with the key. Please, try again", chat_id=update.message.chat_id)

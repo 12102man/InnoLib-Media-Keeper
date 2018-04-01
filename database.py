@@ -243,7 +243,6 @@ class MediaQueue(db.Entity):
                            default=datetime.datetime.utcnow)
 
     def is_empty(self):
-        return len(list(MediaQueue.select(lambda c: c.mediaID == media))) == 0
-
+        return len(list(MediaQueue.select(lambda c: c.mediaID == self.mediaID))) == 0
 
 db.generate_mapping(create_tables=True)
