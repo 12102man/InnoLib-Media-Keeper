@@ -1294,7 +1294,7 @@ def renew_media(bot, update, argument):
                               chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
     else:
-        bot.edit_message_text(text="You are already renewed this media!",
+        bot.edit_message_text(text="You have already renewed this media!",
                               chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
 
