@@ -79,9 +79,7 @@ def test1():
 
     set_balance(datetime.datetime(2018, 4, 2, 12, 0, 0))
 
-    assert(not user_medias[0].is_expired(datetime.datetime(2018, 4, 2, 12, 0, 0)) and user_medias[0].balance == 0)
-
-
+    assert (not user_medias[0].is_expired(datetime.datetime(2018, 4, 2, 12, 0, 0)) and user_medias[0].balance == 0)
 
 
 @db_session
@@ -128,7 +126,6 @@ def test2():
     assert (v_2.is_expired(today) and v_2.time_expired(today) == 21 and v_2.balance == 1700)
 
 
-
 @db_session
 def test3():
     initial_state()
@@ -163,7 +160,31 @@ def test3():
 
 @db_session
 def test4():
-    assert (False)
+    initial_state()
+    march_nine = datetime.datetime(2018, 3, 29, 12, 0, 0)
+    today = datetime.datetime(2018, 4, 2, 12, 0, 0)
+    p1 = User[1010]
+    s = User[1101]
+    v = User[1110]
+    librarian = Librarian[1]
+
+    p1.book_media(Media[1], march_nine)
+    s.book_media(Media[2], march_nine)
+    v.book_media(Media[2], march_nine)
+
+    librarian.outstanding_request(2, today)
+
+    p1.renew_copy(p1.medias()[0].mediaID, today)
+    s.renew_copy(s.medias()[0].mediaID, today)
+    v.renew_copy(v.medias()[0].mediaID, today)
+
+    p1_1 = librarian.get_user_medias(p1)[0]
+    s_1 = librarian.get_user_medias(s)[0]
+    v_1 = librarian.get_user_medias(v)[0]
+
+    assert (p1_1.expiry_date == datetime.datetime(2018, 4, 30, 12, 0, 0))
+    assert (s_1.expiry_date == today)
+    assert (v_1.expiry_date == today)
 
 
 @db_session
@@ -205,21 +226,39 @@ def test6():
 @db_session
 def test7():
     test6()
+    p1 = User[1010]
+    p2 = User[1011]
+    p3 = User[1100]
+    s = User[1101]
+    v = User[1110]
+    today = datetime.datetime(2018, 4, 2, 12, 0, 0)
     librarian = Librarian[1]
 
-    librarian.outstanding_request()
-
+    status, queue, raw_holders = librarian.outstanding_request(3, today)
+    holders = [User[int(e[0])] for e in raw_holders]
+    assert (status == 1)
     assert (len(Media[3].queue) == 0)
-    # TODO: Notify
+    assert (queue.__contains__(s) and queue.__contains__(v) and queue.__contains__(p3))
+    assert (holders.__contains__(p1) and holders.__contains__(p2))
 
 
 @db_session
 def test8():
     test6()
+    p1 = User[1010]
     p2 = User[1011]
+    p3 = User[1100]
+    s = User[1101]
+    v = User[1110]
+    librarian = Librarian[1]
+    p2.return_media(p2.medias()[0].mediaID)
+    status, popped_user = librarian.accept_return(p2.medias()[0].mediaID)
+    assert (status == 2)
+    assert (User[popped_user] == s)
+    assert (len(p2.medias()) == 0)
 
-    assert (len(Media[3].queue) == 0)
-    # TODO: Notify
+    queue = [e.user for e in Media[3].get_queue()]
+    assert (queue.__contains__(v) and queue.__contains__(p3))
 
 
 @db_session
@@ -245,7 +284,6 @@ def test9():
     assert (users == [s, v, p3])
 
 
-
 @db_session
 def test10():
     initial_state()
@@ -269,7 +307,7 @@ def test10():
                                                                                                      0))
     assert (
         Media[int(v_1.mediaID.split('-')[0])] == Media[1] and v_1.expiry_date == datetime.datetime(2018, 4, 5, 12, 0,
-                                                                                                     0))
+                                                                                                   0))
 
 
 tests_array = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10]
@@ -277,6 +315,6 @@ tests_array = [test1, test2, test3, test4, test5, test6, test7, test8, test9, te
 for i in range(0, len(tests_array)):
     try:
         tests_array[i]()
-        print("Test %d OK" % (i+1))
+        print("Test %d OK" % (i + 1))
     except (AssertionError, TypeError) as e:
-        print(("Test %d FAIL \nError: " + str(e)) % (i+1))
+        print(("Test %d FAIL \nError: " + str(e)) % (i + 1))

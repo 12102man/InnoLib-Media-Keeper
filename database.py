@@ -21,7 +21,7 @@ class User(db.Entity):
     queue = Set('MediaQueue')
 
     def medias(self):
-        return list(Log.select(lambda c: c.libID == self.telegramID))
+        return list(Log.select(lambda c: c.libID == self.telegramID and not c.returned))
 
 
     def add_to_queue(self, media_id):
@@ -154,8 +154,9 @@ class Librarian(db.Entity):
             copy.available = True
             record.returned = True
             ReturnRequest.get(copyID=copy_id).delete()
+            commit()
             media = copy.mediaID
-            if not media.queue.is_empty:
+            if len(media.queue) > 0:
                 user = media.pop().user
                 copy.available = False
                 Log(libID=user.telegramID, mediaID=copy_id,
@@ -175,15 +176,17 @@ class Librarian(db.Entity):
         record = Log.select(lambda c: c.mediaID == copy_id and not c.returned)
         record.balance = 0
 
-    def outstanding_request(self, media_id):
+    def outstanding_request(self, media_id, date):
         media = Media[media_id]
-        queue = list(media.queue)
+        queue = []
+        for element in media.queue:
+            queue.append(element.user)
         media.delete_queue()
         checked_out_copies = list(Log.select(lambda c: c.returned == 0 and c.mediaID.startswith(str(media.mediaID))))
         holders = []
         for i in range(len(checked_out_copies)):
             checked_out_copies[i].renewed = 1
-            checked_out_copies[i].expiry_date = datetime.datetime.now()
+            checked_out_copies[i].expiry_date = date
             holders.append([checked_out_copies[i].libID, checked_out_copies[i].mediaID])
 
         return [1, queue, holders]

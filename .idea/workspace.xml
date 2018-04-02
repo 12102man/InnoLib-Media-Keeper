@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d78e4202-0a47-4043-8125-c51b11caa892" name="Default" comment="">
+    <list default="true" id="d78e4202-0a47-4043-8125-c51b11caa892" name="Default" comment="Preparing for testcases-2">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/InnoLib-Media-Keeper.iml" afterPath="$PROJECT_DIR$/.idea/InnoLib-Media-Keeper.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/button_actions.py" afterPath="$PROJECT_DIR$/button_actions.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database.py" afterPath="$PROJECT_DIR$/database.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/telebot.py" afterPath="$PROJECT_DIR$/telebot.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testsD3.py" afterPath="$PROJECT_DIR$/testsD3.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,7 +17,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/InnoLib_Media_Keeper$testsD3.coverage" NAME="testsD3 Coverage Results" MODIFIED="1522689907804" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/InnoLib_Media_Keeper$testsD3.coverage" NAME="testsD3 Coverage Results" MODIFIED="1522692904299" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/InnoLib_Media_Keeper$telebot.coverage" NAME="telebot Coverage Results" MODIFIED="1522611098166" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="DatabaseView">
@@ -50,17 +52,17 @@
       <file leaf-file-name="telebot.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/telebot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="239">
-              <caret line="67" column="15" lean-forward="false" selection-start-line="67" selection-start-column="8" selection-end-line="67" selection-end-column="15" />
+            <state relative-caret-position="524">
+              <caret line="289" column="0" lean-forward="true" selection-start-line="289" selection-start-column="0" selection-end-line="289" selection-end-column="0" />
               <folding>
-                <marker date="1522685438505" expanded="true" signature="16213:16271" ph="UPDATE regis... " />
-                <marker date="1522685438505" expanded="true" signature="16344:16403" ph="UPDATE regis... " />
-                <marker date="1522685438505" expanded="true" signature="16476:16537" ph="UPDATE regis... " />
-                <marker date="1522685438505" expanded="true" signature="16610:16671" ph="UPDATE regis... " />
-                <marker date="1522685438505" expanded="true" signature="47957:48015" ph="UPDATE regis... " />
-                <marker date="1522685438505" expanded="true" signature="48088:48147" ph="UPDATE regis... " />
-                <marker date="1522685438505" expanded="true" signature="48220:48281" ph="UPDATE regis... " />
-                <marker date="1522685438505" expanded="true" signature="48354:48415" ph="UPDATE regis... " />
+                <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
+                <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
+                <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
+                <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
+                <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
+                <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
+                <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
+                <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
               </folding>
             </state>
           </provider>
@@ -69,7 +71,7 @@
       <file leaf-file-name="button_actions.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/button_actions.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="217">
+            <state relative-caret-position="-1981">
               <caret line="100" column="63" lean-forward="false" selection-start-line="100" selection-start-column="63" selection-end-line="100" selection-end-column="63" />
               <folding />
             </state>
@@ -79,8 +81,8 @@
       <file leaf-file-name="testsD3.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/testsD3.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="462">
-              <caret line="191" column="28" lean-forward="true" selection-start-line="191" selection-start-column="28" selection-end-line="191" selection-end-column="28" />
+            <state relative-caret-position="221">
+              <caret line="291" column="28" lean-forward="true" selection-start-line="291" selection-start-column="28" selection-end-line="292" selection-end-column="56" />
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
               </folding>
@@ -91,8 +93,8 @@
       <file leaf-file-name="database.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="658">
-              <caret line="90" column="23" lean-forward="true" selection-start-line="90" selection-start-column="23" selection-end-line="90" selection-end-column="23" />
+            <state relative-caret-position="172">
+              <caret line="150" column="0" lean-forward="false" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
               </folding>
@@ -120,9 +122,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>copi</find>
-      <find>gener</find>
-      <find>check_co</find>
       <find>commit(</find>
       <find>librarian</find>
       <find>j =</find>
@@ -147,9 +146,12 @@
       <find>renew_co</find>
       <find>MediaCopies</find>
       <find>book_me</find>
-      <find>book_media</find>
-      <find>book</find>
       <find>print(&quot;test</find>
+      <find>book_media</find>
+      <find>outs</find>
+      <find>book</find>
+      <find>acce</find>
+      <find>medias()</find>
     </findStrings>
     <replaceStrings>
       <replace>pay_for_media</replace>
@@ -162,9 +164,9 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/scroller.py" />
-        <option value="$PROJECT_DIR$/database.py" />
-        <option value="$PROJECT_DIR$/telebot.py" />
         <option value="$PROJECT_DIR$/button_actions.py" />
+        <option value="$PROJECT_DIR$/telebot.py" />
+        <option value="$PROJECT_DIR$/database.py" />
         <option value="$PROJECT_DIR$/testsD3.py" />
       </list>
     </option>
@@ -328,7 +330,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522686180248</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Preparing for testcases-2">
+      <created>1522690103463</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1522690103463</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -338,8 +347,8 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Heroku" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19410568" sideWeight="0.5015886" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19410568" sideWeight="0.49841145" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329602" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19410568" sideWeight="0.49841145" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23034154" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
@@ -392,29 +401,26 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="Fixed bugs with balance&#10;Added restoring balance feature" />
     <MESSAGE value="Fixed registration balance, checked merged code" />
     <MESSAGE value="Merged Din's code, fixed generate_expiry_date method according to TZ" />
     <MESSAGE value="Fixed minor bugs before delivery" />
     <MESSAGE value="Preparing for testcases" />
-    <option name="LAST_COMMIT_MESSAGE" value="Preparing for testcases" />
+    <MESSAGE value="Preparing for testcases-2" />
+    <option name="LAST_COMMIT_MESSAGE" value="Preparing for testcases-2" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/telebot.py</url>
-          <line>832</line>
+          <line>839</line>
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/button_actions.py</url>
           <line>166</line>
           <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/database.py</url>
-          <line>150</line>
-          <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/scroller.py</url>
@@ -423,17 +429,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/telebot.py</url>
-          <line>759</line>
+          <line>766</line>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/telebot.py</url>
-          <line>1317</line>
+          <line>1324</line>
           <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/telebot.py</url>
-          <line>307</line>
+          <line>314</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -443,11 +449,26 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/testsD3.py</url>
-          <line>150</line>
+          <line>147</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/testsD3.py</url>
+          <line>238</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/testsD3.py</url>
+          <line>255</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/testsD3.py</url>
+          <line>260</line>
+          <option name="timeStamp" value="30" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="27" />
+      <option name="time" value="31" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -475,14 +496,14 @@
         <state relative-caret-position="570">
           <caret line="53" column="31" lean-forward="false" selection-start-line="53" selection-start-column="31" selection-end-line="53" selection-end-column="31" />
           <folding>
-            <marker date="1522685438505" expanded="true" signature="16213:16271" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16344:16403" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16476:16537" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16610:16671" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="47957:48015" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48088:48147" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48220:48281" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48354:48415" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
           </folding>
         </state>
       </provider>
@@ -560,14 +581,14 @@
         <state relative-caret-position="10035">
           <caret line="684" column="0" lean-forward="false" selection-start-line="684" selection-start-column="0" selection-end-line="684" selection-end-column="0" />
           <folding>
-            <marker date="1522685438505" expanded="true" signature="16213:16271" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16344:16403" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16476:16537" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16610:16671" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="47957:48015" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48088:48147" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48220:48281" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48354:48415" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
           </folding>
         </state>
       </provider>
@@ -610,14 +631,14 @@
         <state relative-caret-position="2670">
           <caret line="178" column="32" lean-forward="false" selection-start-line="178" selection-start-column="32" selection-end-line="178" selection-end-column="32" />
           <folding>
-            <marker date="1522685438505" expanded="true" signature="16213:16271" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16344:16403" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16476:16537" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16610:16671" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="47957:48015" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48088:48147" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48220:48281" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48354:48415" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
           </folding>
         </state>
       </provider>
@@ -665,14 +686,14 @@
         <state relative-caret-position="8143">
           <caret line="479" column="0" lean-forward="false" selection-start-line="479" selection-start-column="0" selection-end-line="479" selection-end-column="0" />
           <folding>
-            <marker date="1522685438505" expanded="true" signature="16213:16271" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16344:16403" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16476:16537" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16610:16671" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="47957:48015" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48088:48147" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48220:48281" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48354:48415" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
           </folding>
         </state>
       </provider>
@@ -720,14 +741,14 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1522685438505" expanded="true" signature="16213:16271" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16344:16403" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16476:16537" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16610:16671" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="47957:48015" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48088:48147" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48220:48281" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48354:48415" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
           </folding>
         </state>
       </provider>
@@ -876,18 +897,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
-          <caret line="67" column="15" lean-forward="false" selection-start-line="67" selection-start-column="8" selection-end-line="67" selection-end-column="15" />
+        <state relative-caret-position="524">
+          <caret line="289" column="0" lean-forward="true" selection-start-line="289" selection-start-column="0" selection-end-line="289" selection-end-column="0" />
           <folding>
-            <marker date="1522685438505" expanded="true" signature="16213:16271" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16344:16403" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16476:16537" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="16610:16671" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="47957:48015" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48088:48147" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48220:48281" ph="UPDATE regis... " />
-            <marker date="1522685438505" expanded="true" signature="48354:48415" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
+            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/button_actions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1981">
+          <caret line="100" column="63" lean-forward="false" selection-start-line="100" selection-start-column="63" selection-end-line="100" selection-end-column="63" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -900,26 +929,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="658">
-          <caret line="90" column="23" lean-forward="true" selection-start-line="90" selection-start-column="23" selection-end-line="90" selection-end-column="23" />
+        <state relative-caret-position="172">
+          <caret line="150" column="0" lean-forward="false" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/button_actions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="100" column="63" lean-forward="false" selection-start-line="100" selection-start-column="63" selection-end-line="100" selection-end-column="63" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/testsD3.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="462">
-          <caret line="191" column="28" lean-forward="true" selection-start-line="191" selection-start-column="28" selection-end-line="191" selection-end-column="28" />
+        <state relative-caret-position="221">
+          <caret line="291" column="28" lean-forward="true" selection-start-line="291" selection-start-column="28" selection-end-line="292" selection-end-column="56" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
