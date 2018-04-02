@@ -79,10 +79,9 @@ def test1():
 
     set_balance(datetime.datetime(2018, 4, 2, 12, 0, 0))
 
-    if not user_medias[0].is_expired(datetime.datetime(2018, 4, 2, 12, 0, 0)) and user_medias[0].balance == 0:
-        print("test 1 OK")
-    else:
-        print("test 1 FAIL")
+    assert(not user_medias[0].is_expired(datetime.datetime(2018, 4, 2, 12, 0, 0)) and user_medias[0].balance == 0)
+
+
 
 
 @db_session
@@ -128,7 +127,6 @@ def test2():
     assert (v_1.is_expired(today) and v_1.time_expired(today) == 21 and v_1.balance == 2100)
     assert (v_2.is_expired(today) and v_2.time_expired(today) == 21 and v_2.balance == 1700)
 
-    print("test 2 OK")
 
 
 @db_session
@@ -162,14 +160,123 @@ def test3():
     assert (s_media.expiry_date == datetime.datetime(2018, 4, 16, 12, 0, 0))
     assert (v_media.expiry_date == datetime.datetime(2018, 4, 9, 12, 0, 0))
 
-    print("test 3 OK")
+
+@db_session
+def test4():
+    assert (False)
+
+
+@db_session
+def test5():
+    initial_state()
+    today = datetime.datetime(2018, 4, 2, 12, 0, 0)
+    p1 = User[1010]
+    s = User[1101]
+    v = User[1110]
+
+    p1.book_media(Media[3], today)
+    s.book_media(Media[3], today)
+    v.book_media(Media[3], today)
+
+    assert (Media[3].get_queue()[0].user == v)
+
+
+@db_session
+def test6():
+    initial_state()
+    p1 = User[1010]
+    p2 = User[1011]
+    p3 = User[1100]
+    s = User[1101]
+    v = User[1110]
+    librarian = Librarian[1]
+    today = datetime.datetime(2018, 4, 2, 12, 0, 0)
+
+    p1.book_media(Media[3], today)
+    p2.book_media(Media[3], today)
+    s.book_media(Media[3], today)
+    v.book_media(Media[3], today)
+    p3.book_media(Media[3], today)
+
+    users = [e.user for e in Media[3].get_queue()]
+    assert (users == [s, v, p3])
+
+
+@db_session
+def test7():
+    test6()
+    librarian = Librarian[1]
+
+    librarian.outstanding_request()
+
+    assert (len(Media[3].queue) == 0)
+    # TODO: Notify
+
+
+@db_session
+def test8():
+    test6()
+    p2 = User[1011]
+
+    assert (len(Media[3].queue) == 0)
+    # TODO: Notify
+
+
+@db_session
+def test9():
+    test6()
+    today = datetime.datetime(2018, 4, 2, 12, 0, 0)
+    p1 = User[1010]
+    p3 = User[1100]
+    s = User[1101]
+    v = User[1110]
+    commit()
+    librarian = Librarian[1]
+    p1.renew_copy(p1.medias()[0].mediaID, today)
+    commit()
+
+    p1_1 = librarian.get_user_medias(p1)[0]
+    assert (
+        MediaCopies.get(copyID=p1_1.mediaID).mediaID == Media[3] and p1_1.expiry_date == datetime.datetime(2018, 4, 16,
+                                                                                                           12,
+                                                                                                           0, 0))
+
+    users = [e.user for e in Media[3].get_queue()]
+    assert (users == [s, v, p3])
 
 
 
+@db_session
+def test10():
+    initial_state()
+    p1 = User[1010]
+    v = User[1110]
+    librarian = Librarian[1]
+    march_six = datetime.datetime(2018, 3, 26, 12, 0, 0)
+    march_nine = datetime.datetime(2018, 3, 29, 12, 0, 0)
+
+    p1.book_media(Media[1], march_six)
+    p1.renew_copy(p1.medias()[0].mediaID, march_nine)
+
+    v.book_media(Media[1], march_six)
+    v.renew_copy(v.medias()[0].mediaID, march_nine)
+
+    p1_1 = librarian.get_user_medias(p1)[0]
+    v_1 = librarian.get_user_medias(v)[0]
+
+    assert (
+        Media[int(p1_1.mediaID.split('-')[0])] == Media[1] and p1_1.expiry_date == datetime.datetime(2018, 4, 26, 12, 0,
+                                                                                                     0))
+    assert (
+        Media[int(v_1.mediaID.split('-')[0])] == Media[1] and v_1.expiry_date == datetime.datetime(2018, 4, 5, 12, 0,
+                                                                                                     0))
 
 
+tests_array = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10]
 
-
-
-
-test3()
+for i in range(0, len(tests_array)):
+    try:
+        tests_array[i]()
+        print("Test %d OK" % (i+1))
+    except (AssertionError, TypeError) as e:
+        print(("Test %d FAIL \nError: " + str(e)) % (i+1))

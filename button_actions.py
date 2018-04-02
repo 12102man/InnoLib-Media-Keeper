@@ -98,7 +98,7 @@ def book_media(bot, update):
         session = database.RegistrySession[telegram_id]
         media = list(database.Media.select())[session.media_c]
 
-        status = user.book_media(media)
+        status = user.book_media(media, datetime.datetime.now())
         if status == -1:
             bot.edit_message_text(text="This media is unavailable :( ",
                                   chat_id=query.message.chat_id,

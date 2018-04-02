@@ -14,12 +14,15 @@ class User(db.Entity):
     telegramID = PrimaryKey(int)
     name = Required(str)
     address = Required(str)
-    medias = Set('MediaCopies')
     alias = Required(str)
     phone = Required(str)
     balance = Optional(int)
     priority = Optional(int, default=4)
     queue = Set('MediaQueue')
+
+    def medias(self):
+        return list(Log.select(lambda c: c.libID == self.telegramID))
+
 
     def add_to_queue(self, media_id):
         MediaQueue(user=self, mediaID=media_id)
@@ -32,6 +35,7 @@ class User(db.Entity):
         order_of_users = media.get_queue()
         user_place = list(filter(lambda o: o.user == self, order_of_users))
         return order_of_users.index(user_place[0]) + 1
+
 
     def renew_copy(self, copy_id, date):
         # select log and extend expiry date
@@ -56,8 +60,9 @@ class User(db.Entity):
         self.balance = balance
         return balance
 
-    def book_media(self, media_item):
+    def book_media(self, media_item, date):
         if not media_item.availability:
+            self.add_to_queue(media_item.mediaID)
             return -1
         if not check_copy(media_item.mediaID, self.telegramID):
             return -2
@@ -67,7 +72,7 @@ class User(db.Entity):
         item = copies_to_book[0]
 
         Log(libID=self.telegramID, mediaID=item.copyID,
-            expiry_date=generate_expiry_date(media_item, self, datetime.datetime.now()))
+            expiry_date=generate_expiry_date(media_item, self, date))
 
         item.available = False
 
@@ -207,7 +212,6 @@ class MediaCopies(db.Entity):
     mediaID = Required(Media)
     copyID = Required(str)
     available = Required(bool)
-    current_owner = Optional(User)
 
 
 class RegistrySession(db.Entity):
