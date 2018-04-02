@@ -174,7 +174,14 @@ class Librarian(db.Entity):
         media = Media[media_id]
         queue = list(media.queue)
         media.delete_queue()
-        return [1, queue]
+        checked_out_copies = list(Log.select(lambda c: c.returned == 0 and c.mediaID.startswith(str(media.mediaID))))
+        holders = []
+        for i in range(len(checked_out_copies)):
+            checked_out_copies[i].renewed = 1
+            checked_out_copies[i].expiry_date = datetime.datetime.now()
+            holders.append([checked_out_copies[i].libID, checked_out_copies[i].mediaID])
+
+        return [1, queue, holders]
 
 
 class Images(db.Entity):

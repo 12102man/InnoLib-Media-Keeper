@@ -272,13 +272,20 @@ def callback_query_selector(bot, update):
             librarian = Librarian.get(telegramID=update.callback_query.from_user.id)
             status = librarian.outstanding_request(argument)
             if status[0] == 1:
-                bot.edit_message_text(text="Queue has been deleted",
+                bot.edit_message_text(text="Request completed!",
                                       message_id=update.callback_query.message.message_id,
                                       chat_id=update.callback_query.message.chat_id)
                 title = Media[argument].name
                 queue = status[1]
                 for element in queue:
-                    bot.send_message(text="Sorry, you have been deleted from the queue for the following media: %s" % title, chat_id=element.user.telegramID)
+                    bot.send_message(text="Sorry, you have been deleted from "
+                                          "the queue for the following media: "
+                                          "%s because of an outstanding "
+                                          "request" % title,
+                                     chat_id=element.user.telegramID)
+                holders = status[2]
+                for element in holders:
+                    ask_for_return(bot, update, element[1], element[0])
 
 
 
