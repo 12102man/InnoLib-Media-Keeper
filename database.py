@@ -33,16 +33,18 @@ class User(db.Entity):
         user_place = list(filter(lambda o: o.user == self, order_of_users))
         return order_of_users.index(user_place[0]) + 1
 
-    def renew_copy(self, copy_id):
+    def renew_copy(self, copy_id, date):
         # select log and extend expiry date
         media = MediaCopies.get(copyID=copy_id).mediaID
         log = Log.get(mediaID=copy_id, libID=self.telegramID)
         if (not log.renewed) or (User.priority == 3 and len(media.get_queue) == 0):
             log.expiry_date = generate_expiry_date(media=media,
                                                    patron=self,
-                                                   issue_date=log.expiry_date)
+                                                   issue_date=date)
             log.renewed = 1
+            commit()
             return 1
+
         else:
             return 0
 
@@ -74,6 +76,12 @@ class User(db.Entity):
 
         return 0
 
+    def return_media(self, copy_id):
+        ReturnRequest(
+            telegramID=self.telegramID,
+            copyID=copy_id
+        )
+
 
 class Media(db.Entity):
     mediaID = PrimaryKey(int, auto=True)
@@ -103,6 +111,7 @@ class Media(db.Entity):
             element.delete()
         return 0
 
+
 class Request(db.Entity):
     telegramID = Required(int)
     alias = Required(str)
@@ -129,6 +138,9 @@ class Librarian(db.Entity):
             return [0, record.balance]
         else:
             return [1, 1]
+
+    def get_user_medias(self, user):
+        return list(Log.select(lambda c: c.libID == user.telegramID and not c.returned))
 
     def accept_return(self, copy_id):
         if self.check_return(copy_id)[0] == 1:
@@ -157,11 +169,13 @@ class Librarian(db.Entity):
     def change_balance(self, copy_id, amount):
         record = Log.select(lambda c: c.mediaID == copy_id and not c.returned)
         record.balance = 0
+
     def outstanding_request(self, media_id):
         media = Media[media_id]
         queue = list(media.queue)
         media.delete_queue()
         return [1, queue]
+
 
 class Images(db.Entity):
     mediaID = Required(Media)
@@ -179,6 +193,14 @@ class Log(db.Entity):
     returned = Required(bool, default=0)
     renewed = Required(bool, default=0)
     balance = Optional(int, default=0)
+
+    def is_expired(self, check_date):
+        return self.expiry_date < check_date
+
+    def time_expired(self, check_date):
+        assert self.is_expired(check_date)
+        return (check_date-self.expiry_date).days
+
 
 
 class MediaCopies(db.Entity):
@@ -198,7 +220,7 @@ class RegistrySession(db.Entity):
     name = Optional(str, default="")
     phone = Optional(str, default="")
     address = Optional(str, default="")
-    faculty = Optional(int, default="4")
+    faculty = Optional(int, default=0)
 
     # Cursors for different tables
     request_c = Optional(int, default=0)
@@ -222,7 +244,6 @@ class RegistrySession(db.Entity):
     debtors_c = Optional(int, default=0)
 
 
-
 class ReturnRequest(db.Entity):
     telegramID = Required(int)
     copyID = Required(str)
@@ -244,5 +265,6 @@ class MediaQueue(db.Entity):
 
     def is_empty(self):
         return len(list(MediaQueue.select(lambda c: c.mediaID == self.mediaID))) == 0
+
 
 db.generate_mapping(create_tables=True)

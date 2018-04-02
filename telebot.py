@@ -183,7 +183,7 @@ def callback_query_selector(bot, update):
 
     elif query_type == 'my_balance':
         print_balance(bot, update, argument)
-        
+
     elif query_type == 'pay':
         pay_for_media(bot, update, argument, parsed_query['media'])
 
@@ -559,6 +559,8 @@ def create_debt_card(bot, update): #воть тут
         bot.send_message(text="Sorry, " + e.args[0] + ". Please, try again", chat_id=update.message.chat_id)
 
 
+
+
 @db_session
 def check_media_balance(bot, job):
 
@@ -571,7 +573,7 @@ def check_media_balance(bot, job):
 
     log = Log.select(lambda c: c.expiry_date < datetime.datetime.now())
     for item in log:
-        cost = MediaCopies.get(copyID=item.mediaID).cost
+        cost = MediaCopies.get(copyID=item.mediaID).mediaID.cost
         if item.balance + 100 <= cost:
             item.balance += 100
 
@@ -1288,7 +1290,7 @@ def cancel_process(bot, update):
 def renew_media(bot, update, argument):
     # select log and extend expiry date
     user = User.get(telegramID=update.callback_query.message.chat_id)
-    renewed = user.renew_copy(argument)
+    renewed = user.renew_copy(argument, datetime.datetime.now())
     if renewed and user.priority != 2:
         bot.edit_message_text(text="You successfully renewed the media!",
                               chat_id=update.callback_query.message.chat_id,
@@ -1325,7 +1327,7 @@ def confirm_user(bot, update, args):
     enroll_request.delete()
     commit()
 
-    
+
 @db_session
 def reboot(bot, update):
     """
