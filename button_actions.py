@@ -28,9 +28,10 @@ def approve_request(bot, update):
     enrolled_user = database.User(telegramID=request.telegramID,
                                   phone=request.phone,
                                   address=request.address,
-                                  faculty=request.faculty,
+                                  priority=request.faculty,
                                   alias=request.alias,
                                   name=request.name)
+
     database.Request[request.id].status = 1
 
     session.request_c = 0
@@ -235,9 +236,9 @@ def generate_expiry_date(media, patron, issue_date):
     date = issue_date
 
     if type_of_media == 'Book':
-        if media.bestseller and patron.faculty != 1:
+        if media.bestseller and (patron.priority == 5 or patron.priority == 2):
             date += datetime.timedelta(weeks=2)
-        elif patron.faculty:
+        elif patron.priority == 1 or patron.priority == 3 or patron.priority == 4:
             date += datetime.timedelta(weeks=4)
         else:
             date += datetime.timedelta(weeks=3)
@@ -292,7 +293,7 @@ def print_balance(bot, update, telegram_id):
     overdue = database.Log.select(lambda c: c.libID == user.telegramID and c.expiry_date <= datetime.datetime.now() and not c.returned)
     elements = ""
     if len(overdue) == 0:
-        element = "None"
+        elements = "None"
     else:
         for element in overdue:
             overdue_days = str((datetime.datetime.now() - element.expiry_date).days)

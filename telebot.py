@@ -1289,7 +1289,7 @@ def renew_media(bot, update, argument):
     # select log and extend expiry date
     user = User.get(telegramID=update.callback_query.message.chat_id)
     renewed = user.renew_copy(argument)
-    if renewed:
+    if renewed and user.priority != 2:
         bot.edit_message_text(text="You successfully renewed the media!",
                               chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
