@@ -11,10 +11,27 @@ db.bind(provider='mysql', host='37.46.132.57', user='telebot', passwd='Malinka20
 
 """ Button actions for accepting/rejecting users"""
 
+
+@db_session
+def set_balance(date):
+    """
+    Immediately sets all fines for overdue medias
+    :return:
+    """
+    log = list(database.Log.select(lambda c: c.expiry_date < date))
+    for item in log:
+        cost = database.MediaCopies.get(copyID=item.mediaID).mediaID.cost
+        fine = (date-item.expiry_date).days * 100
+        while fine > cost:
+            fine = fine - 100
+        item.balance = fine
+    commit()
+
 """
 def approve_request(self)
 This function accepts request for enrolling the system
 """
+
 
 
 @db_session
@@ -28,9 +45,10 @@ def approve_request(bot, update):
     enrolled_user = database.User(telegramID=request.telegramID,
                                   phone=request.phone,
                                   address=request.address,
-                                  faculty=request.faculty,
+                                  priority=request.faculty,
                                   alias=request.alias,
                                   name=request.name)
+
     database.Request[request.id].status = 1
 
     session.request_c = 0
@@ -80,7 +98,7 @@ def book_media(bot, update):
         session = database.RegistrySession[telegram_id]
         media = list(database.Media.select())[session.media_c]
 
-        status = user.book_media(media)
+        status = user.book_media(media, datetime.datetime.now())
         if status == -1:
             bot.edit_message_text(text="This media is unavailable :( ",
                                   chat_id=query.message.chat_id,
@@ -235,14 +253,22 @@ def generate_expiry_date(media, patron, issue_date):
     date = issue_date
 
     if type_of_media == 'Book':
-        if media.bestseller and patron.faculty != 1:
+        if patron.priority == 2:
+            date += datetime.timedelta(weeks=1)
+        elif media.bestseller and (patron.priority == 5 or patron.priority == 2):
             date += datetime.timedelta(weeks=2)
-        elif patron.faculty:
+        elif patron.priority == 1 or patron.priority == 3 or patron.priority == 4:
             date += datetime.timedelta(weeks=4)
         else:
             date += datetime.timedelta(weeks=3)
         return date
-    elif type_of_media == 'AV' or type_of_media == 'Journals':
+    elif type_of_media == 'AV':
+        if patron.priority == 2:
+            date += datetime.timedelta(weeks=1)
+        else:
+            date += datetime.timedelta(weeks=2)
+        return date
+    elif type_of_media == 'Journals':
         date += datetime.timedelta(weeks=2)
         return date
     else:
@@ -292,7 +318,7 @@ def print_balance(bot, update, telegram_id):
     overdue = database.Log.select(lambda c: c.libID == user.telegramID and c.expiry_date <= datetime.datetime.now() and not c.returned)
     elements = ""
     if len(overdue) == 0:
-        element = "None"
+        elements = "None"
     else:
         for element in overdue:
             overdue_days = str((datetime.datetime.now() - element.expiry_date).days)
