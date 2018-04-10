@@ -1146,65 +1146,70 @@ def create_new_media(bot, update):
     :param update: update object
     :return: media added
     """
-    session = RegistrySession.get(telegramID=update.message.chat_id)
-    if session is not None:
-        if session.type == "":
-            if update.message.text == "/add_media":
-                bot.send_message(text="Let's add a new media! What is the type of media?",
-                                 chat_id=update.message.chat_id)
-                return NOT_FINISHED
-            session.type = update.message.text
-            bot.send_message(text="What is the title of media?", chat_id=update.message.chat_id)
-            return NOT_FINISHED
-        elif session.title == "":
-            session.title = update.message.text
-            bot.send_message(text="Who is the author?", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.author == "":
-            session.author = update.message.text
-            bot.send_message(text="What is the publisher?", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.publisher == "":
-            session.publisher = update.message.text
-            bot.send_message(text="What is the price?", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.price == -1:
-            session.price = update.message.text
-            bot.send_message(text="What is the fine?", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.fine == -1:
-            session.fine = update.message.text
-            bot.send_message(text="How many copies do you want to add?", chat_id=update.message.chat_id)
-            commit()
-        elif session.no_of_copies == -1:
-            no_of_copies = int(update.message.text)
-            session.no_of_copies = no_of_copies
-            Media(name=session.title, type=session.type, authors=session.author,
-                  publisher=session.publisher, cost=session.price, fine=session.fine,
-                  availability=True, bestseller=False)
-            media_id = Media.get(name=session.title).mediaID
-            for i in range(1, no_of_copies + 1):
-                MediaCopies(mediaID=media_id, copyID="%s-%s" % (str(media_id), str(i)), available=1)
-            session.title = ""
-            session.type = ""
-            session.author = ""
-            session.fine = -1
-            session.price = -1
-            session.no_of_copies = -1
-            session.publisher = ""
-            commit()
-            bot.send_message(text="Media and %s its copies had been added" % str(no_of_copies),
-                             chat_id=update.message.chat_id)
-            return new_media_conversation.END
-    else:
-        RegistrySession(telegramID=update.message.chat_id)
-        bot.send_message(text="Please, enter Title: ", chat_id=update.message.chat_id)
-        return NOT_FINISHED
 
+    lib = Librarian.get(telegramID=update.message.chat_id)
+
+    if lib is not None and lib.priority > 1:
+        session = RegistrySession.get(telegramID=update.message.chat_id)
+        if session is not None:
+            if session.type == "":
+                if update.message.text == "/add_media":
+                    bot.send_message(text="Let's add a new media! What is the type of media?",
+                                     chat_id=update.message.chat_id)
+                    return NOT_FINISHED
+                session.type = update.message.text
+                bot.send_message(text="What is the title of media?", chat_id=update.message.chat_id)
+                return NOT_FINISHED
+            elif session.title == "":
+                session.title = update.message.text
+                bot.send_message(text="Who is the author?", chat_id=update.message.chat_id)
+                commit()
+                return NOT_FINISHED
+            elif session.author == "":
+                session.author = update.message.text
+                bot.send_message(text="What is the publisher?", chat_id=update.message.chat_id)
+                commit()
+                return NOT_FINISHED
+            elif session.publisher == "":
+                session.publisher = update.message.text
+                bot.send_message(text="What is the price?", chat_id=update.message.chat_id)
+                commit()
+                return NOT_FINISHED
+            elif session.price == -1:
+                session.price = update.message.text
+                bot.send_message(text="What is the fine?", chat_id=update.message.chat_id)
+                commit()
+                return NOT_FINISHED
+            elif session.fine == -1:
+                session.fine = update.message.text
+                bot.send_message(text="How many copies do you want to add?", chat_id=update.message.chat_id)
+                commit()
+            elif session.no_of_copies == -1:
+                no_of_copies = int(update.message.text)
+                session.no_of_copies = no_of_copies
+                Media(name=session.title, type=session.type, authors=session.author,
+                      publisher=session.publisher, cost=session.price, fine=session.fine,
+                      availability=True, bestseller=False)
+                media_id = Media.get(name=session.title).mediaID
+                for i in range(1, no_of_copies + 1):
+                    MediaCopies(mediaID=media_id, copyID="%s-%s" % (str(media_id), str(i)), available=1)
+                session.title = ""
+                session.type = ""
+                session.author = ""
+                session.fine = -1
+                session.price = -1
+                session.no_of_copies = -1
+                session.publisher = ""
+                commit()
+                bot.send_message(text="Media and %s its copies had been added" % str(no_of_copies),
+                                 chat_id=update.message.chat_id)
+                return new_media_conversation.END
+        else:
+            RegistrySession(telegramID=update.message.chat_id)
+            bot.send_message(text="Please, enter type of media: ", chat_id=update.message.chat_id)
+            return NOT_FINISHED
+    else:
+        bot.send_message(text="Sorry, you have no enough permissions!", chat_id=update.message.chat_id)
 
 @db_session
 def create_new_user(bot, update):

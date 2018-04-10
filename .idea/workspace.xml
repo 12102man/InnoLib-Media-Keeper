@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d78e4202-0a47-4043-8125-c51b11caa892" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/InnoLib-Media-Keeper.iml" afterPath="$PROJECT_DIR$/.idea/InnoLib-Media-Keeper.iml" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/database.py" afterPath="$PROJECT_DIR$/database.py" />
+      <change beforePath="$PROJECT_DIR$/scroller.py" afterPath="$PROJECT_DIR$/scroller.py" />
+      <change beforePath="$PROJECT_DIR$/telebot.py" afterPath="$PROJECT_DIR$/telebot.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -12,11 +17,12 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/InnoLib_Media_Keeper$telebot.coverage" NAME="telebot Coverage Results" MODIFIED="1523372369956" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/InnoLib_Media_Keeper$testsD3.coverage" NAME="testsD3 Coverage Results" MODIFIED="1522835408249" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/InnoLib_Media_Keeper$telebot.coverage" NAME="telebot Coverage Results" MODIFIED="1522835731578" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="DatabaseView">
     <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
     <option name="GROUP_SCHEMA" value="true" />
     <option name="GROUP_CONTENTS" value="false" />
     <option name="SORT_POSITIONED" value="false" />
@@ -25,55 +31,60 @@
     <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
     <expand>
       <path>
-        <item name="" type="eadb38e5:DatabaseStructure$Root" />
-        <item name="37.46.132.57" type="e3449647:DbNodeDescriptor" />
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
       </path>
       <path>
-        <item name="" type="eadb38e5:DatabaseStructure$Root" />
-        <item name="37.46.132.57" type="e3449647:DbNodeDescriptor" />
-        <item name="testbase" type="e3449647:DbNodeDescriptor" />
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
       </path>
       <path>
-        <item name="" type="eadb38e5:DatabaseStructure$Root" />
-        <item name="37.46.132.57" type="e3449647:DbNodeDescriptor" />
-        <item name="testbase" type="e3449647:DbNodeDescriptor" />
-        <item name="user" type="e3449647:DbNodeDescriptor" />
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="testbase: schema" type="c314c289:MysqlImplModel$Schema" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="testbase: schema" type="c314c289:MysqlImplModel$Schema" />
+        <item name="librarian: table" type="98d5ac3d:MysqlImplModel$Table" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="testbase: schema" type="c314c289:MysqlImplModel$Schema" />
+        <item name="registrysession: table" type="98d5ac3d:MysqlImplModel$Table" />
       </path>
     </expand>
     <select />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="telebot.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="telebot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/telebot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="16716">
-              <caret line="1169" column="36" lean-forward="false" selection-start-line="1169" selection-start-column="35" selection-end-line="1169" selection-end-column="36" />
+            <state relative-caret-position="607">
+              <caret line="1208" column="50" lean-forward="false" selection-start-line="1208" selection-start-column="50" selection-end-line="1208" selection-end-column="50" />
               <folding>
-                <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
+                <marker date="1523372117504" expanded="true" signature="16583:16641" ph="UPDATE registrysession... " />
+                <marker date="1523372117504" expanded="true" signature="16714:16773" ph="UPDATE registrysession... " />
+                <marker date="1523372117504" expanded="true" signature="16846:16907" ph="UPDATE registrysession... " />
+                <marker date="1523372117504" expanded="true" signature="16980:17041" ph="UPDATE registrysession... " />
+                <marker date="1523372117504" expanded="true" signature="48786:48844" ph="UPDATE registrysession... " />
+                <marker date="1523372117504" expanded="true" signature="48917:48976" ph="UPDATE registrysession... " />
+                <marker date="1523372117504" expanded="true" signature="49049:49110" ph="UPDATE registrysession... " />
+                <marker date="1523372117504" expanded="true" signature="49183:49244" ph="UPDATE registrysession... " />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mediaqueue" pinned="false" current-in-tab="false">
-        <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediaqueue">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="registrysession" pinned="false" current-in-tab="false">
-        <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.registrysession">
+        <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.registrysession">
           <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
             <state>
               <filtering enabled="true" />
@@ -81,24 +92,36 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="button_actions.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/button_actions.py">
+      <file leaf-file-name="scroller.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scroller.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="716">
-              <caret line="100" column="63" lean-forward="false" selection-start-line="100" selection-start-column="63" selection-end-line="100" selection-end-column="63" />
-              <folding />
+            <state relative-caret-position="616">
+              <caret line="182" column="0" lean-forward="true" selection-start-line="182" selection-start-column="0" selection-end-line="182" selection-end-column="0" />
+              <folding>
+                <element signature="e#1859#2489#0" expanded="false" />
+                <element signature="e#2548#3007#0" expanded="false" />
+                <element signature="e#3055#3752#0" expanded="false" />
+                <element signature="e#3807#4550#0" expanded="false" />
+                <element signature="e#4608#5061#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="testsD3.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/testsD3.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="427">
-              <caret line="292" column="16" lean-forward="false" selection-start-line="292" selection-start-column="16" selection-end-line="292" selection-end-column="56" />
-              <folding>
-                <element signature="e#0#22#0" expanded="true" />
-              </folding>
+      <file leaf-file-name="librarian" pinned="false" current-in-tab="false">
+        <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.librarian">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state>
+              <filtering enabled="true" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="media" pinned="false" current-in-tab="false">
+        <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.media">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state>
+              <filtering enabled="true" />
             </state>
           </provider>
         </entry>
@@ -106,20 +129,11 @@
       <file leaf-file-name="database.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2020">
-              <caret line="150" column="0" lean-forward="false" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
+            <state relative-caret-position="428">
+              <caret line="257" column="43" lean-forward="false" selection-start-line="257" selection-start-column="43" selection-end-line="257" selection-end-column="43" />
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="log" pinned="false" current-in-tab="true">
-        <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.log">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
             </state>
           </provider>
         </entry>
@@ -172,15 +186,20 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/scroller.py" />
         <option value="$PROJECT_DIR$/button_actions.py" />
+        <option value="$PROJECT_DIR$/testsD3.py" />
+        <option value="$PROJECT_DIR$/scroller.py" />
         <option value="$PROJECT_DIR$/telebot.py" />
         <option value="$PROJECT_DIR$/database.py" />
-        <option value="$PROJECT_DIR$/testsD3.py" />
       </list>
     </option>
   </component>
@@ -210,8 +229,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -219,20 +236,18 @@
               <item name="InnoLib-Media-Keeper" type="b2602c69:ProjectViewProjectNode" />
               <item name="InnoLib-Media-Keeper" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="InnoLib-Media-Keeper" type="b2602c69:ProjectViewProjectNode" />
-              <item name="InnoLib-Media-Keeper" type="462c0819:PsiDirectoryNode" />
-              <item name="Docs" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -264,6 +279,7 @@
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
     </configuration>
     <configuration name="testsD3" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -282,6 +298,7 @@
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
     </configuration>
     <list size="2">
       <item index="0" class="java.lang.String" itemvalue="Python.telebot" />
@@ -361,31 +378,32 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="2560" height="1080" extended-state="0" />
+    <frame x="0" y="0" width="1920" height="1080" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Heroku" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19410568" sideWeight="0.5015886" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19410568" sideWeight="0.49841145" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19329388" sideWeight="0.49841145" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23034154" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17394757" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23020834" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1734375" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.398374" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Heroku" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
-      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Concurrent Activities Diagram" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3292683" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
@@ -443,19 +461,9 @@
           <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/scroller.py</url>
-          <line>36</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/telebot.py</url>
           <line>766</line>
           <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/telebot.py</url>
-          <line>1324</line>
-          <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/telebot.py</url>
@@ -493,122 +501,19 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/button_actions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4245">
-          <caret line="283" column="18" lean-forward="false" selection-start-line="283" selection-start-column="18" selection-end-line="283" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3525">
-          <caret line="235" column="77" lean-forward="false" selection-start-line="235" selection-start-column="77" selection-end-line="235" selection-end-column="77" />
-          <folding>
-            <element signature="e#0#22#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/telebot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="53" column="31" lean-forward="false" selection-start-line="53" selection-start-column="31" selection-end-line="53" selection-end-column="31" />
-          <folding>
-            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scroller.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#27#0" expanded="false" />
-            <element signature="e#1859#2489#0" expanded="false" />
-            <element signature="e#2548#3007#0" expanded="false" />
-            <element signature="e#3055#3752#0" expanded="false" />
-            <element signature="e#3807#4550#0" expanded="false" />
-            <element signature="e#4608#5061#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.media">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediacopies">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediaqueue">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.librarian">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.user">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/button_actions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4245">
-          <caret line="283" column="18" lean-forward="true" selection-start-line="283" selection-start-column="18" selection-end-line="283" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3525">
-          <caret line="235" column="77" lean-forward="false" selection-start-line="235" selection-start-column="77" selection-end-line="235" selection-end-column="77" />
-          <folding>
-            <element signature="e#0#22#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="10035">
           <caret line="684" column="0" lean-forward="false" selection-start-line="684" selection-start-column="0" selection-end-line="684" selection-end-column="0" />
           <folding>
-            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
+            <marker date="1523372117504" expanded="true" signature="16583:16641" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16714:16773" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16846:16907" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16980:17041" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="48786:48844" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="48917:48976" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="49049:49110" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="49183:49244" ph="UPDATE registrysession... " />
           </folding>
         </state>
       </provider>
@@ -636,7 +541,6 @@
         <state relative-caret-position="540">
           <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
           <folding>
-            <element signature="e#0#27#0" expanded="false" />
             <element signature="e#1859#2489#0" expanded="false" />
             <element signature="e#2548#3007#0" expanded="false" />
             <element signature="e#3055#3752#0" expanded="false" />
@@ -651,14 +555,14 @@
         <state relative-caret-position="2670">
           <caret line="178" column="32" lean-forward="false" selection-start-line="178" selection-start-column="32" selection-end-line="178" selection-end-column="32" />
           <folding>
-            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
+            <marker date="1523372117504" expanded="true" signature="16583:16641" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16714:16773" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16846:16907" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16980:17041" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="48786:48844" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="48917:48976" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="49049:49110" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="49183:49244" ph="UPDATE registrysession... " />
           </folding>
         </state>
       </provider>
@@ -668,7 +572,6 @@
         <state relative-caret-position="2535">
           <caret line="263" column="46" lean-forward="false" selection-start-line="263" selection-start-column="46" selection-end-line="263" selection-end-column="46" />
           <folding>
-            <element signature="e#0#27#0" expanded="false" />
             <element signature="e#1859#2489#0" expanded="false" />
             <element signature="e#2548#3007#0" expanded="false" />
             <element signature="e#3055#3752#0" expanded="false" />
@@ -706,14 +609,14 @@
         <state relative-caret-position="8143">
           <caret line="479" column="0" lean-forward="false" selection-start-line="479" selection-start-column="0" selection-end-line="479" selection-end-column="0" />
           <folding>
-            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
+            <marker date="1523372117504" expanded="true" signature="16583:16641" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16714:16773" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16846:16907" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16980:17041" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="48786:48844" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="48917:48976" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="49049:49110" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="49183:49244" ph="UPDATE registrysession... " />
           </folding>
         </state>
       </provider>
@@ -723,7 +626,6 @@
         <state relative-caret-position="2873">
           <caret line="263" column="46" lean-forward="true" selection-start-line="263" selection-start-column="46" selection-end-line="263" selection-end-column="46" />
           <folding>
-            <element signature="e#0#27#0" expanded="false" />
             <element signature="e#1859#2489#0" expanded="false" />
             <element signature="e#2548#3007#0" expanded="false" />
             <element signature="e#3055#3752#0" expanded="false" />
@@ -761,14 +663,14 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
+            <marker date="1523372117504" expanded="true" signature="16583:16641" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16714:16773" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16846:16907" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16980:17041" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="48786:48844" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="48917:48976" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="49049:49110" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="49183:49244" ph="UPDATE registrysession... " />
           </folding>
         </state>
       </provider>
@@ -791,32 +693,134 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../TGBot/venv/Lib/site-packages/pony/orm/dbschema.py" />
-    <entry file="file://$PROJECT_DIR$/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../TGBot/venv/Lib/site-packages/pony/orm/dbapiprovider.py" />
     <entry file="file://$PROJECT_DIR$/Docs/Diagram.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/telegram/message.py">
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/telegram/message.py" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.librarianenrollment" />
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pony/utils/utils.py" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediacopies" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.request" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.user" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.media" />
+    <entry file="file://$PROJECT_DIR$/testbot_D2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="198" column="0" lean-forward="false" selection-start-line="198" selection-start-column="0" selection-end-line="198" selection-end-column="0" />
+        <state relative-caret-position="303">
+          <caret line="873" column="8" lean-forward="true" selection-start-line="873" selection-start-column="8" selection-end-line="875" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.librarian" />
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pony/orm/core.py" />
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pymysql/cursors.py" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.registrysession" />
+    <entry file="file://$PROJECT_DIR$/testsD3.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="292" column="16" lean-forward="false" selection-start-line="292" selection-start-column="16" selection-end-line="292" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#22#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/button_actions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="100" column="63" lean-forward="false" selection-start-line="100" selection-start-column="63" selection-end-line="100" selection-end-column="63" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediaqueue" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.log" />
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/43b80660-205d-4e70-9dc3-7ba126f306d7/console.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-9">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.mediacopies">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.user">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.images">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.librarianenrollment">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.returnrequest">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.request">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.log">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.media">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.librarian">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scroller.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+        <state relative-caret-position="616">
+          <caret line="182" column="0" lean-forward="true" selection-start-line="182" selection-start-column="0" selection-end-line="182" selection-end-column="0" />
           <folding>
-            <element signature="e#0#27#0" expanded="false" />
             <element signature="e#1859#2489#0" expanded="false" />
             <element signature="e#2548#3007#0" expanded="false" />
             <element signature="e#3055#3752#0" expanded="false" />
@@ -826,141 +830,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.librarianenrollment">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pony/utils/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="97" column="0" lean-forward="false" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediacopies">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.request">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.user">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.media">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/testbot_D2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="303">
-          <caret line="873" column="8" lean-forward="true" selection-start-line="873" selection-start-column="8" selection-end-line="875" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.librarian">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pony/orm/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="464" column="0" lean-forward="false" selection-start-line="464" selection-start-column="0" selection-end-line="464" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pymysql/cursors.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
-          <caret line="257" column="13" lean-forward="false" selection-start-line="257" selection-start-column="13" selection-end-line="257" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.registrysession">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/testsD3.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="292" column="16" lean-forward="false" selection-start-line="292" selection-start-column="16" selection-end-line="292" selection-end-column="56" />
-          <folding>
-            <element signature="e#0#22#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2020">
-          <caret line="150" column="0" lean-forward="false" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
+        <state relative-caret-position="428">
+          <caret line="257" column="43" lean-forward="false" selection-start-line="257" selection-start-column="43" selection-end-line="257" selection-end-column="43" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/button_actions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="716">
-          <caret line="100" column="63" lean-forward="false" selection-start-line="100" selection-start-column="63" selection-end-line="100" selection-end-column="63" />
-          <folding />
+    <entry file="das://table:/39abbffb/43b80660-205d-4e70-9dc3-7ba126f306d7/testbase.registrysession">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16716">
-          <caret line="1169" column="36" lean-forward="false" selection-start-line="1169" selection-start-column="35" selection-end-line="1169" selection-end-column="36" />
+        <state relative-caret-position="607">
+          <caret line="1208" column="50" lean-forward="false" selection-start-line="1208" selection-start-column="50" selection-end-line="1208" selection-end-column="50" />
           <folding>
-            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
+            <marker date="1523372117504" expanded="true" signature="16583:16641" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16714:16773" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16846:16907" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="16980:17041" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="48786:48844" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="48917:48976" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="49049:49110" ph="UPDATE registrysession... " />
+            <marker date="1523372117504" expanded="true" signature="49183:49244" ph="UPDATE registrysession... " />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediaqueue">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.log">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
         </state>
       </provider>
     </entry>

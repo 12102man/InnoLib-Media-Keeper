@@ -136,6 +136,7 @@ class MediaRequest(db.Entity):
 class Librarian(db.Entity):
     telegramID = Required(int)
     name = Required(str)
+    priority = Required(int)
 
     def check_return(self, copy_id):
         record = list(Log.select(lambda c: c.mediaID == copy_id and not c.returned))[0]
@@ -254,7 +255,7 @@ class RegistrySession(db.Entity):
     price = Optional(int, default=-1)
     fine = Optional(int, default=-1)
     publisher = Optional(str, default="")
-    no_of_copies = Optional(int)
+    no_of_copies = Optional(int, default=-1)
     debtors_c = Optional(int, default=0)
 
 
