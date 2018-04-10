@@ -192,6 +192,56 @@ class Librarian(db.Entity):
 
         return [1, queue, holders]
 
+    def add_media(self, text):
+        session = RegistrySession.get(telegramID=self.telegramID)
+        if session is not None:
+            if session.type == "":
+                if text == "/add_media":
+                    return "Let's add a new media! What is the type of media?"
+                session.type = text
+                return "What is the title of media?"
+            elif session.title == "":
+                session.title = text
+                commit()
+                return "Who is the author?"
+            elif session.author == "":
+                session.author = text
+                commit()
+                return "What is the publisher?"
+            elif session.publisher == "":
+                session.publisher = text
+                commit()
+                return "What is the price?"
+            elif session.price == -1:
+                session.price = text
+                commit()
+                return "What is the fine?"
+            elif session.fine == -1:
+                session.fine = text
+                commit()
+                return "How many copies do you want to add?"
+            elif session.no_of_copies == -1:
+                no_of_copies = int(text)
+                session.no_of_copies = no_of_copies
+                Media(name=session.title, type=session.type, authors=session.author,
+                      publisher=session.publisher, cost=session.price, fine=session.fine,
+                      availability=True, bestseller=False)
+                media_id = Media.get(name=session.title).mediaID
+                for i in range(1, no_of_copies + 1):
+                    MediaCopies(mediaID=media_id, copyID="%s-%s" % (str(media_id), str(i)), available=1)
+                session.title = ""
+                session.type = ""
+                session.author = ""
+                session.fine = -1
+                session.price = -1
+                session.no_of_copies = -1
+                session.publisher = ""
+                commit()
+                return "Media and %s its copies had been added" % str(no_of_copies)
+        else:
+            RegistrySession(telegramID=self.telegramID)
+            return "Please, enter type of media:"
+
 
 class Images(db.Entity):
     mediaID = Required(Media)

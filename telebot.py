@@ -1071,7 +1071,6 @@ def edit_field(bot, update):
     session.edit_media_state = field
     commit()
 
-
     if field == 'priority':
         keyboard = InlineKeyboardMarkup(
             [[InlineKeyboardButton("Student",
@@ -1150,66 +1149,15 @@ def create_new_media(bot, update):
     lib = Librarian.get(telegramID=update.message.chat_id)
 
     if lib is not None and lib.priority > 1:
-        session = RegistrySession.get(telegramID=update.message.chat_id)
-        if session is not None:
-            if session.type == "":
-                if update.message.text == "/add_media":
-                    bot.send_message(text="Let's add a new media! What is the type of media?",
-                                     chat_id=update.message.chat_id)
-                    return NOT_FINISHED
-                session.type = update.message.text
-                bot.send_message(text="What is the title of media?", chat_id=update.message.chat_id)
-                return NOT_FINISHED
-            elif session.title == "":
-                session.title = update.message.text
-                bot.send_message(text="Who is the author?", chat_id=update.message.chat_id)
-                commit()
-                return NOT_FINISHED
-            elif session.author == "":
-                session.author = update.message.text
-                bot.send_message(text="What is the publisher?", chat_id=update.message.chat_id)
-                commit()
-                return NOT_FINISHED
-            elif session.publisher == "":
-                session.publisher = update.message.text
-                bot.send_message(text="What is the price?", chat_id=update.message.chat_id)
-                commit()
-                return NOT_FINISHED
-            elif session.price == -1:
-                session.price = update.message.text
-                bot.send_message(text="What is the fine?", chat_id=update.message.chat_id)
-                commit()
-                return NOT_FINISHED
-            elif session.fine == -1:
-                session.fine = update.message.text
-                bot.send_message(text="How many copies do you want to add?", chat_id=update.message.chat_id)
-                commit()
-            elif session.no_of_copies == -1:
-                no_of_copies = int(update.message.text)
-                session.no_of_copies = no_of_copies
-                Media(name=session.title, type=session.type, authors=session.author,
-                      publisher=session.publisher, cost=session.price, fine=session.fine,
-                      availability=True, bestseller=False)
-                media_id = Media.get(name=session.title).mediaID
-                for i in range(1, no_of_copies + 1):
-                    MediaCopies(mediaID=media_id, copyID="%s-%s" % (str(media_id), str(i)), available=1)
-                session.title = ""
-                session.type = ""
-                session.author = ""
-                session.fine = -1
-                session.price = -1
-                session.no_of_copies = -1
-                session.publisher = ""
-                commit()
-                bot.send_message(text="Media and %s its copies had been added" % str(no_of_copies),
-                                 chat_id=update.message.chat_id)
-                return new_media_conversation.END
-        else:
-            RegistrySession(telegramID=update.message.chat_id)
-            bot.send_message(text="Please, enter type of media: ", chat_id=update.message.chat_id)
+        text_to_send = lib.add_media(update.message.text)
+        bot.send_message(text=text_to_send, chat_id=update.message.chat_id)
+        if text_to_send != "Media and %s its copies had been added":
             return NOT_FINISHED
+        else:
+            return new_media_conversation.END
     else:
         bot.send_message(text="Sorry, you have no enough permissions!", chat_id=update.message.chat_id)
+
 
 @db_session
 def create_new_user(bot, update):
@@ -1220,39 +1168,47 @@ def create_new_user(bot, update):
     :return: user added
     """
 
-    session = RegistrySession.get(telegramID=update.message.chat_id)
-    if session is not None:
-        if session.name is None:
-            if update.message.text == "/add_user":
-                bot.send_message(text="Let's add a new User! Please, enter new user's name",
-                                 chat_id=update.message.chat_id)
+    lib = Librarian.get(telegramID=update.message.chat_id)
+
+    if lib is not None and lib.priority > 1:
+        session = RegistrySession.get(telegramID=update.message.chat_id)
+        if session is not None:
+            if session.name == "":
+                if update.message.text == "/add_user":
+                    bot.send_message(text="Let's add a new User! Please, enter new user's name",
+                                     chat_id=update.message.chat_id)
+                    return NOT_FINISHED
+                session.name = update.message.text
+                bot.send_message(text="Please, enter new user's phone", chat_id=update.message.chat_id)
+                commit()
                 return NOT_FINISHED
-            session.name = update.message.text
-            bot.send_message(text="Please, enter new user's phone", chat_id=update.message.chat_id)
-            commit()
+            elif session.phone == "":
+                session.phone = update.message.text
+                bot.send_message(text="Please, enter new user's address", chat_id=update.message.chat_id)
+                commit()
+                return NOT_FINISHED
+            elif session.address == "":
+                session.address = update.message.text
+                keyboard = InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("Student",
+                                           callback_data=json.dumps({'type': 'setState', 'argument': 5})),
+                      InlineKeyboardButton("Instructor",
+                                           callback_data=json.dumps({'type': 'setState', 'argument': 4}))],
+                     [InlineKeyboardButton("TA",
+                                           callback_data=json.dumps({'type': 'setState', 'argument': 3})),
+                      InlineKeyboardButton("Professor",
+                                           callback_data=json.dumps({'type': 'setState', 'argument': 1}))],
+                     [InlineKeyboardButton("Visiting Professor",
+                                           callback_data=json.dumps({'type': 'setState', 'argument': 2}))]])
+                bot.send_message(text="Choose his/her status", chat_id=update.message.chat_id,
+                                 reply_markup=keyboard)
+                commit()
+                return new_user_conversation.END
+        else:
+            RegistrySession(telegramID=update.message.chat_id)
+            bot.send_message(text="Let's add a new User! Please, enter new user's name",
+                             chat_id=update.message.chat_id)
             return NOT_FINISHED
-        elif session.phone is None:
-            session.phone = update.message.text
-            bot.send_message(text="Please, enter new user's address", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.address is None:
-            session.address = update.message.text
-            keyboard = InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Student",
-                                       callback_data=json.dumps({'type': 'setState', 'argument': 5})),
-                  InlineKeyboardButton("Instructor",
-                                       callback_data=json.dumps({'type': 'setState', 'argument': 4}))],
-                 [InlineKeyboardButton("TA",
-                                       callback_data=json.dumps({'type': 'setState', 'argument': 3})),
-                  InlineKeyboardButton("Professor",
-                                       callback_data=json.dumps({'type': 'setState', 'argument': 1}))],
-                 [InlineKeyboardButton("Visiting Professor",
-                                       callback_data=json.dumps({'type': 'setState', 'argument': 2}))]])
-            bot.send_message(text="Choose his/her status", chat_id=update.message.chat_id,
-                             reply_markup=keyboard)
-            commit()
-            return new_user_conversation.END
 
 
 @db_session
@@ -1413,7 +1369,6 @@ dispatcher.add_handler(new_media_conversation)
 dispatcher.add_handler(new_user_conversation)
 dispatcher.add_handler(edit_conv)
 dispatcher.add_handler(end_create_user)
-
 
 
 search_query_handler = CallbackQueryHandler(callback_query_selector)
