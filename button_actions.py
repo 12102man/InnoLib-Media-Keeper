@@ -11,10 +11,27 @@ db.bind(provider='mysql', host='37.46.132.57', user='telebot', passwd='Malinka20
 
 """ Button actions for accepting/rejecting users"""
 
+
+@db_session
+def set_balance(date):
+    """
+    Immediately sets all fines for overdue medias
+    :return:
+    """
+    log = list(database.Log.select(lambda c: c.expiry_date < date))
+    for item in log:
+        cost = database.MediaCopies.get(copyID=item.mediaID).mediaID.cost
+        fine = (date-item.expiry_date).days * 100
+        while fine > cost:
+            fine = fine - 100
+        item.balance = fine
+    commit()
+
 """
 def approve_request(self)
 This function accepts request for enrolling the system
 """
+
 
 
 @db_session
@@ -81,7 +98,7 @@ def book_media(bot, update):
         session = database.RegistrySession[telegram_id]
         media = list(database.Media.select())[session.media_c]
 
-        status = user.book_media(media)
+        status = user.book_media(media, datetime.datetime.now())
         if status == -1:
             bot.edit_message_text(text="This media is unavailable :( ",
                                   chat_id=query.message.chat_id,
@@ -236,14 +253,22 @@ def generate_expiry_date(media, patron, issue_date):
     date = issue_date
 
     if type_of_media == 'Book':
-        if media.bestseller and (patron.priority == 5 or patron.priority == 2):
+        if patron.priority == 2:
+            date += datetime.timedelta(weeks=1)
+        elif media.bestseller and (patron.priority == 5 or patron.priority == 2):
             date += datetime.timedelta(weeks=2)
         elif patron.priority == 1 or patron.priority == 3 or patron.priority == 4:
             date += datetime.timedelta(weeks=4)
         else:
             date += datetime.timedelta(weeks=3)
         return date
-    elif type_of_media == 'AV' or type_of_media == 'Journals':
+    elif type_of_media == 'AV':
+        if patron.priority == 2:
+            date += datetime.timedelta(weeks=1)
+        else:
+            date += datetime.timedelta(weeks=2)
+        return date
+    elif type_of_media == 'Journals':
         date += datetime.timedelta(weeks=2)
         return date
     else:
