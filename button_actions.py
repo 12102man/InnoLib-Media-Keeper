@@ -327,10 +327,25 @@ def print_balance(bot, update, telegram_id):
                 database.MediaCopies.get(copyID=element.mediaID).mediaID.authors,
                 element.mediaID, overdue_days)
     if len(overdue) == 0:
-        bot.edit_message_text(text="""Your balance is: %s""" % (user.balance),
+        bot.edit_message_text(text="""Your balance is: %s""" % user.balance,
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.message.chat_id)
     else:
         bot.edit_message_text(text="""Your balance is: %s \nOverdue medias: \n%s""" % (user.balance, elements),
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.message.chat_id)
+
+
+def priority_keyboard():
+    keyboard = InlineKeyboardMarkup(
+        [[InlineKeyboardButton("Student",
+                               callback_data=json.dumps({'type': 'setState', 'argument': 5})),
+          InlineKeyboardButton("Instructor",
+                               callback_data=json.dumps({'type': 'setState', 'argument': 4}))],
+         [InlineKeyboardButton("TA",
+                               callback_data=json.dumps({'type': 'setState', 'argument': 3})),
+          InlineKeyboardButton("Professor",
+                               callback_data=json.dumps({'type': 'setState', 'argument': 1}))],
+         [InlineKeyboardButton("Visiting Professor",
+                               callback_data=json.dumps({'type': 'setState', 'argument': 2}))]])
+    return keyboard

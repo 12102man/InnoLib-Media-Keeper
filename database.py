@@ -23,7 +23,6 @@ class User(db.Entity):
     def medias(self):
         return list(Log.select(lambda c: c.libID == self.telegramID and not c.returned))
 
-
     def add_to_queue(self, media_id):
         MediaQueue(user=self, mediaID=media_id)
         commit()
@@ -35,7 +34,6 @@ class User(db.Entity):
         order_of_users = media.get_queue()
         user_place = list(filter(lambda o: o.user == self, order_of_users))
         return order_of_users.index(user_place[0]) + 1
-
 
     def renew_copy(self, copy_id, date):
         # select log and extend expiry date
@@ -223,6 +221,7 @@ class Librarian(db.Entity):
             elif session.no_of_copies == -1:
                 no_of_copies = int(text)
                 session.no_of_copies = no_of_copies
+
                 Media(name=session.title, type=session.type, authors=session.author,
                       publisher=session.publisher, cost=session.price, fine=session.fine,
                       availability=True, bestseller=False)
@@ -241,6 +240,25 @@ class Librarian(db.Entity):
         else:
             RegistrySession(telegramID=self.telegramID)
             return "Please, enter type of media:"
+
+    def add_user(self, text):
+        session = RegistrySession.get(telegramID=self.telegramID)
+        if session is not None:
+            if session.name == "":
+                session.name = text
+                commit()
+                return "Let's add a new User! Please, enter new user's name"
+            elif session.phone == "":
+                session.phone = text
+                commit()
+                return "Please, enter new user's address"
+            elif session.address == "":
+                session.address = text
+                commit()
+                return "Choose his/her status"
+        else:
+            RegistrySession(telegramID=self.telegramID)
+            return "Let's add a new User! Please, enter new user's name"
 
 
 class Images(db.Entity):
@@ -266,7 +284,6 @@ class Log(db.Entity):
     def time_expired(self, check_date):
         assert self.is_expired(check_date)
         return (check_date-self.expiry_date).days
-
 
 
 class MediaCopies(db.Entity):

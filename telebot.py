@@ -138,7 +138,6 @@ def callback_query_selector(bot, update):
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.from_user.id)
 
-
     elif query_type == 'priorityEdited':
         user = User.get(telegramID=update.callback_query.from_user.id)
         user.priority = argument
@@ -403,7 +402,6 @@ def ask_priority(bot, update):
 
     bot.send_message(chat_id=update.message.chat_id, text="Choose your status:", reply_markup=reply)
     return register_conversation.END
-
 
 
 @db_session
@@ -1171,44 +1169,16 @@ def create_new_user(bot, update):
     lib = Librarian.get(telegramID=update.message.chat_id)
 
     if lib is not None and lib.priority > 1:
-        session = RegistrySession.get(telegramID=update.message.chat_id)
-        if session is not None:
-            if session.name == "":
-                if update.message.text == "/add_user":
-                    bot.send_message(text="Let's add a new User! Please, enter new user's name",
-                                     chat_id=update.message.chat_id)
-                    return NOT_FINISHED
-                session.name = update.message.text
-                bot.send_message(text="Please, enter new user's phone", chat_id=update.message.chat_id)
-                commit()
-                return NOT_FINISHED
-            elif session.phone == "":
-                session.phone = update.message.text
-                bot.send_message(text="Please, enter new user's address", chat_id=update.message.chat_id)
-                commit()
-                return NOT_FINISHED
-            elif session.address == "":
-                session.address = update.message.text
-                keyboard = InlineKeyboardMarkup(
-                    [[InlineKeyboardButton("Student",
-                                           callback_data=json.dumps({'type': 'setState', 'argument': 5})),
-                      InlineKeyboardButton("Instructor",
-                                           callback_data=json.dumps({'type': 'setState', 'argument': 4}))],
-                     [InlineKeyboardButton("TA",
-                                           callback_data=json.dumps({'type': 'setState', 'argument': 3})),
-                      InlineKeyboardButton("Professor",
-                                           callback_data=json.dumps({'type': 'setState', 'argument': 1}))],
-                     [InlineKeyboardButton("Visiting Professor",
-                                           callback_data=json.dumps({'type': 'setState', 'argument': 2}))]])
-                bot.send_message(text="Choose his/her status", chat_id=update.message.chat_id,
-                                 reply_markup=keyboard)
-                commit()
-                return new_user_conversation.END
-        else:
-            RegistrySession(telegramID=update.message.chat_id)
-            bot.send_message(text="Let's add a new User! Please, enter new user's name",
-                             chat_id=update.message.chat_id)
+        text_to_send = lib.add_user(update.message.text)
+        if text_to_send != "Choose his/her status":
+            bot.send_message(text=text_to_send, chat_id=update.message.chat_id)
             return NOT_FINISHED
+        else:
+            keyboard = priority_keyboard()
+            bot.send_message(text=text_to_send, chat_id=update.message.chat_id, reply_markups=keyboard)
+            return new_user_conversation.END
+    else:
+        bot.send_message(text="Sorry, you have no enough permissions!", chat_id=update.message.chat_id)
 
 
 @db_session
@@ -1239,9 +1209,6 @@ def create_user_set_status(bot, update):
                      chat_id=update.callback_query.from_user.id)
     bot.send_message(text="/start %s" % key,
                      chat_id=update.callback_query.from_user.id)
-
-    commit()
-
 
 
 def cancel_process(bot, update):
@@ -1378,7 +1345,7 @@ dispatcher.add_handler(CommandHandler('return', create_return_media_card))
 dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', create_booking_request_card))
 dispatcher.add_handler(CommandHandler('log', create_log_card))
-dispatcher.add_handler(CommandHandler('debtors', create_debt_card)) #воть тут
+dispatcher.add_handler(CommandHandler('debtors', create_debt_card))
 dispatcher.add_handler(CommandHandler('me', me))
 dispatcher.add_handler(CommandHandler('start', confirm_user, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True))
