@@ -1175,7 +1175,7 @@ def create_new_user(bot, update):
             return NOT_FINISHED
         else:
             keyboard = priority_keyboard()
-            bot.send_message(text=text_to_send, chat_id=update.message.chat_id, reply_markups=keyboard)
+            bot.send_message(text=text_to_send, chat_id=update.message.chat_id, reply_markup=keyboard)
             return new_user_conversation.END
     else:
         bot.send_message(text="Sorry, you have no enough permissions!", chat_id=update.message.chat_id)
@@ -1194,16 +1194,14 @@ def create_user_set_status(bot, update):
     session.faculty = argument
     key = generate_key()
 
-    LibrarianEnrollment(name=session.name, phone=session.phone,address=session.address, faculty=session.faculty, registrykey=key)
+    LibrarianEnrollment(name=session.name, phone=session.phone, address=session.address,
+                        faculty=session.faculty, registrykey=key)
 
-    db.execute(
-        "UPDATE registrysession SET name = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
-    db.execute(
-        "UPDATE registrysession SET phone = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
-    db.execute(
-        "UPDATE registrysession SET address = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
-    db.execute(
-        "UPDATE registrysession SET faculty = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
+    session.address = ""
+    session.phone = ""
+    session.name = ""
+    session.faculty = 0
+
     commit()
     bot.send_message(text="User was added. Please, ask User to send the following command:",
                      chat_id=update.callback_query.from_user.id)

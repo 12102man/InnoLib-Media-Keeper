@@ -247,7 +247,7 @@ class Librarian(db.Entity):
             if session.name == "":
                 session.name = text
                 commit()
-                return "Let's add a new User! Please, enter new user's name"
+                return "Please, enter his phone"
             elif session.phone == "":
                 session.phone = text
                 commit()
@@ -255,6 +255,8 @@ class Librarian(db.Entity):
             elif session.address == "":
                 session.address = text
                 commit()
+                return "Choose his/her status"
+            elif session.faculty == 0:
                 return "Choose his/her status"
         else:
             RegistrySession(telegramID=self.telegramID)
