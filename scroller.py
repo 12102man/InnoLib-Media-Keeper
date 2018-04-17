@@ -166,8 +166,6 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
 
             return message
 
-
-
     def create_keyboard(self):
         """
         This function creates buttons under the message for navigation
@@ -285,9 +283,14 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'return_request'})
 
         elif self.state == 'users':
+            user = database.Librarian.get(telegramID=self.__telegram_id)
             log_record = self.list[self.__cursor].telegramID
-            delete_user = json.dumps({'type': 'accept', 'argument': 'users', 'id': log_record})
-            up_row.append(InlineKeyboardButton("Delete", callback_data=delete_user))
+            if user is not None:
+                if user.priority > 2:
+                    delete_user = json.dumps({'type': 'user_delete', 'argument': log_record})
+                    up_row.append(InlineKeyboardButton("Delete", callback_data=delete_user))
+            edit_user = json.dumps({'type': 'user_edit', 'argument': log_record, 'id': log_record})
+            up_row.append(InlineKeyboardButton("Edit", callback_data=edit_user))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'users'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'users'})
         elif self.state == 'debtors': # воть тут

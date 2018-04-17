@@ -10,6 +10,11 @@ db = Database()
 db.bind(provider='mysql', host=config.db_host, user=config.db_username, passwd=config.db_password, db=config.db_name)
 
 
+class Admin(db.Entity):
+    telegram_id = PrimaryKey(int)
+    new_lib_id = Optional(int)
+
+
 class User(db.Entity):
     telegramID = PrimaryKey(int)
     name = Required(str)
