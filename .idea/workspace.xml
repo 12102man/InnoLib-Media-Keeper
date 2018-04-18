@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d78e4202-0a47-4043-8125-c51b11caa892" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scroller.py" beforeDir="false" afterPath="$PROJECT_DIR$/scroller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telebot.py" beforeDir="false" afterPath="$PROJECT_DIR$/telebot.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -13,58 +16,114 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/InnoLib_Media_Keeper$testsD3.coverage" NAME="testsD3 Coverage Results" MODIFIED="1522835408249" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/InnoLib_Media_Keeper$telebot.coverage" NAME="telebot Coverage Results" MODIFIED="1522835731578" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/InnoLib_Media_Keeper$telebot.coverage" NAME="telebot Coverage Results" MODIFIED="1524065533984" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="DatabaseView">
     <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
     <option name="GROUP_SCHEMA" value="true" />
     <option name="GROUP_CONTENTS" value="false" />
     <option name="SORT_POSITIONED" value="false" />
-    <option name="SHOW_TABLE_DETAILS" value="true" />
     <option name="SHOW_EMPTY_GROUPS" value="false" />
     <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
     <expand>
       <path>
-        <item name="" type="eadb38e5:DatabaseStructure$Root" />
-        <item name="37.46.132.57" type="e3449647:DbNodeDescriptor" />
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
       </path>
       <path>
-        <item name="" type="eadb38e5:DatabaseStructure$Root" />
-        <item name="37.46.132.57" type="e3449647:DbNodeDescriptor" />
-        <item name="testbase" type="e3449647:DbNodeDescriptor" />
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
       </path>
       <path>
-        <item name="" type="eadb38e5:DatabaseStructure$Root" />
-        <item name="37.46.132.57" type="e3449647:DbNodeDescriptor" />
-        <item name="testbase" type="e3449647:DbNodeDescriptor" />
-        <item name="user" type="e3449647:DbNodeDescriptor" />
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="testbase: schema" type="c314c289:MysqlImplModel$Schema" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="testbase: schema" type="c314c289:MysqlImplModel$Schema" />
+        <item name="admin: table" type="98d5ac3d:MysqlImplModel$Table" />
       </path>
     </expand>
     <select />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="telebot.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="telebot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/telebot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="16716">
-              <caret line="1169" column="36" lean-forward="false" selection-start-line="1169" selection-start-column="35" selection-end-line="1169" selection-end-column="36" />
+            <state relative-caret-position="446">
+              <caret line="1399" lean-forward="true" selection-start-line="1399" selection-end-line="1399" />
               <folding>
-                <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-                <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
+                <element signature="e#0#32#0" expanded="true" />
+                <element signature="e#11690#11741#0" />
+                <element signature="e#11787#13297#0" />
+                <element signature="e#13345#13817#0" />
+                <element signature="e#13867#14570#0" />
+                <element signature="e#14621#15763#0" />
+                <element signature="e#15783#16746#0" />
+                <element signature="e#17578#18132#0" />
+                <element signature="e#18188#18701#0" />
+                <element signature="e#18757#19252#0" />
+                <element signature="e#19317#19870#0" />
+                <element signature="e#19924#20412#0" />
+                <element signature="e#20476#21118#0" />
+                <element signature="e#21175#21545#0" />
+                <element signature="e#21695#22222#0" />
+                <element signature="e#22342#23137#0" />
+                <element signature="e#23191#23924#0" />
+                <element signature="e#23977#24723#0" />
+                <element signature="e#24786#25550#0" />
+                <element signature="e#25601#26306#0" />
+                <element signature="e#26367#26891#0" />
+                <element signature="e#26947#27571#0" />
+                <element signature="e#27628#28491#0" />
+                <element signature="e#28550#28885#0" />
+                <element signature="e#28943#29604#0" />
+                <element signature="e#29644#31210#0" />
+                <element signature="e#31271#32526#0" />
+                <element signature="e#32582#33843#0" />
+                <element signature="e#33905#35096#0" />
+                <element signature="e#35152#35717#0" />
+                <element signature="e#35775#37471#0" />
+                <element signature="e#37531#38941#0" />
+                <element signature="e#38991#41578#0" />
+                <element signature="e#41628#42612#0" />
+                <element signature="e#42666#43309#0" />
+                <element signature="e#43362#44134#0" />
+                <element signature="e#44195#45055#0" />
+                <element signature="e#45095#45316#0" />
+                <element signature="e#45375#46063#0" />
+                <element signature="e#46119#47089#0" />
+                <element signature="e#47133#47503#0" />
+                <element signature="e#47572#47899#0" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mediaqueue" pinned="false" current-in-tab="false">
-        <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediaqueue">
+      <file leaf-file-name="database.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/database.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="558">
+              <caret line="51" column="16" lean-forward="true" selection-start-line="51" selection-start-column="16" selection-end-line="51" selection-end-column="16" />
+              <folding>
+                <element signature="e#0#22#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="registrysession" pinned="false" current-in-tab="false">
+        <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/registrysession">
           <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
             <state>
               <filtering enabled="true" />
@@ -72,8 +131,36 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="registrysession" pinned="false" current-in-tab="false">
-        <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.registrysession">
+      <file leaf-file-name="scroller.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scroller.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-612">
+              <caret line="33" column="47" selection-start-line="33" selection-start-column="47" selection-end-line="33" selection-end-column="47" />
+              <folding>
+                <element signature="e#0#27#0" expanded="true" />
+                <element signature="e#1252#1810#0" />
+                <element signature="e#1859#2489#0" />
+                <element signature="e#2548#3007#0" />
+                <element signature="e#3055#3752#0" />
+                <element signature="e#3807#4550#0" />
+                <element signature="e#4608#5061#0" />
+                <element signature="e#5110#5434#0" />
+                <element signature="e#5922#6880#0" />
+                <element signature="e#7156#7641#0" />
+                <element signature="e#7691#10033#0" />
+                <element signature="e#10092#10605#0" />
+                <element signature="e#10653#11137#0" />
+                <element signature="e#11192#11754#0" />
+                <element signature="e#11813#12834#0" />
+                <element signature="e#13299#14023#0" />
+                <element signature="e#13668#14055#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="user" pinned="false" current-in-tab="false">
+        <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/user">
           <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
             <state>
               <filtering enabled="true" />
@@ -84,18 +171,8 @@
       <file leaf-file-name="button_actions.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/button_actions.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="716">
-              <caret line="100" column="63" lean-forward="false" selection-start-line="100" selection-start-column="63" selection-end-line="100" selection-end-column="63" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="testsD3.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/testsD3.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="427">
-              <caret line="292" column="16" lean-forward="false" selection-start-line="292" selection-start-column="16" selection-end-line="292" selection-end-column="56" />
+            <state relative-caret-position="507">
+              <caret line="344" column="10" selection-start-line="344" selection-start-column="10" selection-end-line="344" selection-end-column="10" />
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
               </folding>
@@ -103,20 +180,8 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="database.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/database.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2020">
-              <caret line="150" column="0" lean-forward="false" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#22#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="log" pinned="false" current-in-tab="true">
-        <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.log">
+      <file leaf-file-name="librarian" pinned="false" current-in-tab="false">
+        <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/librarian">
           <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
             <state>
               <filtering enabled="true" />
@@ -135,9 +200,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>j =</find>
-      <find>accept</find>
-      <find>chan</find>
       <find>check_re</find>
       <find>pay_for_book</find>
       <find>Overdue</find>
@@ -165,6 +227,9 @@
       <find>medias()</find>
       <find>media</find>
       <find>add_med</find>
+      <find>token</find>
+      <find>update</find>
+      <find>updater</find>
     </findStrings>
     <replaceStrings>
       <replace>pay_for_media</replace>
@@ -172,15 +237,21 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/scroller.py" />
-        <option value="$PROJECT_DIR$/button_actions.py" />
-        <option value="$PROJECT_DIR$/telebot.py" />
-        <option value="$PROJECT_DIR$/database.py" />
         <option value="$PROJECT_DIR$/testsD3.py" />
+        <option value="$PROJECT_DIR$/config.py" />
+        <option value="$PROJECT_DIR$/button_actions.py" />
+        <option value="$PROJECT_DIR$/scroller.py" />
+        <option value="$PROJECT_DIR$/database.py" />
+        <option value="$PROJECT_DIR$/telebot.py" />
       </list>
     </option>
   </component>
@@ -190,28 +261,20 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="2560" />
-    <option name="height" value="1080" />
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths />
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+    <option name="x" value="484" />
+    <option name="width" value="1272" />
+    <option name="height" value="689" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
-      <flattenPackages />
-      <showMembers />
-      <showModules />
-      <showLibraryContents />
-      <hideEmptyPackages />
-      <abbreviatePackageNames />
-      <autoscrollToSource />
-      <autoscrollFromSource />
-      <sortByType />
-      <manualOrder />
+    <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -228,10 +291,12 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -248,6 +313,7 @@
   </component>
   <component name="RunManager" selected="Python.telebot">
     <configuration name="telebot" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="InnoLib-Media-Keeper" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -258,14 +324,15 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="InnoLib-Media-Keeper" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/telebot.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
     </configuration>
     <configuration name="testsD3" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="InnoLib-Media-Keeper" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -276,26 +343,23 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="InnoLib-Media-Keeper" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/testsD3.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
     </configuration>
-    <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="Python.telebot" />
-      <item index="1" class="java.lang.String" itemvalue="Python.testsD3" />
+    <list>
+      <item itemvalue="Python.telebot" />
+      <item itemvalue="Python.testsD3" />
     </list>
     <recent_temporary>
-      <list size="2">
-        <item index="0" class="java.lang.String" itemvalue="Python.telebot" />
-        <item index="1" class="java.lang.String" itemvalue="Python.testsD3" />
+      <list>
+        <item itemvalue="Python.telebot" />
+        <item itemvalue="Python.testsD3" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="ShelveChangesManager" show_recycled="false">
-    <option name="remove_strategy" value="false" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -357,64 +421,89 @@
       <option name="project" value="LOCAL" />
       <updated>1522692950323</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Added add_user to librarian">
+      <created>1523831212932</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1523831212932</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Added add_user to librarian">
+      <created>1523832508063</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1523832508063</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Added ADMIN and its features">
+      <created>1524007381406</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1524007381406</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="2560" height="1080" extended-state="0" />
+    <frame x="0" y="-29" width="1920" height="1109" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Heroku" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19410568" sideWeight="0.5015886" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19410568" sideWeight="0.49841145" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23034154" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17394757" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.398374" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
-      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Concurrent Activities Diagram" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3292683" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info anchor="bottom" id="TODO" order="12" />
+      <window_info anchor="bottom" id="Event Log" order="1" sideWeight="0.50208336" weight="0.23902439" />
+      <window_info anchor="bottom" id="Database Changes" order="0" show_stripe_button="false" />
+      <window_info active="true" anchor="bottom" id="Run" order="8" sideWeight="0.49791667" visible="true" weight="0.23902439" />
+      <window_info anchor="bottom" id="Version Control" order="2" weight="0.3287805" />
+      <window_info anchor="bottom" id="Python Console" order="3" />
+      <window_info anchor="bottom" id="Terminal" order="4" />
+      <window_info anchor="bottom" id="Database Console" order="13" sideWeight="0.49947917" weight="0.3297561" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.23020834" />
+      <window_info anchor="bottom" id="Docker" order="5" show_stripe_button="false" />
+      <window_info anchor="right" id="Database" order="1" visible="true" weight="0.1734375" />
+      <window_info anchor="right" id="SciView" order="0" />
+      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Debug" order="9" weight="0.3980488" />
+      <window_info id="Favorites" order="0" side_tool="true" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="11" weight="0.4" />
+      <window_info anchor="bottom" id="Heroku" order="13" />
+      <window_info anchor="right" id="Commander" order="2" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="3" weight="0.25" />
+      <window_info anchor="right" id="Data View" order="3" />
+      <window_info anchor="bottom" id="Message" order="6" />
+      <window_info anchor="bottom" id="Cvs" order="10" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="7" />
+      <window_info anchor="bottom" id="Concurrent Activities Diagram" order="14" visible="true" weight="0.3292683" />
     </layout>
-    <layout-to-restore>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Heroku" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19410568" sideWeight="0.5015886" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19410568" sideWeight="0.49841145" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329602" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23034154" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
-      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17394757" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Concurrent Activities Diagram" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3292683" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.398374" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -428,168 +517,31 @@
     <MESSAGE value="Preparing for testcases" />
     <MESSAGE value="Preparing for testcases-2" />
     <MESSAGE value="Full test cases" />
-    <option name="LAST_COMMIT_MESSAGE" value="Full test cases" />
+    <MESSAGE value="Added add_user to librarian" />
+    <MESSAGE value="Added ADMIN and its features" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added ADMIN and its features" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/telebot.py</url>
-          <line>839</line>
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/button_actions.py</url>
-          <line>166</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/scroller.py</url>
-          <line>36</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/telebot.py</url>
-          <line>766</line>
-          <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/telebot.py</url>
-          <line>1324</line>
-          <option name="timeStamp" value="18" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/telebot.py</url>
-          <line>314</line>
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/button_actions.py</url>
-          <line>21</line>
-          <option name="timeStamp" value="20" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/testsD3.py</url>
-          <line>147</line>
-          <option name="timeStamp" value="22" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/testsD3.py</url>
-          <line>238</line>
-          <option name="timeStamp" value="27" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/testsD3.py</url>
-          <line>255</line>
-          <option name="timeStamp" value="28" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/testsD3.py</url>
-          <line>260</line>
-          <option name="timeStamp" value="30" />
-        </line-breakpoint>
-      </breakpoints>
-      <option name="time" value="31" />
+      <option name="time" value="36" />
     </breakpoint-manager>
-    <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.user" />
     <entry file="file://$PROJECT_DIR$/button_actions.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4245">
-          <caret line="283" column="18" lean-forward="false" selection-start-line="283" selection-start-column="18" selection-end-line="283" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3525">
-          <caret line="235" column="77" lean-forward="false" selection-start-line="235" selection-start-column="77" selection-end-line="235" selection-end-column="77" />
+          <caret line="283" column="18" lean-forward="true" selection-start-line="283" selection-start-column="18" selection-end-line="283" selection-end-column="18" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/telebot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="53" column="31" lean-forward="false" selection-start-line="53" selection-start-column="31" selection-end-line="53" selection-end-column="31" />
-          <folding>
-            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scroller.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#27#0" expanded="false" />
-            <element signature="e#1859#2489#0" expanded="false" />
-            <element signature="e#2548#3007#0" expanded="false" />
-            <element signature="e#3055#3752#0" expanded="false" />
-            <element signature="e#3807#4550#0" expanded="false" />
-            <element signature="e#4608#5061#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.media">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediacopies">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediaqueue">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.librarian">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.user">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/button_actions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4245">
-          <caret line="283" column="18" lean-forward="true" selection-start-line="283" selection-start-column="18" selection-end-line="283" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3525">
-          <caret line="235" column="77" lean-forward="false" selection-start-line="235" selection-start-column="77" selection-end-line="235" selection-end-column="77" />
+          <caret line="235" column="77" selection-start-line="235" selection-start-column="77" selection-end-line="235" selection-end-column="77" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
@@ -599,16 +551,50 @@
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="10035">
-          <caret line="684" column="0" lean-forward="false" selection-start-line="684" selection-start-column="0" selection-end-line="684" selection-end-column="0" />
+          <caret line="684" selection-start-line="684" selection-end-line="684" />
           <folding>
-            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
+            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#11690#11741#0" />
+            <element signature="e#11787#13297#0" />
+            <element signature="e#13345#13817#0" />
+            <element signature="e#13867#14570#0" />
+            <element signature="e#14621#15763#0" />
+            <element signature="e#15783#16746#0" />
+            <element signature="e#17578#18132#0" />
+            <element signature="e#18188#18701#0" />
+            <element signature="e#18757#19252#0" />
+            <element signature="e#19317#19870#0" />
+            <element signature="e#19924#20412#0" />
+            <element signature="e#20476#21118#0" />
+            <element signature="e#21175#21545#0" />
+            <element signature="e#21695#22222#0" />
+            <element signature="e#22342#23137#0" />
+            <element signature="e#23191#23924#0" />
+            <element signature="e#23977#24723#0" />
+            <element signature="e#24786#25550#0" />
+            <element signature="e#25601#26306#0" />
+            <element signature="e#26367#26891#0" />
+            <element signature="e#26947#27571#0" />
+            <element signature="e#27628#28491#0" />
+            <element signature="e#28550#28885#0" />
+            <element signature="e#28943#29604#0" />
+            <element signature="e#29644#31210#0" />
+            <element signature="e#31271#32526#0" />
+            <element signature="e#32582#33843#0" />
+            <element signature="e#33905#35096#0" />
+            <element signature="e#35152#35717#0" />
+            <element signature="e#35775#37471#0" />
+            <element signature="e#37531#38941#0" />
+            <element signature="e#38991#41578#0" />
+            <element signature="e#41628#42612#0" />
+            <element signature="e#42666#43309#0" />
+            <element signature="e#43362#44134#0" />
+            <element signature="e#44195#45055#0" />
+            <element signature="e#45095#45316#0" />
+            <element signature="e#45375#46063#0" />
+            <element signature="e#46119#47089#0" />
+            <element signature="e#47133#47503#0" />
+            <element signature="e#47572#47899#0" />
           </folding>
         </state>
       </provider>
@@ -616,7 +602,7 @@
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
-          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
@@ -626,22 +612,35 @@
     <entry file="file://$PROJECT_DIR$/button_actions.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4365">
-          <caret line="291" column="134" lean-forward="false" selection-start-line="291" selection-start-column="134" selection-end-line="291" selection-end-column="134" />
-          <folding />
+          <caret line="291" column="134" selection-start-line="291" selection-start-column="134" selection-end-line="291" selection-end-column="134" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scroller.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
-          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+          <caret line="36" selection-start-line="36" selection-end-line="36" />
           <folding>
-            <element signature="e#0#27#0" expanded="false" />
-            <element signature="e#1859#2489#0" expanded="false" />
-            <element signature="e#2548#3007#0" expanded="false" />
-            <element signature="e#3055#3752#0" expanded="false" />
-            <element signature="e#3807#4550#0" expanded="false" />
-            <element signature="e#4608#5061#0" expanded="false" />
+            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#1252#1810#0" />
+            <element signature="e#1859#2489#0" />
+            <element signature="e#2548#3007#0" />
+            <element signature="e#3055#3752#0" />
+            <element signature="e#3807#4550#0" />
+            <element signature="e#4608#5061#0" />
+            <element signature="e#5110#5434#0" />
+            <element signature="e#5922#6880#0" />
+            <element signature="e#7156#7641#0" />
+            <element signature="e#7691#10033#0" />
+            <element signature="e#10092#10605#0" />
+            <element signature="e#10653#11137#0" />
+            <element signature="e#11192#11754#0" />
+            <element signature="e#11813#12834#0" />
+            <element signature="e#13299#14023#0" />
+            <element signature="e#13668#14055#0" />
           </folding>
         </state>
       </provider>
@@ -649,16 +648,50 @@
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2670">
-          <caret line="178" column="32" lean-forward="false" selection-start-line="178" selection-start-column="32" selection-end-line="178" selection-end-column="32" />
+          <caret line="178" column="32" selection-start-line="178" selection-start-column="32" selection-end-line="178" selection-end-column="32" />
           <folding>
-            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
+            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#11690#11741#0" />
+            <element signature="e#11787#13297#0" />
+            <element signature="e#13345#13817#0" />
+            <element signature="e#13867#14570#0" />
+            <element signature="e#14621#15763#0" />
+            <element signature="e#15783#16746#0" />
+            <element signature="e#17578#18132#0" />
+            <element signature="e#18188#18701#0" />
+            <element signature="e#18757#19252#0" />
+            <element signature="e#19317#19870#0" />
+            <element signature="e#19924#20412#0" />
+            <element signature="e#20476#21118#0" />
+            <element signature="e#21175#21545#0" />
+            <element signature="e#21695#22222#0" />
+            <element signature="e#22342#23137#0" />
+            <element signature="e#23191#23924#0" />
+            <element signature="e#23977#24723#0" />
+            <element signature="e#24786#25550#0" />
+            <element signature="e#25601#26306#0" />
+            <element signature="e#26367#26891#0" />
+            <element signature="e#26947#27571#0" />
+            <element signature="e#27628#28491#0" />
+            <element signature="e#28550#28885#0" />
+            <element signature="e#28943#29604#0" />
+            <element signature="e#29644#31210#0" />
+            <element signature="e#31271#32526#0" />
+            <element signature="e#32582#33843#0" />
+            <element signature="e#33905#35096#0" />
+            <element signature="e#35152#35717#0" />
+            <element signature="e#35775#37471#0" />
+            <element signature="e#37531#38941#0" />
+            <element signature="e#38991#41578#0" />
+            <element signature="e#41628#42612#0" />
+            <element signature="e#42666#43309#0" />
+            <element signature="e#43362#44134#0" />
+            <element signature="e#44195#45055#0" />
+            <element signature="e#45095#45316#0" />
+            <element signature="e#45375#46063#0" />
+            <element signature="e#46119#47089#0" />
+            <element signature="e#47133#47503#0" />
+            <element signature="e#47572#47899#0" />
           </folding>
         </state>
       </provider>
@@ -666,27 +699,33 @@
     <entry file="file://$PROJECT_DIR$/scroller.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2535">
-          <caret line="263" column="46" lean-forward="false" selection-start-line="263" selection-start-column="46" selection-end-line="263" selection-end-column="46" />
+          <caret line="263" column="46" selection-start-line="263" selection-start-column="46" selection-end-line="263" selection-end-column="46" />
           <folding>
-            <element signature="e#0#27#0" expanded="false" />
-            <element signature="e#1859#2489#0" expanded="false" />
-            <element signature="e#2548#3007#0" expanded="false" />
-            <element signature="e#3055#3752#0" expanded="false" />
-            <element signature="e#3807#4550#0" expanded="false" />
-            <element signature="e#4608#5061#0" expanded="false" />
+            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#1252#1810#0" />
+            <element signature="e#1859#2489#0" />
+            <element signature="e#2548#3007#0" />
+            <element signature="e#3055#3752#0" />
+            <element signature="e#3807#4550#0" />
+            <element signature="e#4608#5061#0" />
+            <element signature="e#5110#5434#0" />
+            <element signature="e#5922#6880#0" />
+            <element signature="e#7156#7641#0" />
+            <element signature="e#7691#10033#0" />
+            <element signature="e#10092#10605#0" />
+            <element signature="e#10653#11137#0" />
+            <element signature="e#11192#11754#0" />
+            <element signature="e#11813#12834#0" />
+            <element signature="e#13299#14023#0" />
+            <element signature="e#13668#14055#0" />
           </folding>
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Docs/Diagram.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2310">
-          <caret line="159" column="0" lean-forward="true" selection-start-line="159" selection-start-column="0" selection-end-line="159" selection-end-column="0" />
+          <caret line="159" lean-forward="true" selection-start-line="159" selection-end-line="159" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
@@ -696,24 +735,60 @@
     <entry file="file://$PROJECT_DIR$/button_actions.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2835">
-          <caret line="192" column="82" lean-forward="false" selection-start-line="192" selection-start-column="82" selection-end-line="192" selection-end-column="82" />
-          <folding />
+          <caret line="192" column="82" selection-start-line="192" selection-start-column="82" selection-end-line="192" selection-end-column="82" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8143">
-          <caret line="479" column="0" lean-forward="false" selection-start-line="479" selection-start-column="0" selection-end-line="479" selection-end-column="0" />
+          <caret line="479" selection-start-line="479" selection-end-line="479" />
           <folding>
-            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
+            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#11690#11741#0" />
+            <element signature="e#11787#13297#0" />
+            <element signature="e#13345#13817#0" />
+            <element signature="e#13867#14570#0" />
+            <element signature="e#14621#15763#0" />
+            <element signature="e#15783#16746#0" />
+            <element signature="e#17578#18132#0" />
+            <element signature="e#18188#18701#0" />
+            <element signature="e#18757#19252#0" />
+            <element signature="e#19317#19870#0" />
+            <element signature="e#19924#20412#0" />
+            <element signature="e#20476#21118#0" />
+            <element signature="e#21175#21545#0" />
+            <element signature="e#21695#22222#0" />
+            <element signature="e#22342#23137#0" />
+            <element signature="e#23191#23924#0" />
+            <element signature="e#23977#24723#0" />
+            <element signature="e#24786#25550#0" />
+            <element signature="e#25601#26306#0" />
+            <element signature="e#26367#26891#0" />
+            <element signature="e#26947#27571#0" />
+            <element signature="e#27628#28491#0" />
+            <element signature="e#28550#28885#0" />
+            <element signature="e#28943#29604#0" />
+            <element signature="e#29644#31210#0" />
+            <element signature="e#31271#32526#0" />
+            <element signature="e#32582#33843#0" />
+            <element signature="e#33905#35096#0" />
+            <element signature="e#35152#35717#0" />
+            <element signature="e#35775#37471#0" />
+            <element signature="e#37531#38941#0" />
+            <element signature="e#38991#41578#0" />
+            <element signature="e#41628#42612#0" />
+            <element signature="e#42666#43309#0" />
+            <element signature="e#43362#44134#0" />
+            <element signature="e#44195#45055#0" />
+            <element signature="e#45095#45316#0" />
+            <element signature="e#45375#46063#0" />
+            <element signature="e#46119#47089#0" />
+            <element signature="e#47133#47503#0" />
+            <element signature="e#47572#47899#0" />
           </folding>
         </state>
       </provider>
@@ -723,25 +798,31 @@
         <state relative-caret-position="2873">
           <caret line="263" column="46" lean-forward="true" selection-start-line="263" selection-start-column="46" selection-end-line="263" selection-end-column="46" />
           <folding>
-            <element signature="e#0#27#0" expanded="false" />
-            <element signature="e#1859#2489#0" expanded="false" />
-            <element signature="e#2548#3007#0" expanded="false" />
-            <element signature="e#3055#3752#0" expanded="false" />
-            <element signature="e#3807#4550#0" expanded="false" />
-            <element signature="e#4608#5061#0" expanded="false" />
+            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#1252#1810#0" />
+            <element signature="e#1859#2489#0" />
+            <element signature="e#2548#3007#0" />
+            <element signature="e#3055#3752#0" />
+            <element signature="e#3807#4550#0" />
+            <element signature="e#4608#5061#0" />
+            <element signature="e#5110#5434#0" />
+            <element signature="e#5922#6880#0" />
+            <element signature="e#7156#7641#0" />
+            <element signature="e#7691#10033#0" />
+            <element signature="e#10092#10605#0" />
+            <element signature="e#10653#11137#0" />
+            <element signature="e#11192#11754#0" />
+            <element signature="e#11813#12834#0" />
+            <element signature="e#13299#14023#0" />
+            <element signature="e#13668#14055#0" />
           </folding>
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Docs/Diagram.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="867">
-          <caret line="51" column="47" lean-forward="false" selection-start-line="51" selection-start-column="47" selection-end-line="51" selection-end-column="47" />
+          <caret line="51" column="47" selection-start-line="51" selection-start-column="47" selection-end-line="51" selection-end-column="47" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
@@ -752,23 +833,58 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5304">
           <caret line="315" column="17" lean-forward="true" selection-start-line="315" selection-start-column="17" selection-end-line="315" selection-end-column="17" />
-          <folding />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state>
           <folding>
-            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
+            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#11690#11741#0" />
+            <element signature="e#11787#13297#0" />
+            <element signature="e#13345#13817#0" />
+            <element signature="e#13867#14570#0" />
+            <element signature="e#14621#15763#0" />
+            <element signature="e#15783#16746#0" />
+            <element signature="e#17578#18132#0" />
+            <element signature="e#18188#18701#0" />
+            <element signature="e#18757#19252#0" />
+            <element signature="e#19317#19870#0" />
+            <element signature="e#19924#20412#0" />
+            <element signature="e#20476#21118#0" />
+            <element signature="e#21175#21545#0" />
+            <element signature="e#21695#22222#0" />
+            <element signature="e#22342#23137#0" />
+            <element signature="e#23191#23924#0" />
+            <element signature="e#23977#24723#0" />
+            <element signature="e#24786#25550#0" />
+            <element signature="e#25601#26306#0" />
+            <element signature="e#26367#26891#0" />
+            <element signature="e#26947#27571#0" />
+            <element signature="e#27628#28491#0" />
+            <element signature="e#28550#28885#0" />
+            <element signature="e#28943#29604#0" />
+            <element signature="e#29644#31210#0" />
+            <element signature="e#31271#32526#0" />
+            <element signature="e#32582#33843#0" />
+            <element signature="e#33905#35096#0" />
+            <element signature="e#35152#35717#0" />
+            <element signature="e#35775#37471#0" />
+            <element signature="e#37531#38941#0" />
+            <element signature="e#38991#41578#0" />
+            <element signature="e#41628#42612#0" />
+            <element signature="e#42666#43309#0" />
+            <element signature="e#43362#44134#0" />
+            <element signature="e#44195#45055#0" />
+            <element signature="e#45095#45316#0" />
+            <element signature="e#45375#46063#0" />
+            <element signature="e#46119#47089#0" />
+            <element signature="e#47133#47503#0" />
+            <element signature="e#47572#47899#0" />
           </folding>
         </state>
       </provider>
@@ -783,91 +899,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sandbox.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../TGBot/venv/Lib/site-packages/pony/orm/dbschema.py" />
-    <entry file="file://$PROJECT_DIR$/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../TGBot/venv/Lib/site-packages/pony/orm/dbapiprovider.py" />
-    <entry file="file://$PROJECT_DIR$/Docs/Diagram.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/telegram/message.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="198" column="0" lean-forward="false" selection-start-line="198" selection-start-column="0" selection-end-line="198" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scroller.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#27#0" expanded="false" />
-            <element signature="e#1859#2489#0" expanded="false" />
-            <element signature="e#2548#3007#0" expanded="false" />
-            <element signature="e#3055#3752#0" expanded="false" />
-            <element signature="e#3807#4550#0" expanded="false" />
-            <element signature="e#4608#5061#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.librarianenrollment">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pony/utils/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="97" column="0" lean-forward="false" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediacopies">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.request">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.user">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.media">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/telegram/message.py" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.librarianenrollment" />
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pony/utils/utils.py" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediacopies" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.request" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.user" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.media" />
     <entry file="file://$PROJECT_DIR$/testbot_D2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="303">
@@ -875,92 +915,206 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.librarian">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pony/orm/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="464" column="0" lean-forward="false" selection-start-line="464" selection-start-column="0" selection-end-line="464" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pymysql/cursors.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
-          <caret line="257" column="13" lean-forward="false" selection-start-line="257" selection-start-column="13" selection-end-line="257" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.registrysession">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.librarian" />
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pony/orm/core.py" />
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pymysql/cursors.py" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.registrysession" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediaqueue" />
+    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.log" />
     <entry file="file://$PROJECT_DIR$/testsD3.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="292" column="16" lean-forward="false" selection-start-line="292" selection-start-column="16" selection-end-line="292" selection-end-column="56" />
+        <state relative-caret-position="1666">
+          <caret line="290" column="18" lean-forward="true" selection-start-line="290" selection-start-column="18" selection-end-line="290" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/key_generator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/librarianenrollment">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/admin">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/lib/python3.6/site-packages/telegram/ext/commandhandler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="746">
+          <caret line="169" selection-start-line="169" selection-end-line="169" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/request">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/admin.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="2" selection-start-line="3" selection-start-column="2" selection-end-line="3" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.1/system/python_stubs/-714265945/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="251">
+          <caret line="5243" column="8" selection-start-line="5243" selection-start-column="8" selection-end-line="5243" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/lib/python3.6/site-packages/telegram/inline/inlinekeyboardmarkup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="473">
+          <caret line="41" lean-forward="true" selection-start-line="41" selection-end-line="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/button_actions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="507">
+          <caret line="344" column="10" selection-start-line="344" selection-start-column="10" selection-end-line="344" selection-end-column="10" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/lib/python3.6/site-packages/pony/orm/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="459" selection-start-line="459" selection-end-line="459" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/librarian">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/registrysession">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/user">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scroller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-612">
+          <caret line="33" column="47" selection-start-line="33" selection-start-column="47" selection-end-line="33" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#1252#1810#0" />
+            <element signature="e#1859#2489#0" />
+            <element signature="e#2548#3007#0" />
+            <element signature="e#3055#3752#0" />
+            <element signature="e#3807#4550#0" />
+            <element signature="e#4608#5061#0" />
+            <element signature="e#5110#5434#0" />
+            <element signature="e#5922#6880#0" />
+            <element signature="e#7156#7641#0" />
+            <element signature="e#7691#10033#0" />
+            <element signature="e#10092#10605#0" />
+            <element signature="e#10653#11137#0" />
+            <element signature="e#11192#11754#0" />
+            <element signature="e#11813#12834#0" />
+            <element signature="e#13299#14023#0" />
+            <element signature="e#13668#14055#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2020">
-          <caret line="150" column="0" lean-forward="false" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
+        <state relative-caret-position="558">
+          <caret line="51" column="16" lean-forward="true" selection-start-line="51" selection-start-column="16" selection-end-line="51" selection-end-column="16" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/button_actions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="716">
-          <caret line="100" column="63" lean-forward="false" selection-start-line="100" selection-start-column="63" selection-end-line="100" selection-end-column="63" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16716">
-          <caret line="1169" column="36" lean-forward="false" selection-start-line="1169" selection-start-column="35" selection-end-line="1169" selection-end-column="36" />
+        <state relative-caret-position="446">
+          <caret line="1399" lean-forward="true" selection-start-line="1399" selection-end-line="1399" />
           <folding>
-            <marker date="1522691568455" expanded="true" signature="16583:16641" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16714:16773" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16846:16907" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="16980:17041" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48327:48385" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48458:48517" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48590:48651" ph="UPDATE regis... " />
-            <marker date="1522691568455" expanded="true" signature="48724:48785" ph="UPDATE regis... " />
+            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#11690#11741#0" />
+            <element signature="e#11787#13297#0" />
+            <element signature="e#13345#13817#0" />
+            <element signature="e#13867#14570#0" />
+            <element signature="e#14621#15763#0" />
+            <element signature="e#15783#16746#0" />
+            <element signature="e#17578#18132#0" />
+            <element signature="e#18188#18701#0" />
+            <element signature="e#18757#19252#0" />
+            <element signature="e#19317#19870#0" />
+            <element signature="e#19924#20412#0" />
+            <element signature="e#20476#21118#0" />
+            <element signature="e#21175#21545#0" />
+            <element signature="e#21695#22222#0" />
+            <element signature="e#22342#23137#0" />
+            <element signature="e#23191#23924#0" />
+            <element signature="e#23977#24723#0" />
+            <element signature="e#24786#25550#0" />
+            <element signature="e#25601#26306#0" />
+            <element signature="e#26367#26891#0" />
+            <element signature="e#26947#27571#0" />
+            <element signature="e#27628#28491#0" />
+            <element signature="e#28550#28885#0" />
+            <element signature="e#28943#29604#0" />
+            <element signature="e#29644#31210#0" />
+            <element signature="e#31271#32526#0" />
+            <element signature="e#32582#33843#0" />
+            <element signature="e#33905#35096#0" />
+            <element signature="e#35152#35717#0" />
+            <element signature="e#35775#37471#0" />
+            <element signature="e#37531#38941#0" />
+            <element signature="e#38991#41578#0" />
+            <element signature="e#41628#42612#0" />
+            <element signature="e#42666#43309#0" />
+            <element signature="e#43362#44134#0" />
+            <element signature="e#44195#45055#0" />
+            <element signature="e#45095#45316#0" />
+            <element signature="e#45375#46063#0" />
+            <element signature="e#46119#47089#0" />
+            <element signature="e#47133#47503#0" />
+            <element signature="e#47572#47899#0" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediaqueue">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.log">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
         </state>
       </provider>
     </entry>

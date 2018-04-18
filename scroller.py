@@ -144,7 +144,19 @@ Telephone number: %s
 Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patron.balance)
 
             return message
-        elif self.state == 'debtors': # воть тут
+        elif self.state == 'librarians':
+            self.__cursor = database.RegistrySession[self.__telegram_id].users_c
+            lib = self.list[self.__cursor]
+            patron = database.User[lib.telegramID]
+            message = """ Librarian %s information:
+Address: %s
+Alias: @%s
+Telephone number: %s
+Balance: %s
+Privilege level: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patron.balance, lib.priority)
+
+            return message
+        elif self.state == 'debtors':  # воть тут
             self.__cursor = database.RegistrySession[self.__telegram_id].debtors_c
             debt = self.list[self.__cursor]
             user = database.User.get(telegramID=debt.libID)
@@ -165,8 +177,6 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
                            convert_to_emoji(debt.renewed))
 
             return message
-
-
 
     def create_keyboard(self):
         """
@@ -202,16 +212,19 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'media'})
             #   Buttons for editing (only for librarian)
 
-            if database.Librarian.get(telegramID=self.__telegram_id) is not None:
+            librarian = database.Librarian.get(telegramID=self.__telegram_id)
+            if librarian is not None:
 
                 mid_row.append(InlineKeyboardButton("Edit", callback_data=json.dumps(
                     {'type': 'media_edit', 'argument': self.list[self.__cursor].mediaID})))
-                mid_row.append(InlineKeyboardButton("Delete", callback_data=json.dumps(
-                    {'type': 'media_delete', 'argument': self.list[self.__cursor].mediaID})))
-                mid_row.append(InlineKeyboardButton("Copy", callback_data=json.dumps(
-                    {'type': 'media_add_copy', 'argument': self.list[self.__cursor].mediaID})))
-                mid_row.append(InlineKeyboardButton("Outstanding request", callback_data=json.dumps(
-                    {'type': 'outstanding_request', 'argument': self.list[self.__cursor].mediaID})))
+                if librarian.priority > 2:
+                    mid_row.append(InlineKeyboardButton("Delete", callback_data=json.dumps(
+                        {'type': 'media_delete', 'argument': self.list[self.__cursor].mediaID})))
+                if librarian.priority > 1:
+                    mid_row.append(InlineKeyboardButton("Copy", callback_data=json.dumps(
+                        {'type': 'media_add_copy', 'argument': self.list[self.__cursor].mediaID})))
+                    mid_row.append(InlineKeyboardButton("Outstanding request", callback_data=json.dumps(
+                        {'type': 'outstanding_request', 'argument': self.list[self.__cursor].mediaID})))
 
             if not self.list[self.__cursor].availability:
                 user = database.User[self.__telegram_id]
@@ -282,11 +295,24 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'return_request'})
 
         elif self.state == 'users':
+            user = database.Librarian.get(telegramID=self.__telegram_id)
             log_record = self.list[self.__cursor].telegramID
-            delete_user = json.dumps({'type': 'accept', 'argument': 'users', 'id': log_record})
-            up_row.append(InlineKeyboardButton("Delete", callback_data=delete_user))
+            if user is not None:
+                if user.priority > 2:
+                    delete_user = json.dumps({'type': 'user_delete', 'argument': log_record})
+                    up_row.append(InlineKeyboardButton("Delete", callback_data=delete_user))
+            edit_user = json.dumps({'type': 'user_edit', 'argument': log_record, 'id': log_record})
+            up_row.append(InlineKeyboardButton("Edit", callback_data=edit_user))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'users'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'users'})
+        elif self.state == 'librarians':
+            log_record = self.list[self.__cursor].telegramID
+            delete_librarian = json.dumps({'type': 'lib_delete', 'argument': log_record})
+            up_row.append(InlineKeyboardButton("Delete", callback_data=delete_librarian))
+            change_librarian_privilege = json.dumps({'type': 'priv_edit', 'argument': log_record})
+            mid_row.append(InlineKeyboardButton("Change privilege", callback_data=change_librarian_privilege))
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'librs'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'librs'})
         elif self.state == 'debtors': # воть тут
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'debtors'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'debtors'})
@@ -296,7 +322,6 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
                     {'type': 'ask_for_return', 'argument': debt.mediaID, 'user': debt.libID})))
 
         """ If cursor is on the edge position (0 or length of list with records),
-
         then don't append one of arrows."""
         if self.__cursor > 0:
             low_row.append(InlineKeyboardButton("⬅", callback_data=callback_prev))
