@@ -14,6 +14,47 @@ class Admin(db.Entity):
     telegram_id = PrimaryKey(int)
     new_lib_id = Optional(int)
 
+    def set_privilege(self, level):
+        """
+        Sets privileges to existing or new librarian
+        :param level: level of privileges
+        :return: string depends on is the librarian newcomer or he already was him
+        """
+        new_lib = Librarian.get(telegramID=self.new_lib_id)
+        if new_lib.priority is None:
+            action = "New librarian was added!"
+        else:
+            action = "Librarian privileges was changed!"
+        if level == 'edit':
+            new_lib.priority = 1
+        if level == 'add':
+            new_lib.priority = 2
+        if level == 'delete':
+            new_lib.priority = 3
+        self.new_lib_id = 0
+        commit()
+        return action
+
+    def add_new_librarian(self):
+        """
+        Adds record about new librarian
+        :return:
+        """
+        Librarian(telegramID=self.new_lib_id,
+                  name=User.get(telegramID=self.new_lib_id).name,
+                  priority=0)
+        commit()
+
+    def delete_librarian(self, lib_id):
+        """
+        Deletes existing librarian
+        :param lib_id: telegramID of librarian
+        :return:
+        """
+        RegistrySession.get(telegramID=self.telegram_id).users_c = 0
+        Librarian.get(telegramID=lib_id).delete()
+        commit()
+
 
 class User(db.Entity):
     telegramID = PrimaryKey(int)

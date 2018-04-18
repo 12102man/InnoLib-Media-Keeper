@@ -87,6 +87,42 @@ def callback_query_selector(bot, update):
     elif query_type == 'user_delete':
         delete_user(bot, update, argument)
 
+    # Actions with librarians
+    elif query_type == 'lib_delete':
+        yes_json = json.dumps({'type': 'lib_delete_y', 'argument': argument})
+        no_json = json.dumps({'type': 'lib_delete_n', 'argument': argument})
+        keyboard = InlineKeyboardMarkup([[
+            InlineKeyboardButton("Yes", callback_data=yes_json),
+            InlineKeyboardButton("No", callback_data=no_json)
+        ]])
+        bot.edit_message_text(text="Do you really want to remove librarian rights?",
+                              chat_id=update.callback_query.message.chat_id,
+                              message_id=update.callback_query.message.message_id,
+                              reply_markup=keyboard)
+    elif query_type == 'lib_delete_y':
+        admin = Admin.get(telegram_id=update.callback_query.message.chat_id)
+        admin.delete_librarian(argument)
+        bot.edit_message_text(text="Rights was removed!",
+                              chat_id=update.callback_query.message.chat_id,
+                              message_id=update.callback_query.message.message_id)
+    elif query_type == 'lib_delete_n':
+        bot.edit_message_text(text="Process was cancelled.",
+                              chat_id=update.callback_query.message.chat_id,
+                              message_id=update.callback_query.message.message_id)
+    elif query_type == 'priv_edit':
+        admin = Admin.get(telegram_id=update.callback_query.message.chat_id)
+        admin.new_lib_id = argument
+        see_edit = json.dumps({'type': 'adm_s_pr', 'argument': 'edit'})
+        add = json.dumps({'type': 'adm_s_pr', 'argument': 'add'})
+        deletion = json.dumps({'type': 'adm_s_pr', 'argument': 'delete'})
+        keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("See/Edit", callback_data=see_edit),
+                                          InlineKeyboardButton(" + Addition", callback_data=add),
+                                          InlineKeyboardButton(" + Deletion", callback_data=deletion)]])
+        bot.edit_message_text(text="Choose librarian's new privileges:",
+                              message_id=update.callback_query.message.message_id,
+                              chat_id=update.callback_query.from_user.id,
+                              reply_markup=keyboard)
+
     # Confirmed deletes
     elif query_type == 'deleteMedia':
         Media.get(mediaID=argument).delete()
@@ -224,6 +260,10 @@ def callback_query_selector(bot, update):
             session.users_c += 1
             commit()
             edit_users_card(bot, update)
+        elif argument == 'librs':
+            session = RegistrySession[update.callback_query.from_user.id]
+            session.users_c += 1
+            edit_librarians_card(bot, update)
         elif argument == 'debtors': # воть тут
             session = RegistrySession[update.callback_query.from_user.id]
             session.debtors_c += 1
@@ -262,6 +302,10 @@ def callback_query_selector(bot, update):
             session.users_c -= 1
             commit()
             edit_users_card(bot, update)
+        elif argument == 'librs':
+            session = RegistrySession[update.callback_query.from_user.id]
+            session.users_c -= 1
+            edit_librarians_card(bot, update)
         elif argument == 'debtors': # воть тут
             session = RegistrySession[update.callback_query.from_user.id]
             session.debtors_c -= 1
@@ -291,12 +335,14 @@ def callback_query_selector(bot, update):
     # 'adm_s_pr' is 'admin sets privilege'
     elif query_type == 'acpt_nl':
         if argument == 'Yes':
+            admin = Admin.get(telegram_id=update.callback_query.message.chat_id)
             see_edit = json.dumps({'type': 'adm_s_pr', 'argument': 'edit'})
             add = json.dumps({'type': 'adm_s_pr', 'argument': 'add'})
             deletion = json.dumps({'type': 'adm_s_pr', 'argument': 'delete'})
             keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("See/Edit", callback_data=see_edit),
                                              InlineKeyboardButton(" + Addition", callback_data=add),
                                              InlineKeyboardButton(" + Deletion", callback_data=deletion)]])
+            admin.add_new_librarian()
             bot.edit_message_text(text="Choose new librarian's privilege:",
                                   message_id=update.callback_query.message.message_id,
                                   chat_id=update.callback_query.from_user.id,
@@ -308,17 +354,8 @@ def callback_query_selector(bot, update):
 
     elif query_type == 'adm_s_pr':
         admin = Admin[update.callback_query.message.chat_id]
-        new_lib = Librarian(telegramID=admin.new_lib_id,
-                            name=User.get(telegramID=admin.new_lib_id).name,
-                            priority=0)
-        if argument == 'edit':
-            new_lib.priority = 1
-        if argument == 'add':
-            new_lib.priority = 2
-        if argument == 'delete':
-            new_lib.priority = 3
-        commit()
-        bot.edit_message_text(text="New librarian was added!",
+        action = admin.set_privilege(argument)
+        bot.edit_message_text(text=action,
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.from_user.id)
 
@@ -629,6 +666,26 @@ def create_return_media_card(bot, update):
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
 
+@db_session
+def create_librarian_card(bot, update):
+    """
+    :param bot:
+    :param update:
+    :return: this feature sends message with information about librarians and keyboard with actions
+    """
+
+    libs = list(Librarian.select())
+    admin = Admin.get(telegram_id=update.message.chat_id)
+    if admin is not None:
+        log = Scroller('librarians', libs, update.message.chat_id)
+        if len(libs) == 0:
+            bot.send_message(text="You have no librarians in system!",
+                             chat_id=update.message.chat_id)
+        else:
+            bot.send_message(text=log.create_message(),
+                             chat_id=update.message.chat_id,
+                             reply_markup=log.create_keyboard())
+
 
 """
 This section of functions edits already created cards
@@ -695,6 +752,24 @@ def edit_users_card(bot, update):
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
+
+
+@db_session
+def edit_librarians_card(bot, update):
+    """
+        Edits librarians' card
+        :param bot: bot object
+        :param update: update object
+        :return: information about librarian and keyboard with actions
+        """
+    query = update.callback_query
+    registry = list(Librarian.select())
+
+    libs_card = Scroller('librarians', registry, update.callback_query.from_user.id)
+    bot.edit_message_text(text=libs_card.create_message(),
+                          message_id=query.message.message_id,
+                          chat_id=query.message.chat_id,
+                          reply_markup=libs_card.create_keyboard())
 
 
 @db_session
@@ -1323,7 +1398,6 @@ def add_new_librarian(bot, update, args):
     # Converts args into string
     alias_or_id = "".join(args).strip()
 
-    print(alias_or_id)
     user = Admin.get(telegram_id=update.message.chat_id)
     if user is None:
         return 0
@@ -1348,14 +1422,18 @@ def add_new_librarian(bot, update, args):
                 real_id = new_user_by_alias.telegramID
             if new_user_by_id is not None:
                 real_id = alias_or_id
-            yes_button = InlineKeyboardButton("Yes", callback_data=json.dumps({'type': 'acpt_nl', 'argument': 'Yes'}))
-            no_button = InlineKeyboardButton("No", callback_data=json.dumps({'type': 'acpt_nl', 'argument': 'No'}))
-            keyboard = InlineKeyboardMarkup([[yes_button, no_button]])
-            user_name = User.get(telegramID=real_id).name
-            user.new_lib_id = real_id
-            bot.send_message(text=str("Is " + user_name + " a person you want to add as a new librarian?"),
-                             chat_id=update.message.chat_id,
-                             reply_markup=keyboard)
+            if Librarian.get(telegramID=real_id) is None:
+                yes_button = InlineKeyboardButton("Yes", callback_data=json.dumps({'type': 'acpt_nl', 'argument': 'Yes'}))
+                no_button = InlineKeyboardButton("No", callback_data=json.dumps({'type': 'acpt_nl', 'argument': 'No'}))
+                keyboard = InlineKeyboardMarkup([[yes_button, no_button]])
+                user_name = User.get(telegramID=real_id).name
+                user.new_lib_id = real_id
+                bot.send_message(text=str("Is " + user_name + " a person you want to add as a new librarian?"),
+                                 chat_id=update.message.chat_id,
+                                 reply_markup=keyboard)
+            else:
+                bot.send_message(text="This user already is librarian!",
+                                 chat_id=update.message.chat_id)
 
 
 """
@@ -1421,6 +1499,7 @@ dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True
 dispatcher.add_handler(CommandHandler('users', create_users_card))
 dispatcher.add_handler(CommandHandler('librarian', librarian_interface))
 dispatcher.add_handler(CommandHandler('new_librarian', add_new_librarian, pass_args=True))
+dispatcher.add_handler(CommandHandler('librarians', create_librarian_card))
 dispatcher.add_handler(search_query_handler)
 
 updater.start_polling()  # Start asking for server about any incoming requests
