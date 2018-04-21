@@ -373,6 +373,8 @@ class RegistrySession(db.Entity):
     no_of_copies = Optional(int, default=-1)
     debtors_c = Optional(int, default=0)
 
+    search_parameter = Optional(str, default="")
+
 
 class ReturnRequest(db.Entity):
     telegramID = Required(int)

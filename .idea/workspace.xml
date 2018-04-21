@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d78e4202-0a47-4043-8125-c51b11caa892" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scroller.py" beforeDir="false" afterPath="$PROJECT_DIR$/scroller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/telebot.py" beforeDir="false" afterPath="$PROJECT_DIR$/telebot.py" afterDir="false" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/InnoLib-Media-Keeper.iml" afterPath="$PROJECT_DIR$/.idea/InnoLib-Media-Keeper.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.py" afterPath="$PROJECT_DIR$/config.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database.py" afterPath="$PROJECT_DIR$/database.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scroller.py" afterPath="$PROJECT_DIR$/scroller.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/telebot.py" afterPath="$PROJECT_DIR$/telebot.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -15,118 +18,18 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/InnoLib_Media_Keeper$testsD3.coverage" NAME="testsD3 Coverage Results" MODIFIED="1522835408249" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/InnoLib_Media_Keeper$telebot.coverage" NAME="telebot Coverage Results" MODIFIED="1524065533984" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-  </component>
-  <component name="DatabaseView">
-    <option name="SHOW_INTERMEDIATE" value="true" />
-    <option name="GROUP_DATA_SOURCES" value="true" />
-    <option name="GROUP_SCHEMA" value="true" />
-    <option name="GROUP_CONTENTS" value="false" />
-    <option name="SORT_POSITIONED" value="false" />
-    <option name="SHOW_EMPTY_GROUPS" value="false" />
-    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
-    <option name="HIDDEN_KINDS">
-      <set />
-    </option>
-    <expand>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
-      </path>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
-        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
-      </path>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
-        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
-        <item name="testbase: schema" type="c314c289:MysqlImplModel$Schema" />
-      </path>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="testbase@37.46.132.57" type="feb32156:DbDataSourceImpl" />
-        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
-        <item name="testbase: schema" type="c314c289:MysqlImplModel$Schema" />
-        <item name="admin: table" type="98d5ac3d:MysqlImplModel$Table" />
-      </path>
-    </expand>
-    <select />
+    <SUITE FILE_PATH="coverage/InnoLib_Media_Keeper$telebot.coverage" NAME="telebot Coverage Results" MODIFIED="1521597691769" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
       <file leaf-file-name="telebot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/telebot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="446">
-              <caret line="1399" lean-forward="true" selection-start-line="1399" selection-end-line="1399" />
+            <state relative-caret-position="-100">
+              <caret line="676" column="13" lean-forward="false" selection-start-line="676" selection-start-column="4" selection-end-line="676" selection-end-column="13" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
-                <element signature="e#11690#11741#0" />
-                <element signature="e#11787#13297#0" />
-                <element signature="e#13345#13817#0" />
-                <element signature="e#13867#14570#0" />
-                <element signature="e#14621#15763#0" />
-                <element signature="e#15783#16746#0" />
-                <element signature="e#17578#18132#0" />
-                <element signature="e#18188#18701#0" />
-                <element signature="e#18757#19252#0" />
-                <element signature="e#19317#19870#0" />
-                <element signature="e#19924#20412#0" />
-                <element signature="e#20476#21118#0" />
-                <element signature="e#21175#21545#0" />
-                <element signature="e#21695#22222#0" />
-                <element signature="e#22342#23137#0" />
-                <element signature="e#23191#23924#0" />
-                <element signature="e#23977#24723#0" />
-                <element signature="e#24786#25550#0" />
-                <element signature="e#25601#26306#0" />
-                <element signature="e#26367#26891#0" />
-                <element signature="e#26947#27571#0" />
-                <element signature="e#27628#28491#0" />
-                <element signature="e#28550#28885#0" />
-                <element signature="e#28943#29604#0" />
-                <element signature="e#29644#31210#0" />
-                <element signature="e#31271#32526#0" />
-                <element signature="e#32582#33843#0" />
-                <element signature="e#33905#35096#0" />
-                <element signature="e#35152#35717#0" />
-                <element signature="e#35775#37471#0" />
-                <element signature="e#37531#38941#0" />
-                <element signature="e#38991#41578#0" />
-                <element signature="e#41628#42612#0" />
-                <element signature="e#42666#43309#0" />
-                <element signature="e#43362#44134#0" />
-                <element signature="e#44195#45055#0" />
-                <element signature="e#45095#45316#0" />
-                <element signature="e#45375#46063#0" />
-                <element signature="e#46119#47089#0" />
-                <element signature="e#47133#47503#0" />
-                <element signature="e#47572#47899#0" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="database.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/database.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="558">
-              <caret line="51" column="16" lean-forward="true" selection-start-line="51" selection-start-column="16" selection-end-line="51" selection-end-column="16" />
-              <folding>
-                <element signature="e#0#22#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="registrysession" pinned="false" current-in-tab="false">
-        <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/registrysession">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
             </state>
           </provider>
         </entry>
@@ -134,45 +37,38 @@
       <file leaf-file-name="scroller.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scroller.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-612">
-              <caret line="33" column="47" selection-start-line="33" selection-start-column="47" selection-end-line="33" selection-end-column="47" />
+            <state relative-caret-position="355">
+              <caret line="71" column="0" lean-forward="false" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
               <folding>
                 <element signature="e#0#27#0" expanded="true" />
-                <element signature="e#1252#1810#0" />
-                <element signature="e#1859#2489#0" />
-                <element signature="e#2548#3007#0" />
-                <element signature="e#3055#3752#0" />
-                <element signature="e#3807#4550#0" />
-                <element signature="e#4608#5061#0" />
-                <element signature="e#5110#5434#0" />
-                <element signature="e#5922#6880#0" />
-                <element signature="e#7156#7641#0" />
-                <element signature="e#7691#10033#0" />
-                <element signature="e#10092#10605#0" />
-                <element signature="e#10653#11137#0" />
-                <element signature="e#11192#11754#0" />
-                <element signature="e#11813#12834#0" />
-                <element signature="e#13299#14023#0" />
-                <element signature="e#13668#14055#0" />
+                <element signature="e#542#700#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="user" pinned="false" current-in-tab="false">
-        <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/user">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
+      <file leaf-file-name="sandbox.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sandbox.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Diagram.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Docs/Diagram.png">
+          <provider selected="true" editor-type-id="images">
+            <state />
           </provider>
         </entry>
       </file>
       <file leaf-file-name="button_actions.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/button_actions.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="507">
-              <caret line="344" column="10" selection-start-line="344" selection-start-column="10" selection-end-line="344" selection-end-column="10" />
+            <state relative-caret-position="184">
+              <caret line="122" column="107" lean-forward="false" selection-start-line="122" selection-start-column="106" selection-end-line="122" selection-end-column="107" />
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
               </folding>
@@ -180,78 +76,85 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="librarian" pinned="false" current-in-tab="false">
-        <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/librarian">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
+      <file leaf-file-name="config.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="3" column="54" lean-forward="false" selection-start-line="3" selection-start-column="54" selection-end-line="3" selection-end-column="54" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="config_test.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config_test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="database.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/database.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="418">
+              <caret line="375" column="47" lean-forward="false" selection-start-line="375" selection-start-column="47" selection-end-line="375" selection-end-column="47" />
+              <folding>
+                <element signature="e#0#22#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Python Script" />
-      </list>
-    </option>
-  </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>check_re</find>
-      <find>pay_for_book</find>
-      <find>Overdue</find>
-      <find>confirm_user</find>
-      <find>set</find>
-      <find>application</find>
-      <find>end</find>
-      <find>UPDATE</find>
-      <find>end_of</find>
-      <find>Student</find>
-      <find>Log(</find>
-      <find>jobqueue</find>
-      <find>job</find>
-      <find>facul</find>
-      <find>set_bala</find>
-      <find>renew</find>
-      <find>renew_co</find>
-      <find>MediaCopies</find>
-      <find>book_me</find>
-      <find>print(&quot;test</find>
-      <find>book_media</find>
-      <find>outs</find>
-      <find>book</find>
-      <find>acce</find>
-      <find>medias()</find>
-      <find>media</find>
-      <find>add_med</find>
-      <find>token</find>
-      <find>update</find>
-      <find>updater</find>
+      <find>outsta</find>
+      <find>ask_for_ret</find>
+      <find>argum</find>
+      <find>ask</find>
+      <find>out</find>
+      <find>create_media</find>
+      <find>create_medi</find>
+      <find>sea</find>
+      <find>create_key</find>
+      <find>message</find>
+      <find>create_messa</find>
+      <find>search_query</find>
+      <find>callback_quer</find>
+      <find>regist</find>
+      <find>medias</find>
+      <find>state</find>
+      <find>register</find>
+      <find>enrol</find>
+      <find>search_medi</find>
+      <find>edit_media</find>
+      <find>editMedia</find>
+      <find>type</find>
+      <find>editMediaAuthor</find>
+      <find>debt</find>
+      <find>search</find>
+      <find>searchByName</find>
+      <find>sear</find>
+      <find>edit_fie</find>
+      <find>reg</find>
+      <find>enter_sea</find>
     </findStrings>
-    <replaceStrings>
-      <replace>pay_for_media</replace>
-    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="master" />
-      </map>
-    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/testsD3.py" />
-        <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/button_actions.py" />
-        <option value="$PROJECT_DIR$/scroller.py" />
+        <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/database.py" />
         <option value="$PROJECT_DIR$/telebot.py" />
+        <option value="$PROJECT_DIR$/scroller.py" />
       </list>
     </option>
   </component>
@@ -261,43 +164,163 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="NodePackageJsonFileManager">
-    <packageJsonPaths />
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
-    <option name="x" value="484" />
-    <option name="width" value="1272" />
-    <option name="height" value="689" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-7" />
+    <option name="width" value="697" />
+    <option name="height" value="735" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="InnoLib-Media-Keeper" type="b2602c69:ProjectViewProjectNode" />
-              <item name="InnoLib-Media-Keeper" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="InnoLib-Media-Keeper" type="b2602c69:ProjectViewProjectNode" />
-              <item name="InnoLib-Media-Keeper" type="462c0819:PsiDirectoryNode" />
-              <item name="Docs" type="462c0819:PsiDirectoryNode" />
+              <item name="InnoLib-Media-Keeper-LATEST" type="b2602c69:ProjectViewProjectNode" />
+              <item name="InnoLib-Media-Keeper-LATEST" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RestoreUpdateTree" date="Moments ago" ActionInfo="_Update">
+    <UpdatedFiles>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Updated from server" />
+        <option name="myStatusName" value="Changed on server" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="CHANGED_ON_SERVER" />
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Updated" />
+          <option name="myStatusName" value="Changed" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="UPDATED" />
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/InnoLib-Media-Keeper.iml</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/misc.xml</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/workspace.xml</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/button_actions.py</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/config.py</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/database.py</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/scroller.py</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/telebot.py</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/testsD3.py</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Created" />
+          <option name="myStatusName" value="Created" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="CREATED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Deleted" />
+          <option name="myStatusName" value="Deleted" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="true" />
+          <option name="myId" value="REMOVED_FROM_REPOSITORY" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Restored" />
+          <option name="myStatusName" value="Will be restored" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="RESTORED" />
+        </FILE-GROUP>
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Modified" />
+        <option name="myStatusName" value="Modified" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MODIFIED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Skipped" />
+        <option name="myStatusName" value="Skipped" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="SKIPPED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with conflicts" />
+        <option name="myStatusName" value="Will be merged with conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_CONFLICTS" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with tree conflicts" />
+        <option name="myStatusName" value="Merged with tree conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with property conflicts" />
+        <option name="myStatusName" value="Will be merged with property conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged" />
+        <option name="myStatusName" value="Will be merged" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Not in repository" />
+        <option name="myStatusName" value="Not in repository" />
+        <option name="mySupportsDeletion" value="true" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="UNKNOWN" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Locally added" />
+        <option name="myStatusName" value="Locally added" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="LOCALLY_ADDED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Locally removed" />
+        <option name="myStatusName" value="Locally removed" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="LOCALLY_REMOVED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Switched" />
+        <option name="myStatusName" value="Switched" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="SWITCHED" />
+      </FILE-GROUP>
+    </UpdatedFiles>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -313,7 +336,6 @@
   </component>
   <component name="RunManager" selected="Python.telebot">
     <configuration name="telebot" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="InnoLib-Media-Keeper" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -324,42 +346,21 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <module name="InnoLib-Media-Keeper" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/telebot.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="testsD3" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="InnoLib-Media-Keeper" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/testsD3.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <list>
-      <item itemvalue="Python.telebot" />
-      <item itemvalue="Python.testsD3" />
-    </list>
     <recent_temporary>
-      <list>
-        <item itemvalue="Python.telebot" />
-        <item itemvalue="Python.testsD3" />
+      <list size="1">
+        <item index="0" class="java.lang.String" itemvalue="Python.telebot" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -372,166 +373,202 @@
       <option name="presentableId" value="Default" />
       <updated>1521568599633</updated>
     </task>
-    <task id="LOCAL-00001" summary="Fixed bugs with balance&#10;Added restoring balance feature">
-      <created>1521745131284</created>
+    <task id="LOCAL-00001" summary="Added improved return mechanism for fine">
+      <created>1521663174573</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1521745131285</updated>
+      <updated>1521663174573</updated>
     </task>
-    <task id="LOCAL-00002" summary="Fixed registration balance, checked merged code">
-      <created>1522580890904</created>
+    <task id="LOCAL-00002" summary="Small changes in return mechanism for fine">
+      <created>1522062964944</created>
       <option name="number" value="00002" />
       <option name="presentableId" value="LOCAL-00002" />
       <option name="project" value="LOCAL" />
-      <updated>1522580890905</updated>
+      <updated>1522062964944</updated>
     </task>
-    <task id="LOCAL-00003" summary="Merged Din's code, fixed generate_expiry_date method according to TZ">
-      <created>1522581481898</created>
+    <task id="LOCAL-00003" summary="Small changes in return mechanism for fine">
+      <created>1522062978444</created>
       <option name="number" value="00003" />
       <option name="presentableId" value="LOCAL-00003" />
       <option name="project" value="LOCAL" />
-      <updated>1522581481898</updated>
+      <updated>1522062978444</updated>
     </task>
-    <task id="LOCAL-00004" summary="Fixed minor bugs before delivery">
-      <created>1522611138959</created>
+    <task id="LOCAL-00004" summary="delete_queue for outstanding request is added">
+      <created>1522066169821</created>
       <option name="number" value="00004" />
       <option name="presentableId" value="LOCAL-00004" />
       <option name="project" value="LOCAL" />
-      <updated>1522611138959</updated>
+      <updated>1522066169822</updated>
     </task>
-    <task id="LOCAL-00005" summary="Preparing for testcases">
-      <created>1522686180248</created>
+    <task id="LOCAL-00005" summary="delete_queue for outstanding request is added">
+      <created>1522066182667</created>
       <option name="number" value="00005" />
       <option name="presentableId" value="LOCAL-00005" />
       <option name="project" value="LOCAL" />
-      <updated>1522686180248</updated>
+      <updated>1522066182667</updated>
     </task>
-    <task id="LOCAL-00006" summary="Preparing for testcases-2">
-      <created>1522690103463</created>
+    <task id="LOCAL-00006" summary="delete_queue for outstanding request is added">
+      <created>1522068899477</created>
       <option name="number" value="00006" />
       <option name="presentableId" value="LOCAL-00006" />
       <option name="project" value="LOCAL" />
-      <updated>1522690103463</updated>
+      <updated>1522068899477</updated>
     </task>
-    <task id="LOCAL-00007" summary="Full test cases">
-      <created>1522692950323</created>
+    <task id="LOCAL-00007" summary="Outstanding request interface is created">
+      <created>1522068933647</created>
       <option name="number" value="00007" />
       <option name="presentableId" value="LOCAL-00007" />
       <option name="project" value="LOCAL" />
-      <updated>1522692950323</updated>
+      <updated>1522068933647</updated>
     </task>
-    <task id="LOCAL-00008" summary="Added add_user to librarian">
-      <created>1523831212932</created>
+    <task id="LOCAL-00008" summary="Outstanding request modified">
+      <created>1522687883211</created>
       <option name="number" value="00008" />
       <option name="presentableId" value="LOCAL-00008" />
       <option name="project" value="LOCAL" />
-      <updated>1523831212932</updated>
+      <updated>1522687883211</updated>
     </task>
-    <task id="LOCAL-00009" summary="Added add_user to librarian">
-      <created>1523832508063</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1523832508063</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Added ADMIN and its features">
-      <created>1524007381406</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1524007381406</updated>
-    </task>
-    <option name="localTasksCounter" value="11" />
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="-29" width="1920" height="1109" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info anchor="bottom" id="TODO" order="12" />
-      <window_info anchor="bottom" id="Event Log" order="1" sideWeight="0.50208336" weight="0.23902439" />
-      <window_info anchor="bottom" id="Database Changes" order="0" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Run" order="8" sideWeight="0.49791667" visible="true" weight="0.23902439" />
-      <window_info anchor="bottom" id="Version Control" order="2" weight="0.3287805" />
-      <window_info anchor="bottom" id="Python Console" order="3" />
-      <window_info anchor="bottom" id="Terminal" order="4" />
-      <window_info anchor="bottom" id="Database Console" order="13" sideWeight="0.49947917" weight="0.3297561" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.23020834" />
-      <window_info anchor="bottom" id="Docker" order="5" show_stripe_button="false" />
-      <window_info anchor="right" id="Database" order="1" visible="true" weight="0.1734375" />
-      <window_info anchor="right" id="SciView" order="0" />
-      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Debug" order="9" weight="0.3980488" />
-      <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="11" weight="0.4" />
-      <window_info anchor="bottom" id="Heroku" order="13" />
-      <window_info anchor="right" id="Commander" order="2" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="3" weight="0.25" />
-      <window_info anchor="right" id="Data View" order="3" />
-      <window_info anchor="bottom" id="Message" order="6" />
-      <window_info anchor="bottom" id="Cvs" order="10" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="7" />
-      <window_info anchor="bottom" id="Concurrent Activities Diagram" order="14" visible="true" weight="0.3292683" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19033675" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.022187004" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2931854" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39936608" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2931854" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19033675" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39936608" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State>
-              <option name="RECENTLY_FILTERED_USER_GROUPS">
-                <collection />
-              </option>
-              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
-                <collection />
-              </option>
-              <option name="COLUMN_ORDER">
-                <list>
-                  <option value="0" />
-                  <option value="1" />
-                  <option value="2" />
-                  <option value="3" />
-                </list>
-              </option>
-            </State>
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Fixed bugs with balance&#10;Added restoring balance feature" />
-    <MESSAGE value="Fixed registration balance, checked merged code" />
-    <MESSAGE value="Merged Din's code, fixed generate_expiry_date method according to TZ" />
-    <MESSAGE value="Fixed minor bugs before delivery" />
-    <MESSAGE value="Preparing for testcases" />
-    <MESSAGE value="Preparing for testcases-2" />
-    <MESSAGE value="Full test cases" />
-    <MESSAGE value="Added add_user to librarian" />
-    <MESSAGE value="Added ADMIN and its features" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added ADMIN and its features" />
+    <MESSAGE value="Added improved return mechanism for fine" />
+    <MESSAGE value="Small changes in return mechanism for fine" />
+    <MESSAGE value="delete_queue for outstanding request is added" />
+    <MESSAGE value="Outstanding request interface is created" />
+    <MESSAGE value="Outstanding request modified" />
+    <option name="LAST_COMMIT_MESSAGE" value="Outstanding request modified" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="36" />
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/scroller.py</url>
+          <line>149</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/telebot.py</url>
+          <line>100</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/telebot.py</url>
+          <line>709</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/scroller.py</url>
+          <line>33</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/scroller.py</url>
+          <line>59</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="23" />
     </breakpoint-manager>
+    <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.user" />
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/pony/orm/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="459" column="0" lean-forward="false" selection-start-line="459" selection-start-column="0" selection-end-line="459" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scroller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2737">
+          <caret line="168" column="0" lean-forward="false" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#542#700#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/telebot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9537">
+          <caret line="577" column="40" lean-forward="false" selection-start-line="577" selection-start-column="40" selection-end-line="577" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/dsa2assignment1/2nd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="464">
+          <caret line="68" column="9" lean-forward="true" selection-start-line="49" selection-start-column="0" selection-end-line="68" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/button_actions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4245">
-          <caret line="283" column="18" lean-forward="true" selection-start-line="283" selection-start-column="18" selection-end-line="283" selection-end-column="18" />
+        <state relative-caret-position="17">
+          <caret line="264" column="19" lean-forward="false" selection-start-line="264" selection-start-column="19" selection-end-line="264" selection-end-column="19" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
@@ -540,8 +577,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3525">
-          <caret line="235" column="77" selection-start-line="235" selection-start-column="77" selection-end-line="235" selection-end-column="77" />
+        <state relative-caret-position="3672">
+          <caret line="221" column="39" lean-forward="false" selection-start-line="221" selection-start-column="39" selection-end-line="221" selection-end-column="39" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
@@ -550,59 +587,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10035">
-          <caret line="684" selection-start-line="684" selection-end-line="684" />
+        <state relative-caret-position="11305">
+          <caret line="680" column="53" lean-forward="false" selection-start-line="680" selection-start-column="39" selection-end-line="680" selection-end-column="53" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
-            <element signature="e#11690#11741#0" />
-            <element signature="e#11787#13297#0" />
-            <element signature="e#13345#13817#0" />
-            <element signature="e#13867#14570#0" />
-            <element signature="e#14621#15763#0" />
-            <element signature="e#15783#16746#0" />
-            <element signature="e#17578#18132#0" />
-            <element signature="e#18188#18701#0" />
-            <element signature="e#18757#19252#0" />
-            <element signature="e#19317#19870#0" />
-            <element signature="e#19924#20412#0" />
-            <element signature="e#20476#21118#0" />
-            <element signature="e#21175#21545#0" />
-            <element signature="e#21695#22222#0" />
-            <element signature="e#22342#23137#0" />
-            <element signature="e#23191#23924#0" />
-            <element signature="e#23977#24723#0" />
-            <element signature="e#24786#25550#0" />
-            <element signature="e#25601#26306#0" />
-            <element signature="e#26367#26891#0" />
-            <element signature="e#26947#27571#0" />
-            <element signature="e#27628#28491#0" />
-            <element signature="e#28550#28885#0" />
-            <element signature="e#28943#29604#0" />
-            <element signature="e#29644#31210#0" />
-            <element signature="e#31271#32526#0" />
-            <element signature="e#32582#33843#0" />
-            <element signature="e#33905#35096#0" />
-            <element signature="e#35152#35717#0" />
-            <element signature="e#35775#37471#0" />
-            <element signature="e#37531#38941#0" />
-            <element signature="e#38991#41578#0" />
-            <element signature="e#41628#42612#0" />
-            <element signature="e#42666#43309#0" />
-            <element signature="e#43362#44134#0" />
-            <element signature="e#44195#45055#0" />
-            <element signature="e#45095#45316#0" />
-            <element signature="e#45375#46063#0" />
-            <element signature="e#46119#47089#0" />
-            <element signature="e#47133#47503#0" />
-            <element signature="e#47572#47899#0" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Docs/Diagram.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        <state relative-caret-position="2737">
+          <caret line="161" column="33" lean-forward="false" selection-start-line="161" selection-start-column="33" selection-end-line="161" selection-end-column="33" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
@@ -611,8 +612,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/button_actions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4365">
-          <caret line="291" column="134" selection-start-line="291" selection-start-column="134" selection-end-line="291" selection-end-column="134" />
+        <state relative-caret-position="2652">
+          <caret line="161" column="86" lean-forward="false" selection-start-line="161" selection-start-column="77" selection-end-line="161" selection-end-column="86" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
@@ -621,111 +622,34 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/scroller.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="36" selection-start-line="36" selection-end-line="36" />
+        <state relative-caret-position="969">
+          <caret line="57" column="35" lean-forward="true" selection-start-line="57" selection-start-column="8" selection-end-line="57" selection-end-column="35" />
           <folding>
             <element signature="e#0#27#0" expanded="true" />
-            <element signature="e#1252#1810#0" />
-            <element signature="e#1859#2489#0" />
-            <element signature="e#2548#3007#0" />
-            <element signature="e#3055#3752#0" />
-            <element signature="e#3807#4550#0" />
-            <element signature="e#4608#5061#0" />
-            <element signature="e#5110#5434#0" />
-            <element signature="e#5922#6880#0" />
-            <element signature="e#7156#7641#0" />
-            <element signature="e#7691#10033#0" />
-            <element signature="e#10092#10605#0" />
-            <element signature="e#10653#11137#0" />
-            <element signature="e#11192#11754#0" />
-            <element signature="e#11813#12834#0" />
-            <element signature="e#13299#14023#0" />
-            <element signature="e#13668#14055#0" />
+            <element signature="e#542#700#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2670">
-          <caret line="178" column="32" selection-start-line="178" selection-start-column="32" selection-end-line="178" selection-end-column="32" />
+        <state relative-caret-position="3026">
+          <caret line="178" column="32" lean-forward="false" selection-start-line="178" selection-start-column="32" selection-end-line="178" selection-end-column="32" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
-            <element signature="e#11690#11741#0" />
-            <element signature="e#11787#13297#0" />
-            <element signature="e#13345#13817#0" />
-            <element signature="e#13867#14570#0" />
-            <element signature="e#14621#15763#0" />
-            <element signature="e#15783#16746#0" />
-            <element signature="e#17578#18132#0" />
-            <element signature="e#18188#18701#0" />
-            <element signature="e#18757#19252#0" />
-            <element signature="e#19317#19870#0" />
-            <element signature="e#19924#20412#0" />
-            <element signature="e#20476#21118#0" />
-            <element signature="e#21175#21545#0" />
-            <element signature="e#21695#22222#0" />
-            <element signature="e#22342#23137#0" />
-            <element signature="e#23191#23924#0" />
-            <element signature="e#23977#24723#0" />
-            <element signature="e#24786#25550#0" />
-            <element signature="e#25601#26306#0" />
-            <element signature="e#26367#26891#0" />
-            <element signature="e#26947#27571#0" />
-            <element signature="e#27628#28491#0" />
-            <element signature="e#28550#28885#0" />
-            <element signature="e#28943#29604#0" />
-            <element signature="e#29644#31210#0" />
-            <element signature="e#31271#32526#0" />
-            <element signature="e#32582#33843#0" />
-            <element signature="e#33905#35096#0" />
-            <element signature="e#35152#35717#0" />
-            <element signature="e#35775#37471#0" />
-            <element signature="e#37531#38941#0" />
-            <element signature="e#38991#41578#0" />
-            <element signature="e#41628#42612#0" />
-            <element signature="e#42666#43309#0" />
-            <element signature="e#43362#44134#0" />
-            <element signature="e#44195#45055#0" />
-            <element signature="e#45095#45316#0" />
-            <element signature="e#45375#46063#0" />
-            <element signature="e#46119#47089#0" />
-            <element signature="e#47133#47503#0" />
-            <element signature="e#47572#47899#0" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scroller.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2535">
-          <caret line="263" column="46" selection-start-line="263" selection-start-column="46" selection-end-line="263" selection-end-column="46" />
-          <folding>
-            <element signature="e#0#27#0" expanded="true" />
-            <element signature="e#1252#1810#0" />
-            <element signature="e#1859#2489#0" />
-            <element signature="e#2548#3007#0" />
-            <element signature="e#3055#3752#0" />
-            <element signature="e#3807#4550#0" />
-            <element signature="e#4608#5061#0" />
-            <element signature="e#5110#5434#0" />
-            <element signature="e#5922#6880#0" />
-            <element signature="e#7156#7641#0" />
-            <element signature="e#7691#10033#0" />
-            <element signature="e#10092#10605#0" />
-            <element signature="e#10653#11137#0" />
-            <element signature="e#11192#11754#0" />
-            <element signature="e#11813#12834#0" />
-            <element signature="e#13299#14023#0" />
-            <element signature="e#13668#14055#0" />
-          </folding>
-        </state>
+    <entry file="file://$PROJECT_DIR$/Docs/Diagram.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2310">
-          <caret line="159" lean-forward="true" selection-start-line="159" selection-end-line="159" />
+        <state relative-caret-position="2754">
+          <caret line="162" column="16" lean-forward="false" selection-start-line="162" selection-start-column="16" selection-end-line="162" selection-end-column="16" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
@@ -734,8 +658,157 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/button_actions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2835">
-          <caret line="192" column="82" selection-start-line="192" selection-start-column="82" selection-end-line="192" selection-end-column="82" />
+        <state relative-caret-position="3400">
+          <caret line="200" column="46" lean-forward="false" selection-start-line="200" selection-start-column="39" selection-end-line="200" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scroller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3196">
+          <caret line="188" column="95" lean-forward="false" selection-start-line="188" selection-start-column="95" selection-end-line="188" selection-end-column="95" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#542#700#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/telebot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3026">
+          <caret line="178" column="32" lean-forward="false" selection-start-line="178" selection-start-column="32" selection-end-line="178" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scroller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4471">
+          <caret line="263" column="46" lean-forward="false" selection-start-line="263" selection-start-column="46" selection-end-line="263" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#542#700#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Docs/Diagram.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2703">
+          <caret line="159" column="0" lean-forward="false" selection-start-line="159" selection-start-column="0" selection-end-line="159" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/button_actions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3264">
+          <caret line="192" column="82" lean-forward="false" selection-start-line="192" selection-start-column="82" selection-end-line="192" selection-end-column="82" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/telebot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3026">
+          <caret line="178" column="32" lean-forward="false" selection-start-line="178" selection-start-column="32" selection-end-line="178" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scroller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4471">
+          <caret line="263" column="46" lean-forward="false" selection-start-line="263" selection-start-column="46" selection-end-line="263" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#542#700#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Docs/Diagram.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2703">
+          <caret line="159" column="0" lean-forward="false" selection-start-line="159" selection-start-column="0" selection-end-line="159" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/button_actions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3213">
+          <caret line="192" column="82" lean-forward="false" selection-start-line="192" selection-start-column="82" selection-end-line="192" selection-end-column="82" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/telebot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3026">
+          <caret line="178" column="32" lean-forward="false" selection-start-line="178" selection-start-column="32" selection-end-line="178" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scroller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4471">
+          <caret line="263" column="46" lean-forward="false" selection-start-line="263" selection-start-column="46" selection-end-line="263" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#542#700#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Docs/Diagram.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2703">
+          <caret line="159" column="0" lean-forward="true" selection-start-line="159" selection-start-column="0" selection-end-line="159" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/button_actions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3264">
+          <caret line="192" column="82" lean-forward="false" selection-start-line="192" selection-start-column="82" selection-end-line="192" selection-end-column="82" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
@@ -745,50 +818,9 @@
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8143">
-          <caret line="479" selection-start-line="479" selection-end-line="479" />
+          <caret line="479" column="0" lean-forward="false" selection-start-line="479" selection-start-column="0" selection-end-line="479" selection-end-column="0" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
-            <element signature="e#11690#11741#0" />
-            <element signature="e#11787#13297#0" />
-            <element signature="e#13345#13817#0" />
-            <element signature="e#13867#14570#0" />
-            <element signature="e#14621#15763#0" />
-            <element signature="e#15783#16746#0" />
-            <element signature="e#17578#18132#0" />
-            <element signature="e#18188#18701#0" />
-            <element signature="e#18757#19252#0" />
-            <element signature="e#19317#19870#0" />
-            <element signature="e#19924#20412#0" />
-            <element signature="e#20476#21118#0" />
-            <element signature="e#21175#21545#0" />
-            <element signature="e#21695#22222#0" />
-            <element signature="e#22342#23137#0" />
-            <element signature="e#23191#23924#0" />
-            <element signature="e#23977#24723#0" />
-            <element signature="e#24786#25550#0" />
-            <element signature="e#25601#26306#0" />
-            <element signature="e#26367#26891#0" />
-            <element signature="e#26947#27571#0" />
-            <element signature="e#27628#28491#0" />
-            <element signature="e#28550#28885#0" />
-            <element signature="e#28943#29604#0" />
-            <element signature="e#29644#31210#0" />
-            <element signature="e#31271#32526#0" />
-            <element signature="e#32582#33843#0" />
-            <element signature="e#33905#35096#0" />
-            <element signature="e#35152#35717#0" />
-            <element signature="e#35775#37471#0" />
-            <element signature="e#37531#38941#0" />
-            <element signature="e#38991#41578#0" />
-            <element signature="e#41628#42612#0" />
-            <element signature="e#42666#43309#0" />
-            <element signature="e#43362#44134#0" />
-            <element signature="e#44195#45055#0" />
-            <element signature="e#45095#45316#0" />
-            <element signature="e#45375#46063#0" />
-            <element signature="e#46119#47089#0" />
-            <element signature="e#47133#47503#0" />
-            <element signature="e#47572#47899#0" />
           </folding>
         </state>
       </provider>
@@ -799,30 +831,20 @@
           <caret line="263" column="46" lean-forward="true" selection-start-line="263" selection-start-column="46" selection-end-line="263" selection-end-column="46" />
           <folding>
             <element signature="e#0#27#0" expanded="true" />
-            <element signature="e#1252#1810#0" />
-            <element signature="e#1859#2489#0" />
-            <element signature="e#2548#3007#0" />
-            <element signature="e#3055#3752#0" />
-            <element signature="e#3807#4550#0" />
-            <element signature="e#4608#5061#0" />
-            <element signature="e#5110#5434#0" />
-            <element signature="e#5922#6880#0" />
-            <element signature="e#7156#7641#0" />
-            <element signature="e#7691#10033#0" />
-            <element signature="e#10092#10605#0" />
-            <element signature="e#10653#11137#0" />
-            <element signature="e#11192#11754#0" />
-            <element signature="e#11813#12834#0" />
-            <element signature="e#13299#14023#0" />
-            <element signature="e#13668#14055#0" />
+            <element signature="e#542#700#0" expanded="false" />
           </folding>
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Docs/Diagram.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="867">
-          <caret line="51" column="47" selection-start-line="51" selection-start-column="47" selection-end-line="51" selection-end-column="47" />
+          <caret line="51" column="47" lean-forward="false" selection-start-line="51" selection-start-column="47" selection-end-line="51" selection-end-column="47" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
@@ -841,50 +863,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
-            <element signature="e#11690#11741#0" />
-            <element signature="e#11787#13297#0" />
-            <element signature="e#13345#13817#0" />
-            <element signature="e#13867#14570#0" />
-            <element signature="e#14621#15763#0" />
-            <element signature="e#15783#16746#0" />
-            <element signature="e#17578#18132#0" />
-            <element signature="e#18188#18701#0" />
-            <element signature="e#18757#19252#0" />
-            <element signature="e#19317#19870#0" />
-            <element signature="e#19924#20412#0" />
-            <element signature="e#20476#21118#0" />
-            <element signature="e#21175#21545#0" />
-            <element signature="e#21695#22222#0" />
-            <element signature="e#22342#23137#0" />
-            <element signature="e#23191#23924#0" />
-            <element signature="e#23977#24723#0" />
-            <element signature="e#24786#25550#0" />
-            <element signature="e#25601#26306#0" />
-            <element signature="e#26367#26891#0" />
-            <element signature="e#26947#27571#0" />
-            <element signature="e#27628#28491#0" />
-            <element signature="e#28550#28885#0" />
-            <element signature="e#28943#29604#0" />
-            <element signature="e#29644#31210#0" />
-            <element signature="e#31271#32526#0" />
-            <element signature="e#32582#33843#0" />
-            <element signature="e#33905#35096#0" />
-            <element signature="e#35152#35717#0" />
-            <element signature="e#35775#37471#0" />
-            <element signature="e#37531#38941#0" />
-            <element signature="e#38991#41578#0" />
-            <element signature="e#41628#42612#0" />
-            <element signature="e#42666#43309#0" />
-            <element signature="e#43362#44134#0" />
-            <element signature="e#44195#45055#0" />
-            <element signature="e#45095#45316#0" />
-            <element signature="e#45375#46063#0" />
-            <element signature="e#46119#47089#0" />
-            <element signature="e#47133#47503#0" />
-            <element signature="e#47572#47899#0" />
           </folding>
         </state>
       </provider>
@@ -899,221 +881,95 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../TGBot/venv/Lib/site-packages/pony/orm/dbschema.py" />
-    <entry file="file://$PROJECT_DIR$/../TGBot/venv/Lib/site-packages/pony/orm/dbapiprovider.py" />
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/telegram/message.py" />
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.librarianenrollment" />
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pony/utils/utils.py" />
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediacopies" />
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.request" />
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.user" />
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.media" />
-    <entry file="file://$PROJECT_DIR$/testbot_D2.py">
+    <entry file="file://$USER_HOME$/PycharmProjects/TGBot/venv/Lib/site-packages/pony/orm/dbschema.py" />
+    <entry file="file://$USER_HOME$/PycharmProjects/TGBot/venv/Lib/site-packages/pony/orm/dbapiprovider.py" />
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/telegram/ext/dispatcher.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="303">
-          <caret line="873" column="8" lean-forward="true" selection-start-line="873" selection-start-column="8" selection-end-line="875" selection-end-column="26" />
+        <state relative-caret-position="161">
+          <caret line="217" column="0" lean-forward="false" selection-start-line="217" selection-start-column="0" selection-end-line="217" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.librarian" />
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pony/orm/core.py" />
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pymysql/cursors.py" />
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.registrysession" />
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.mediaqueue" />
-    <entry file="das://table:/3a291b58/b5a70f8b-8dec-4673-996e-5732ffa545e9/testbase.log" />
-    <entry file="file://$PROJECT_DIR$/testsD3.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/telegram/ext/callbackqueryhandler.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1666">
-          <caret line="290" column="18" lean-forward="true" selection-start-line="290" selection-start-column="18" selection-end-line="290" selection-end-column="18" />
+        <state relative-caret-position="694">
+          <caret line="142" column="0" lean-forward="false" selection-start-line="142" selection-start-column="0" selection-end-line="142" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/key_generator.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/pony/orm/core.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="288">
+          <caret line="459" column="0" lean-forward="false" selection-start-line="459" selection-start-column="0" selection-end-line="459" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/librarianenrollment">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
+    <entry file="file://$PROJECT_DIR$/Docs/Diagram.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" selection-start-line="10" selection-end-line="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/admin">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/lib/python3.6/site-packages/telegram/ext/commandhandler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="746">
-          <caret line="169" selection-start-line="169" selection-end-line="169" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/request">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/admin.sql">
-      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
-          <caret line="3" column="2" selection-start-line="3" selection-start-column="2" selection-end-line="3" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2018.1/system/python_stubs/-714265945/builtins.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="5243" column="8" selection-start-line="5243" selection-start-column="8" selection-end-line="5243" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/lib/python3.6/site-packages/telegram/inline/inlinekeyboardmarkup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="473">
-          <caret line="41" lean-forward="true" selection-start-line="41" selection-end-line="41" />
+          <caret line="3" column="54" lean-forward="false" selection-start-line="3" selection-start-column="54" selection-end-line="3" selection-end-column="54" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/button_actions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="507">
-          <caret line="344" column="10" selection-start-line="344" selection-start-column="10" selection-end-line="344" selection-end-column="10" />
+        <state relative-caret-position="184">
+          <caret line="122" column="107" lean-forward="false" selection-start-line="122" selection-start-column="106" selection-end-line="122" selection-end-column="107" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/venv/lib/python3.6/site-packages/pony/orm/core.py">
+    <entry file="file://$PROJECT_DIR$/sandbox.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="459" selection-start-line="459" selection-end-line="459" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/librarian">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/registrysession">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://4f1edffc-960b-4c65-9337-eb83e79d186f/schema/testbase/table/user">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scroller.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-612">
-          <caret line="33" column="47" selection-start-line="33" selection-start-column="47" selection-end-line="33" selection-end-column="47" />
-          <folding>
-            <element signature="e#0#27#0" expanded="true" />
-            <element signature="e#1252#1810#0" />
-            <element signature="e#1859#2489#0" />
-            <element signature="e#2548#3007#0" />
-            <element signature="e#3055#3752#0" />
-            <element signature="e#3807#4550#0" />
-            <element signature="e#4608#5061#0" />
-            <element signature="e#5110#5434#0" />
-            <element signature="e#5922#6880#0" />
-            <element signature="e#7156#7641#0" />
-            <element signature="e#7691#10033#0" />
-            <element signature="e#10092#10605#0" />
-            <element signature="e#10653#11137#0" />
-            <element signature="e#11192#11754#0" />
-            <element signature="e#11813#12834#0" />
-            <element signature="e#13299#14023#0" />
-            <element signature="e#13668#14055#0" />
-          </folding>
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="558">
-          <caret line="51" column="16" lean-forward="true" selection-start-line="51" selection-start-column="16" selection-end-line="51" selection-end-column="16" />
+        <state relative-caret-position="418">
+          <caret line="375" column="47" lean-forward="false" selection-start-line="375" selection-start-column="47" selection-end-line="375" selection-end-column="47" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scroller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="71" column="0" lean-forward="false" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#542#700#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/telebot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="446">
-          <caret line="1399" lean-forward="true" selection-start-line="1399" selection-end-line="1399" />
+        <state relative-caret-position="-100">
+          <caret line="676" column="13" lean-forward="false" selection-start-line="676" selection-start-column="4" selection-end-line="676" selection-end-column="13" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
-            <element signature="e#11690#11741#0" />
-            <element signature="e#11787#13297#0" />
-            <element signature="e#13345#13817#0" />
-            <element signature="e#13867#14570#0" />
-            <element signature="e#14621#15763#0" />
-            <element signature="e#15783#16746#0" />
-            <element signature="e#17578#18132#0" />
-            <element signature="e#18188#18701#0" />
-            <element signature="e#18757#19252#0" />
-            <element signature="e#19317#19870#0" />
-            <element signature="e#19924#20412#0" />
-            <element signature="e#20476#21118#0" />
-            <element signature="e#21175#21545#0" />
-            <element signature="e#21695#22222#0" />
-            <element signature="e#22342#23137#0" />
-            <element signature="e#23191#23924#0" />
-            <element signature="e#23977#24723#0" />
-            <element signature="e#24786#25550#0" />
-            <element signature="e#25601#26306#0" />
-            <element signature="e#26367#26891#0" />
-            <element signature="e#26947#27571#0" />
-            <element signature="e#27628#28491#0" />
-            <element signature="e#28550#28885#0" />
-            <element signature="e#28943#29604#0" />
-            <element signature="e#29644#31210#0" />
-            <element signature="e#31271#32526#0" />
-            <element signature="e#32582#33843#0" />
-            <element signature="e#33905#35096#0" />
-            <element signature="e#35152#35717#0" />
-            <element signature="e#35775#37471#0" />
-            <element signature="e#37531#38941#0" />
-            <element signature="e#38991#41578#0" />
-            <element signature="e#41628#42612#0" />
-            <element signature="e#42666#43309#0" />
-            <element signature="e#43362#44134#0" />
-            <element signature="e#44195#45055#0" />
-            <element signature="e#45095#45316#0" />
-            <element signature="e#45375#46063#0" />
-            <element signature="e#46119#47089#0" />
-            <element signature="e#47133#47503#0" />
-            <element signature="e#47572#47899#0" />
           </folding>
         </state>
       </provider>

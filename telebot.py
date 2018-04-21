@@ -66,7 +66,6 @@ def callback_query_selector(bot, update):
         reject_request(bot, update)
     elif query_type == 'book':
         book_media(bot, update)
-
     elif query_type == 'get_in_line':
         add_in_line(bot, update)
     elif query_type == 'get_out_of_line':
@@ -222,6 +221,7 @@ def callback_query_selector(bot, update):
     elif query_type == 'pay':
         pay_for_media(bot, update, argument, parsed_query['media'])
 
+
     # Arrows for switching between cards
     # Selectors for 'next' arrows
     elif query_type == 'nextItem':
@@ -264,7 +264,7 @@ def callback_query_selector(bot, update):
             session = RegistrySession[update.callback_query.from_user.id]
             session.users_c += 1
             edit_librarians_card(bot, update)
-        elif argument == 'debtors': # воть тут
+        elif argument == 'debtors':  # воть тут
             session = RegistrySession[update.callback_query.from_user.id]
             session.debtors_c += 1
             commit()
@@ -306,29 +306,29 @@ def callback_query_selector(bot, update):
             session = RegistrySession[update.callback_query.from_user.id]
             session.users_c -= 1
             edit_librarians_card(bot, update)
-        elif argument == 'debtors': # воть тут
+        elif argument == 'debtors':  # воть тут
             session = RegistrySession[update.callback_query.from_user.id]
             session.debtors_c -= 1
             commit()
             edit_debt_card(bot, update)
     elif query_type == 'outstanding_request':
-            librarian = Librarian.get(telegramID=update.callback_query.from_user.id)
-            status = librarian.outstanding_request(argument, datetime.datetime.now())
-            if status[0] == 1:
-                bot.edit_message_text(text="Request completed!",
-                                      message_id=update.callback_query.message.message_id,
-                                      chat_id=update.callback_query.message.chat_id)
-                title = Media[argument].name
-                queue = status[1]
-                for element in queue:
-                    bot.send_message(text="Sorry, you have been deleted from "
-                                          "the queue for the following media: "
-                                          "%s because of an outstanding "
-                                          "request" % title,
-                                     chat_id=element.telegramID)
-                holders = status[2]
-                for element in holders:
-                    ask_for_return(bot, update, element[1], element[0])
+        librarian = Librarian.get(telegramID=update.callback_query.from_user.id)
+        status = librarian.outstanding_request(argument, datetime.datetime.now())
+        if status[0] == 1:
+            bot.edit_message_text(text="Request completed!",
+                                  message_id=update.callback_query.message.message_id,
+                                  chat_id=update.callback_query.message.chat_id)
+            title = Media[argument].name
+            queue = status[1]
+            for element in queue:
+                bot.send_message(text="Sorry, you have been deleted from "
+                                      "the queue for the following media: "
+                                      "%s because of an outstanding "
+                                      "request" % title,
+                                 chat_id=element.telegramID)
+            holders = status[2]
+            for element in holders:
+                ask_for_return(bot, update, element[1], element[0])
 
     # Features of ADMIN
     # 'acpt_nl' is 'accept new librarian'
@@ -340,8 +340,8 @@ def callback_query_selector(bot, update):
             add = json.dumps({'type': 'adm_s_pr', 'argument': 'add'})
             deletion = json.dumps({'type': 'adm_s_pr', 'argument': 'delete'})
             keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("See/Edit", callback_data=see_edit),
-                                             InlineKeyboardButton(" + Addition", callback_data=add),
-                                             InlineKeyboardButton(" + Deletion", callback_data=deletion)]])
+                                              InlineKeyboardButton(" + Addition", callback_data=add),
+                                              InlineKeyboardButton(" + Deletion", callback_data=deletion)]])
             admin.add_new_librarian()
             bot.edit_message_text(text="Choose new librarian's privilege:",
                                   message_id=update.callback_query.message.message_id,
@@ -516,7 +516,6 @@ and allows to perform some actions (add, delete, modify)
 
 @db_session
 def create_request_card(bot, update):
-
     """
     Creates request menu card
     :param bot: bot object
@@ -535,7 +534,6 @@ def create_request_card(bot, update):
 
 @db_session
 def create_media_card(bot, update):
-
     """
     Creates media menu card
     :param bot: bot object
@@ -590,7 +588,6 @@ def create_booking_request_card(bot, update):
 
 @db_session
 def create_log_card(bot, update):
-
     """
     Creates log menu card
     :param bot: bot object
@@ -608,7 +605,7 @@ def create_log_card(bot, update):
 
 
 @db_session
-def create_debt_card(bot, update): #воть тут
+def create_debt_card(bot, update):  # воть тут
 
     """
     Creates log menu card
@@ -628,7 +625,6 @@ def create_debt_card(bot, update): #воть тут
 
 @db_session
 def check_media_balance(bot, job):
-
     """
     checks the penalty for all media in log
     :param bot: bot object
@@ -646,6 +642,77 @@ def check_media_balance(bot, job):
 morning = time(7, 00)
 j = updater.job_queue
 j.run_daily(check_media_balance, morning)
+
+CHOOSE_SEARCH_PARAMETER, CHOOSE_SEARCH_CRITERIA = range(2)
+
+"""SEARCH BE CAREFUL"""
+
+
+@db_session
+def search_keyboard(bot, update):
+    author = InlineKeyboardButton("By author",
+                                  callback_data=json.dumps(
+                                      {'type': 'search', 'argument': 'authors'}))
+    name = InlineKeyboardButton("By name",
+                                callback_data=json.dumps(
+                                    {'type': 'search', 'argument': 'name'}))
+    type = InlineKeyboardButton("By type",
+                                callback_data=json.dumps(
+                                    {'type': 'search', 'argument': 'type'}))
+
+    publisher = InlineKeyboardButton("By publisher",
+                                     callback_data=json.dumps(
+                                         {'type': 'search', 'argument': 'publisher'}))
+    up_row = [author, name, publisher, type]
+
+    keyboard = InlineKeyboardMarkup([up_row])
+
+    bot.send_message(text="What do you want to search by?", chat_id=update.message.chat_id,
+                     reply_markup=keyboard)
+
+    return CHOOSE_SEARCH_PARAMETER
+
+
+@db_session
+def enter_search_criteria(bot, update):
+    query = json.loads(update.callback_query.data)
+    telegram_id = update.callback_query.message.chat_id
+    parameter = query['argument']
+    database.RegistrySession[telegram_id].search_parameter = parameter
+    bot.send_message(text="Enter search criteria:", chat_id=telegram_id)
+    return CHOOSE_SEARCH_CRITERIA
+
+
+@db_session
+def search_media(bot, update):
+    """
+    :param bot: bot object
+    :param update: update object
+    :param parameter: field of search
+    :param criteria: text of search
+    :return: searched media
+    """
+
+    criteria = update.message.text
+    parameter = database.RegistrySession[update.message.chat_id].search_parameter
+    if parameter == 'name':
+        medias = list(Media.select(lambda c: criteria in c.name))
+    elif parameter == 'authors':
+        medias = list(Media.select(lambda c: criteria in c.authors))
+    elif parameter == 'publisher':
+        medias = list(Media.select(lambda c: criteria in c.publisher))
+    elif parameter == 'type':
+        medias = list(Media.select(lambda c: c.type == criteria))
+
+    media_card = Scroller('media', medias, update.message.chat_id)
+
+    try:
+        bot.send_message(text=media_card.create_message(), chat_id=update.message.chat_id,
+                         reply_markup=media_card.create_keyboard())
+        return search_conversation.END
+    except FileNotFoundError as e:
+        bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+        return search_conversation.END
 
 
 @db_session
@@ -815,7 +882,7 @@ def edit_log_card(bot, update):
 
 
 @db_session
-def edit_debt_card(bot, update): #воть тут
+def edit_debt_card(bot, update):  # воть тут
     """
     Edits log menu card
     :param bot: bot object
@@ -828,7 +895,7 @@ def edit_debt_card(bot, update): #воть тут
     log = Scroller('debtors', registry, query.message.chat_id)
     message = log.create_message()
     bot.edit_message_text(text=message, chat_id=query.message.chat_id,
-                              message_id=query.message.message_id, reply_markup=log.create_keyboard())
+                          message_id=query.message.message_id, reply_markup=log.create_keyboard())
 
 
 @db_session
@@ -892,7 +959,6 @@ def librarian_authentication(user_id):
 
 @db_session
 def librarian_interface(bot, update):
-
     """
     Prints out librarian's menu wih all features
     :param bot: bot object
@@ -939,7 +1005,8 @@ def me(bot, update):
     my_medias_button = InlineKeyboardButton("My medias",
                                             callback_data=json.dumps({'type': 'my_medias', 'argument': 0}))
     my_balance_button = InlineKeyboardButton("My balance",
-                                             callback_data=json.dumps({'type': 'my_balance', 'argument': my_user.telegramID}))
+                                             callback_data=json.dumps(
+                                                 {'type': 'my_balance', 'argument': my_user.telegramID}))
     keyboard = [[edit_button, delete_button], [my_medias_button], [my_balance_button]]
     keyboard = InlineKeyboardMarkup(keyboard)
     message = "Hello, %s! \nHere is information about you: \n👨‍🎓: %s (@%s) \n🏠: %s \n☎️: %s \n🎓: %s" % (
@@ -980,7 +1047,6 @@ def delete_media(bot, update, media_id):
 
 @db_session
 def delete_copy(bot, update, args):
-
     """
     Asks librarian if it still wants to delete a particular copy
     :param bot: bot object
@@ -1127,7 +1193,6 @@ def edit_user(bot, update, telegram_id):
 
 @db_session
 def edit_field(bot, update):
-
     """
     Function which interacts with a certain field
     :param bot: bot object
@@ -1281,7 +1346,6 @@ def create_new_user(bot, update):
 
 @db_session
 def create_user_set_status(bot, update):
-
     # To get data from pressed button
     query = update.callback_query.data
     parsed_query = json.loads(query)
@@ -1423,7 +1487,8 @@ def add_new_librarian(bot, update, args):
             if new_user_by_id is not None:
                 real_id = alias_or_id
             if Librarian.get(telegramID=real_id) is None:
-                yes_button = InlineKeyboardButton("Yes", callback_data=json.dumps({'type': 'acpt_nl', 'argument': 'Yes'}))
+                yes_button = InlineKeyboardButton("Yes",
+                                                  callback_data=json.dumps({'type': 'acpt_nl', 'argument': 'Yes'}))
                 no_button = InlineKeyboardButton("No", callback_data=json.dumps({'type': 'acpt_nl', 'argument': 'No'}))
                 keyboard = InlineKeyboardMarkup([[yes_button, no_button]])
                 user_name = User.get(telegramID=real_id).name
@@ -1464,6 +1529,17 @@ new_user_conversation = ConversationHandler(entry_points=[CommandHandler("add_us
 
                                             fallbacks=[CommandHandler('cancel', cancel_process)])
 
+search_conversation = ConversationHandler(entry_points=[CommandHandler("search", search_keyboard)],
+                                          states={
+                                              CHOOSE_SEARCH_PARAMETER: [
+                                                  CallbackQueryHandler(enter_search_criteria, pattern="^{\"type\": \"search")],
+                                              CHOOSE_SEARCH_CRITERIA:
+                                                  [MessageHandler(Filters.text, search_media)]
+
+                                          },
+
+                                          fallbacks=[CommandHandler('cancel', cancel_process)])
+
 edit_conv = ConversationHandler(entry_points=[CallbackQueryHandler(edit_field, pattern="^{\"type\": \"edit")],
                                 states={
                                     ENTER_VALUE: [MessageHandler(Filters.text, change_value)]
@@ -1473,7 +1549,6 @@ edit_conv = ConversationHandler(entry_points=[CallbackQueryHandler(edit_field, p
 
 end_create_user = CallbackQueryHandler(create_user_set_status, pattern="^{\"type\": \"setState")
 
-
 """
 This part connects commands, queries and any other input information to features
 in code. These are handlers.
@@ -1482,8 +1557,8 @@ dispatcher.add_handler(register_conversation)
 dispatcher.add_handler(new_media_conversation)
 dispatcher.add_handler(new_user_conversation)
 dispatcher.add_handler(edit_conv)
+dispatcher.add_handler(search_conversation)
 dispatcher.add_handler(end_create_user)
-
 
 search_query_handler = CallbackQueryHandler(callback_query_selector)
 dispatcher.add_handler(CommandHandler('requests', create_request_card))
