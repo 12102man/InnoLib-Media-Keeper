@@ -1006,6 +1006,7 @@ Here's a list of useful commands, which are only allowed to librarians:
 /return - return a book
 /users - list of users
 /delete_copy (copy_id) - delete copy
+/actions - get list of all actions happened from the start of ILMK
 """ % librarian.name, chat_id=telegram_id)
 
 
@@ -1430,8 +1431,18 @@ def renew_media(bot, update, argument):
 
 @db_session
 def get_actions(bot, update):
-    database.Actions[1].generate_file()
-    bot.send_document(chat_id=update.message.chat_id, document=open('actions.txt', 'rb'))
+    """
+    Method which generates a textfile with all the actions
+    :param bot:
+    :param update:
+    :return: send textfile with all the actions
+    """
+    if database.Librarian.get(telegramID=update.message.chat_id) is not None:
+        database.Actions(implementer=str(update.message.chat_id),
+                         action="has asked for actions list",
+                         implementee="")
+        database.Actions[1].generate_file()
+        bot.send_document(chat_id=update.message.chat_id, document=open('actions.txt', 'rb'))
 
 @db_session
 def confirm_user(bot, update, args):
