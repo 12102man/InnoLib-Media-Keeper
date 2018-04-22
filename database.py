@@ -331,7 +331,7 @@ class Log(db.Entity):
 
     def time_expired(self, check_date):
         assert self.is_expired(check_date)
-        return (check_date-self.expiry_date).days
+        return (check_date - self.expiry_date).days
 
 
 class MediaCopies(db.Entity):
@@ -397,6 +397,21 @@ class MediaQueue(db.Entity):
 
     def is_empty(self):
         return len(list(MediaQueue.select(lambda c: c.mediaID == self.mediaID))) == 0
+
+
+class Actions(db.Entity):
+    implementer = Required(str)  # item who makes action
+    action = Required(str)
+    implementee = Required(str)  # item which action is taken at
+    timestamp = Required(datetime.datetime,
+                         default=datetime.datetime.utcnow)
+
+    def generate_file(self):
+        with open('actions.txt', 'w') as f:
+            list_of_actions = Actions.select()
+            for action in list_of_actions:
+                f.write(action.timestamp.strftime(
+                    "%d %b %Y %H:%M") + " | " + action.implementer + " " + action.action + action.implementee + "\n")
 
 
 db.generate_mapping(create_tables=True)

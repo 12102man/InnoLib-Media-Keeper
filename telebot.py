@@ -74,6 +74,9 @@ def callback_query_selector(bot, update):
         session = database.RegistrySession[telegram_id]
         media = list(database.Media.select())[session.media_c]
         MediaQueue.select(lambda c: c.user == User[telegram_id] and c.mediaID == media).delete()
+        database.Actions(implementer=str(telegram_id),
+                         action="got out of line for media #",
+                         implementee=str(media.mediaID))
         bot.edit_message_text(text="You got out of the line!",
                               chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
@@ -101,6 +104,9 @@ def callback_query_selector(bot, update):
     elif query_type == 'lib_delete_y':
         admin = Admin.get(telegram_id=update.callback_query.message.chat_id)
         admin.delete_librarian(argument)
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has deleted rights for librarian #",
+                         implementee=str(argument))
         bot.edit_message_text(text="Rights was removed!",
                               chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
@@ -126,6 +132,9 @@ def callback_query_selector(bot, update):
     elif query_type == 'deleteMedia':
         Media.get(mediaID=argument).delete()
         commit()
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has deleted media #",
+                         implementee=str(argument))
         bot.send_message(text="Media and its copies have been successfully deleted!",
                          chat_id=update.callback_query.from_user.id)
     elif query_type == 'cancelDeleteMedia':
@@ -134,6 +143,9 @@ def callback_query_selector(bot, update):
     elif query_type == 'deleteCopy':
         MediaCopies.get(copyID=argument).delete()
         commit()
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has deleted media copy #",
+                         implementee=str(argument))
         bot.send_message(text="Copy has been successfully deleted!",
                          chat_id=update.callback_query.from_user.id)
     elif query_type == 'cancelDeleteCopy':
@@ -142,6 +154,9 @@ def callback_query_selector(bot, update):
     elif query_type == 'deleteUser':
         User.get(telegramID=argument).delete()
         commit()
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has deleted user #",
+                         implementee=str(argument))
         bot.send_message(text="User has been successfully deleted!",
                          chat_id=update.callback_query.from_user.id)
         session = RegistrySession[update.callback_query.from_user.id]
@@ -158,6 +173,9 @@ def callback_query_selector(bot, update):
         media = Media.get(mediaID=argument)
         last_state = media.bestseller
         media.bestseller = not last_state
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has inversed media bestseller from %s to %s" % (str(last_state), str(not last_state)),
+                         implementee=str(argument))
         bot.edit_message_text(
             text="Media's bestseller state has been changed from %s to %s" % (str(last_state), str(not last_state)),
             message_id=update.callback_query.message.message_id,
@@ -168,6 +186,10 @@ def callback_query_selector(bot, update):
         media.availability = not last_state
         for elem in media.copies:
             elem.available = not last_state
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has inversed media availability from %s to %s" % (
+                             str(last_state), str(not last_state)),
+                         implementee=str(argument))
         bot.edit_message_text(text="Media's availability state has been changed from %s to %s" % (
             str(last_state), str(not last_state)),
                               message_id=update.callback_query.message.message_id,
@@ -177,6 +199,7 @@ def callback_query_selector(bot, update):
         user = User.get(telegramID=update.callback_query.from_user.id)
         user.priority = argument
         commit()
+
         bot.edit_message_text(text="Status was successfully changed!",
 
                               message_id=update.callback_query.message.message_id,
@@ -315,6 +338,9 @@ def callback_query_selector(bot, update):
         librarian = Librarian.get(telegramID=update.callback_query.from_user.id)
         status = librarian.outstanding_request(argument, datetime.datetime.now())
         if status[0] == 1:
+            database.Actions(implementer=str(update.callback_query.message.chat_id),
+                             action="has placed an outstanding request for media #",
+                             implementee=str(argument))
             bot.edit_message_text(text="Request completed!",
                                   message_id=update.callback_query.message.message_id,
                                   chat_id=update.callback_query.message.chat_id)
@@ -1387,14 +1413,25 @@ def renew_media(bot, update, argument):
     user = User.get(telegramID=update.callback_query.message.chat_id)
     renewed = user.renew_copy(argument, datetime.datetime.now())
     if renewed and user.priority != 2:
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has renewed media #",
+                         implementee=str(argument))
         bot.edit_message_text(text="You successfully renewed the media!",
                               chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
     else:
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has tried to renew already renewed media #",
+                         implementee=str(argument))
         bot.edit_message_text(text="You have already renewed this media!",
                               chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
 
+
+@db_session
+def get_actions(bot, update):
+    database.Actions[1].generate_file()
+    bot.send_document(chat_id=update.message.chat_id, document=open('actions.txt', 'rb'))
 
 @db_session
 def confirm_user(bot, update, args):
@@ -1532,7 +1569,8 @@ new_user_conversation = ConversationHandler(entry_points=[CommandHandler("add_us
 search_conversation = ConversationHandler(entry_points=[CommandHandler("search", search_keyboard)],
                                           states={
                                               CHOOSE_SEARCH_PARAMETER: [
-                                                  CallbackQueryHandler(enter_search_criteria, pattern="^{\"type\": \"search")],
+                                                  CallbackQueryHandler(enter_search_criteria,
+                                                                       pattern="^{\"type\": \"search")],
                                               CHOOSE_SEARCH_CRITERIA:
                                                   [MessageHandler(Filters.text, search_media)]
 
@@ -1569,6 +1607,7 @@ dispatcher.add_handler(CommandHandler('issue', create_booking_request_card))
 dispatcher.add_handler(CommandHandler('log', create_log_card))
 dispatcher.add_handler(CommandHandler('debtors', create_debt_card))
 dispatcher.add_handler(CommandHandler('me', me))
+dispatcher.add_handler(CommandHandler('actions', get_actions))
 dispatcher.add_handler(CommandHandler('start', confirm_user, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True))
 dispatcher.add_handler(CommandHandler('users', create_users_card))
