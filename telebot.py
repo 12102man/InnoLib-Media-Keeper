@@ -633,7 +633,6 @@ def create_log_card(bot, update):
 @db_session
 def create_debt_card(bot, update):
 
-
     """
     Creates log menu card
     :param bot: bot object

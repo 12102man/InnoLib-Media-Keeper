@@ -159,6 +159,7 @@ Balance: %s
 Privilege level: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patron.balance, lib.priority)
 
                 return message
+
             elif self.state == 'debtors':
                 self.__cursor = database.RegistrySession[self.__telegram_id].debtors_c
                 debt = self.list[self.__cursor]
