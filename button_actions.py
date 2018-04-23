@@ -118,8 +118,6 @@ def book_media(bot, update):
                                   message_id=query.message.message_id)
 
         elif status == 0:
-            database.Actions(implementer=str(telegram_id), action="successfully booked media #",
-                             implementee=str(media.mediaID))
             bot.edit_message_text(text="🤘 Media has been successfully booked. Please visit the library to get it.",
                                   chat_id=query.message.chat_id,
                                   message_id=query.message.message_id)

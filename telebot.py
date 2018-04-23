@@ -676,22 +676,27 @@ CHOOSE_SEARCH_PARAMETER, CHOOSE_SEARCH_CRITERIA = range(2)
 
 @db_session
 def search_keyboard(bot, update):
-    author = InlineKeyboardButton("By author",
+    author = InlineKeyboardButton("Author",
                                   callback_data=json.dumps(
                                       {'type': 'search', 'argument': 'authors'}))
-    name = InlineKeyboardButton("By name",
+    name = InlineKeyboardButton("Title",
                                 callback_data=json.dumps(
                                     {'type': 'search', 'argument': 'name'}))
-    type = InlineKeyboardButton("By type",
+    type = InlineKeyboardButton("Type",
                                 callback_data=json.dumps(
                                     {'type': 'search', 'argument': 'type'}))
 
-    publisher = InlineKeyboardButton("By publisher",
+    publisher = InlineKeyboardButton("Publisher",
                                      callback_data=json.dumps(
                                          {'type': 'search', 'argument': 'publisher'}))
-    up_row = [author, name, publisher, type]
+    keywords = InlineKeyboardButton("Keywords",
+                                     callback_data=json.dumps(
+                                         {'type': 'search', 'argument': 'keywords'}))
+    up_row = [author, name]
+    mid_row = [keywords]
+    low_row = [publisher, type]
 
-    keyboard = InlineKeyboardMarkup([up_row])
+    keyboard = InlineKeyboardMarkup([up_row, mid_row, low_row])
 
     bot.send_message(text="What do you want to search by?", chat_id=update.message.chat_id,
                      reply_markup=keyboard)
@@ -705,7 +710,14 @@ def enter_search_criteria(bot, update):
     telegram_id = update.callback_query.message.chat_id
     parameter = query['argument']
     database.RegistrySession[telegram_id].search_parameter = parameter
-    bot.send_message(text="Enter search criteria:", chat_id=telegram_id)
+    message = ""
+    if parameter == 'keywords':
+        message = "Enter keywords:"
+    elif parameter == 'type':
+        message = "Enter type (Book or AV):"
+    else:
+        message = "Enter search criteria"
+    bot.send_message(text=message, chat_id=telegram_id)
     return CHOOSE_SEARCH_CRITERIA
 
 
@@ -721,14 +733,9 @@ def search_media(bot, update):
 
     criteria = update.message.text
     parameter = database.RegistrySession[update.message.chat_id].search_parameter
-    if parameter == 'name':
-        medias = list(Media.select(lambda c: criteria in c.name))
-    elif parameter == 'authors':
-        medias = list(Media.select(lambda c: criteria in c.authors))
-    elif parameter == 'publisher':
-        medias = list(Media.select(lambda c: criteria in c.publisher))
-    elif parameter == 'type':
-        medias = list(Media.select(lambda c: c.type == criteria))
+
+    user = User[update.message.chat_id]
+    medias = user.search(parameter,criteria)
 
     media_card = Scroller('media', medias, update.message.chat_id)
 
@@ -1142,12 +1149,10 @@ def add_copy(bot, update, media_id):
     :param media_id: ID of abstract media to add
     :return: add a book, send a result
     """
-    abstract_media = Media.get(mediaID=media_id)
-    copies = list(abstract_media.copies)
-    copy_to_add = MediaCopies(mediaID=media_id, copyID=str(media_id) + "-" + str(len(copies) + 1), available=1)
-    copies.append(copy_to_add)
-    abstract_media.copies = copies
-    commit()
+    telegram_id = update.message.chat_id
+    if not librarian_authentication(telegram_id):
+        return 0
+    Librarian[telegram_id].add_copy(media_id)
     bot.send_message(text="New copy has been added!", chat_id=update.callback_query.message.chat_id)
 
 
@@ -1438,9 +1443,6 @@ def get_actions(bot, update):
     :return: send textfile with all the actions
     """
     if database.Librarian.get(telegramID=update.message.chat_id) is not None:
-        database.Actions(implementer=str(update.message.chat_id),
-                         action="has asked for actions list",
-                         implementee="")
         database.Actions[1].generate_file()
         bot.send_document(chat_id=update.message.chat_id, document=open('actions.txt', 'rb'))
 

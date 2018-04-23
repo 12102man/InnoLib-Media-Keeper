@@ -1,4 +1,5 @@
 from pony.orm import *
+from search_engine import *
 
 from button_actions import generate_expiry_date, check_copy
 import datetime
@@ -11,8 +12,14 @@ db.bind(provider='mysql', host=config.db_host, user=config.db_username, passwd=c
 
 
 class Admin(db.Entity):
-    telegram_id = PrimaryKey(int)
+    telegram_id = Required(int)
     new_lib_id = Optional(int)
+
+    def __init__(self, **kwargs):
+        # process kwargs if necessary
+        if Admin.get(id=1) is not None:
+            raise FileExistsError("Admin already exists")
+        super().__init__(**kwargs)
 
     def set_privilege(self, level):
         """
@@ -43,6 +50,9 @@ class Admin(db.Entity):
         Librarian(telegramID=self.new_lib_id,
                   name=User.get(telegramID=self.new_lib_id).name,
                   priority=0)
+        Actions(implementer="Admin 1",
+                action="has added librarian #",
+                implementee=str(self.new_lib_id))
         commit()
 
     def delete_librarian(self, lib_id):
@@ -107,6 +117,9 @@ class User(db.Entity):
     def book_media(self, media_item, date):
         if not media_item.availability:
             self.add_to_queue(media_item.mediaID)
+            Actions(implementer="User#" + str(self.telegramID),
+                    action="got in queue for media #",
+                    implementee=str(media_item.mediaID))
             return -1
         if not check_copy(media_item.mediaID, self.telegramID):
             return -2
@@ -123,6 +136,9 @@ class User(db.Entity):
         if len(copies_to_book) == 1:
             media_item.availability = False
 
+        Actions(implementer="User#" + str(self.telegramID),
+                action="has booked media #",
+                implementee=str(item.copyID))
         return 0
 
     def return_media(self, copy_id):
@@ -130,6 +146,9 @@ class User(db.Entity):
             telegramID=self.telegramID,
             copyID=copy_id
         )
+
+    def search(self, parameter, criteria):
+        return search(parameter, criteria)
 
 
 class Media(db.Entity):
@@ -144,6 +163,7 @@ class Media(db.Entity):
     cost = Required(int)
     image = Set('Images')
     copies = Set('MediaCopies')
+    keywords = Optional(str)
 
     queue = Set('MediaQueue')
 
@@ -178,7 +198,7 @@ class MediaRequest(db.Entity):
 
 
 class Librarian(db.Entity):
-    telegramID = Required(int)
+    telegramID = PrimaryKey(int)
     name = Required(str)
     priority = Required(int)
 
@@ -222,21 +242,45 @@ class Librarian(db.Entity):
         record.balance = 0
 
     def outstanding_request(self, media_id, date):
+        Actions(implementer="Librarian#" + str(self.telegramID),
+                action="has placed an outstanding request for media #",
+                implementee=str(media_id))
+        if not self.priority in [2, 3]:
+            Actions(implementer="Outstanding Request of Librarian#" + str(self.telegramID),
+                    action="for media #",
+                    implementee=str(media_id) + "has been denied")
+            return [-1]
         media = Media[media_id]
         queue = []
         for element in media.queue:
             queue.append(element.user)
         media.delete_queue()
+        Actions(implementer="[OR] Queue for media #" + str(media_id),
+                action="has been deleted",
+                implementee="")
         checked_out_copies = list(Log.select(lambda c: c.returned == 0 and c.mediaID.startswith(str(media.mediaID))))
         holders = []
         for i in range(len(checked_out_copies)):
             checked_out_copies[i].renewed = 1
             checked_out_copies[i].expiry_date = date
             holders.append([checked_out_copies[i].libID, checked_out_copies[i].mediaID])
-
+        holders_string = ""
+        for holder in holders:
+            holders_string += str(holder[0]) + " (with media #" + str(holders[1]) + "), "
+        queue_string = ""
+        for elem in queue:
+            queue_string += str(elem) + ", "
+        Actions(implementer="[OR] Holders " + holders_string,
+                action="have been notified about Outstanding Request",
+                implementee="")
+        Actions(implementer="[OR] Queue participants " + queue_string,
+                action="have been notified about Outstanding Request",
+                implementee="")
         return [1, queue, holders]
 
     def add_media(self, text):
+        if not self.priority in [2, 3]:
+            return -1
         session = RegistrySession.get(telegramID=self.telegramID)
         if session is not None:
             if session.type == "":
@@ -307,6 +351,53 @@ class Librarian(db.Entity):
         else:
             RegistrySession(telegramID=self.telegramID)
             return "Let's add a new User! Please, enter new user's name"
+
+    def add_copy(self, media_id):
+        if not self.priority in [2, 3]:
+            return -1
+        abstract_media = Media.get(mediaID=media_id)
+        if abstract_media is None:
+            return -1
+        copies = list(abstract_media.copies)
+        copy_to_add = MediaCopies(mediaID=abstract_media.mediaID,
+                                  copyID=str(abstract_media.mediaID) + "-" + str(len(copies) + 1), available=1)
+        copies.append(copy_to_add)
+        abstract_media.copies = copies
+        Actions(implementer="Librarian#" + str(self.telegramID),
+                action="has added copy of media #",
+                implementee=str(abstract_media.mediaID))
+        commit()
+        return 1
+
+    def __add_media__(self, params):
+        if not self.priority in [2, 3]:
+            return -1
+        Media(mediaID=params['id'], name=params['name'],
+              type=params['type'],
+              authors=params['authors'],
+              publisher=params['publisher'], cost=params['cost'], fine=params['cost'],
+              availability=params['availability'], bestseller=params['bestseller'], keywords=params['keywords'])
+        Actions(implementer="Librarian#" + str(self.telegramID),
+                action="has added media #",
+                implementee=str(params['id']))
+        return 1
+
+    def __add_user__(self, params):
+        User(telegramID=params['telegramID'], address=params['address'], alias=params['alias'], phone=params['phone'],
+             balance=0, priority=params['priority'], name=params['name'])
+        Actions(implementer="Librarian#" + str(self.telegramID),
+                action="has added user #",
+                implementee=str(params['telegramID']))
+        return 1
+
+    def delete_copy(self, copy_id):
+        if not self.priority in [3]:
+            return -1
+        MediaCopies.get(copyID=copy_id).delete()
+        Actions(implementer="Librarian#" + str(self.telegramID),
+                action="has deleted media copy #",
+                implementee=str(copy_id))
+        return 1
 
 
 class Images(db.Entity):
@@ -402,7 +493,7 @@ class MediaQueue(db.Entity):
 class Actions(db.Entity):
     implementer = Required(str)  # item who makes action
     action = Required(str)
-    implementee = Required(str)  # item which action is taken at
+    implementee = Optional(str)  # item which action is taken at
     timestamp = Required(datetime.datetime,
                          default=datetime.datetime.utcnow)
 
@@ -411,7 +502,7 @@ class Actions(db.Entity):
             list_of_actions = Actions.select()
             for action in list_of_actions:
                 f.write(action.timestamp.strftime(
-                    "%d %b %Y %H:%M") + " | " + action.implementer + " " + action.action + action.implementee + "\n")
+                    "%d %b %Y") + " | " + action.implementer + " " + action.action + action.implementee + "\n")
 
 
 db.generate_mapping(create_tables=True)
