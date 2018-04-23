@@ -159,7 +159,7 @@ Balance: %s
 Privilege level: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patron.balance, lib.priority)
 
                 return message
-            elif self.state == 'debtors':  # воть тут
+            elif self.state == 'debtors':
                 self.__cursor = database.RegistrySession[self.__telegram_id].debtors_c
                 debt = self.list[self.__cursor]
                 user = database.User.get(telegramID=debt.libID)
@@ -168,6 +168,8 @@ Privilege level: %s""" % (patron.name, patron.address, patron.alias, patron.phon
         What: %s
         Issue date: %s
         Expiry date: %s
+        
+        
         Debt: %s
         Returned: %s
         Renewed: %s
@@ -175,7 +177,7 @@ Privilege level: %s""" % (patron.name, patron.address, patron.alias, patron.phon
                            database.MediaCopies.get(copyID=debt.mediaID).mediaID.name + " (" + debt.mediaID + ")",
                            debt.issue_date.strftime("%d %h %Y, %H:%M "),
                            debt.expiry_date.strftime("%d %h %Y, %H:%M "),
-                           list(database.Log.select(lambda c: c.mediaID == debt.mediaID and not c.returned))[0].balance, # воть тут
+                           list(database.Log.select(lambda c: c.mediaID == debt.mediaID and not c.returned))[0].balance,
                            convert_to_emoji(debt.returned),
                            convert_to_emoji(debt.renewed))
 
@@ -318,7 +320,7 @@ Privilege level: %s""" % (patron.name, patron.address, patron.alias, patron.phon
             mid_row.append(InlineKeyboardButton("Change privilege", callback_data=change_librarian_privilege))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'librs'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'librs'})
-        elif self.state == 'debtors': # воть тут
+        elif self.state == 'debtors':
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'debtors'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'debtors'})
 

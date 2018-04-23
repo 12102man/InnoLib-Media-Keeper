@@ -287,7 +287,7 @@ def callback_query_selector(bot, update):
             session = RegistrySession[update.callback_query.from_user.id]
             session.users_c += 1
             edit_librarians_card(bot, update)
-        elif argument == 'debtors':  # воть тут
+        elif argument == 'debtors':
             session = RegistrySession[update.callback_query.from_user.id]
             session.debtors_c += 1
             commit()
@@ -329,7 +329,7 @@ def callback_query_selector(bot, update):
             session = RegistrySession[update.callback_query.from_user.id]
             session.users_c -= 1
             edit_librarians_card(bot, update)
-        elif argument == 'debtors':  # воть тут
+        elif argument == 'debtors':
             session = RegistrySession[update.callback_query.from_user.id]
             session.debtors_c -= 1
             commit()
@@ -631,7 +631,8 @@ def create_log_card(bot, update):
 
 
 @db_session
-def create_debt_card(bot, update):  # воть тут
+def create_debt_card(bot, update):
+
 
     """
     Creates log menu card
@@ -908,7 +909,7 @@ def edit_log_card(bot, update):
 
 
 @db_session
-def edit_debt_card(bot, update):  # воть тут
+def edit_debt_card(bot, update):
     """
     Edits log menu card
     :param bot: bot object
