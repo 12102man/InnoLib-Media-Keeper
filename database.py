@@ -465,6 +465,7 @@ class RegistrySession(db.Entity):
     debtors_c = Optional(int, default=0)
 
     search_parameter = Optional(str, default="")
+    search_criteria = Optional(str, default="")
 
 
 class ReturnRequest(db.Entity):

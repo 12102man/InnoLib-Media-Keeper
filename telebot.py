@@ -258,6 +258,11 @@ def callback_query_selector(bot, update):
             session.media_c += 1
             commit()
             edit_media_card(bot, update)
+        elif argument == 'media_search':
+            session = RegistrySession[update.callback_query.from_user.id]
+            session.media_c += 1
+            commit()
+            edit_search_media(bot, update)
         elif argument == 'my_medias':
             session = RegistrySession[update.callback_query.from_user.id]
             session.my_medias_c += 1
@@ -305,6 +310,11 @@ def callback_query_selector(bot, update):
             session.media_c -= 1
             commit()
             edit_media_card(bot, update)
+        elif argument == 'media_search':
+            session = RegistrySession[update.callback_query.from_user.id]
+            session.media_c -= 1
+            commit()
+            edit_search_media(bot, update)
         elif argument == 'my_medias':
             session = RegistrySession[update.callback_query.from_user.id]
             session.my_medias_c -= 1
@@ -632,7 +642,6 @@ def create_log_card(bot, update):
 
 @db_session
 def create_debt_card(bot, update):
-
     """
     Creates log menu card
     :param bot: bot object
@@ -690,8 +699,8 @@ def search_keyboard(bot, update):
                                      callback_data=json.dumps(
                                          {'type': 'search', 'argument': 'publisher'}))
     keywords = InlineKeyboardButton("Keywords",
-                                     callback_data=json.dumps(
-                                         {'type': 'search', 'argument': 'keywords'}))
+                                    callback_data=json.dumps(
+                                        {'type': 'search', 'argument': 'keywords'}))
     up_row = [author, name]
     mid_row = [keywords]
     low_row = [publisher, type]
@@ -733,11 +742,11 @@ def search_media(bot, update):
 
     criteria = update.message.text
     parameter = database.RegistrySession[update.message.chat_id].search_parameter
-
+    database.RegistrySession[update.message.chat_id].search_criteria = criteria
     user = User[update.message.chat_id]
-    medias = user.search(parameter,criteria)
+    medias = user.search(parameter, criteria)
 
-    media_card = Scroller('media', medias, update.message.chat_id)
+    media_card = Scroller('media_search', medias, update.message.chat_id, parameter, criteria)
 
     try:
         bot.send_message(text=media_card.create_message(), chat_id=update.message.chat_id,
@@ -745,6 +754,25 @@ def search_media(bot, update):
         return search_conversation.END
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+        return search_conversation.END
+
+
+@db_session
+def edit_search_media(bot, update):
+    query = update.callback_query
+    user = User[update.callback_query.message.chat_id]
+    parameter = database.RegistrySession[update.callback_query.message.chat_id].search_parameter
+    criteria = database.RegistrySession[update.callback_query.message.chat_id].search_criteria
+    medias = user.search(parameter, criteria)
+    media_card = Scroller('media_search', medias, update.callback_query.message.chat_id, parameter, criteria)
+
+    try:
+        bot.edit_message_text(text=media_card.create_message(), chat_id=query.message.chat_id,
+                              message_id=query.message.message_id, reply_markup=media_card.create_keyboard())
+        return search_conversation.END
+    except FileNotFoundError as e:
+        bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
+                              message_id=query.message.message_id)
         return search_conversation.END
 
 
@@ -1445,6 +1473,7 @@ def get_actions(bot, update):
     if database.Librarian.get(telegramID=update.message.chat_id) is not None:
         database.Actions[1].generate_file()
         bot.send_document(chat_id=update.message.chat_id, document=open('actions.txt', 'rb'))
+
 
 @db_session
 def confirm_user(bot, update, args):
