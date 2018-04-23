@@ -10,6 +10,52 @@ db = Database()
 db.bind(provider='mysql', host=config.db_host, user=config.db_username, passwd=config.db_password, db=config.db_name)
 
 
+class Admin(db.Entity):
+    telegram_id = PrimaryKey(int)
+    new_lib_id = Optional(int)
+
+    def set_privilege(self, level):
+        """
+        Sets privileges to existing or new librarian
+        :param level: level of privileges
+        :return: string depends on is the librarian newcomer or he already was him
+        """
+        new_lib = Librarian.get(telegramID=self.new_lib_id)
+        if new_lib.priority is None:
+            action = "New librarian was added!"
+        else:
+            action = "Librarian privileges was changed!"
+        if level == 'edit':
+            new_lib.priority = 1
+        if level == 'add':
+            new_lib.priority = 2
+        if level == 'delete':
+            new_lib.priority = 3
+        self.new_lib_id = 0
+        commit()
+        return action
+
+    def add_new_librarian(self):
+        """
+        Adds record about new librarian
+        :return:
+        """
+        Librarian(telegramID=self.new_lib_id,
+                  name=User.get(telegramID=self.new_lib_id).name,
+                  priority=0)
+        commit()
+
+    def delete_librarian(self, lib_id):
+        """
+        Deletes existing librarian
+        :param lib_id: telegramID of librarian
+        :return:
+        """
+        RegistrySession.get(telegramID=self.telegram_id).users_c = 0
+        Librarian.get(telegramID=lib_id).delete()
+        commit()
+
+
 class User(db.Entity):
     telegramID = PrimaryKey(int)
     name = Required(str)
@@ -23,7 +69,6 @@ class User(db.Entity):
     def medias(self):
         return list(Log.select(lambda c: c.libID == self.telegramID and not c.returned))
 
-
     def add_to_queue(self, media_id):
         MediaQueue(user=self, mediaID=media_id)
         commit()
@@ -35,7 +80,6 @@ class User(db.Entity):
         order_of_users = media.get_queue()
         user_place = list(filter(lambda o: o.user == self, order_of_users))
         return order_of_users.index(user_place[0]) + 1
-
 
     def renew_copy(self, copy_id, date):
         # select log and extend expiry date
@@ -136,6 +180,7 @@ class MediaRequest(db.Entity):
 class Librarian(db.Entity):
     telegramID = Required(int)
     name = Required(str)
+    priority = Required(int)
 
     def check_return(self, copy_id):
         record = list(Log.select(lambda c: c.mediaID == copy_id and not c.returned))[0]
@@ -191,6 +236,78 @@ class Librarian(db.Entity):
 
         return [1, queue, holders]
 
+    def add_media(self, text):
+        session = RegistrySession.get(telegramID=self.telegramID)
+        if session is not None:
+            if session.type == "":
+                if text == "/add_media":
+                    return "Let's add a new media! What is the type of media?"
+                session.type = text
+                return "What is the title of media?"
+            elif session.title == "":
+                session.title = text
+                commit()
+                return "Who is the author?"
+            elif session.author == "":
+                session.author = text
+                commit()
+                return "What is the publisher?"
+            elif session.publisher == "":
+                session.publisher = text
+                commit()
+                return "What is the price?"
+            elif session.price == -1:
+                session.price = text
+                commit()
+                return "What is the fine?"
+            elif session.fine == -1:
+                session.fine = text
+                commit()
+                return "How many copies do you want to add?"
+            elif session.no_of_copies == -1:
+                no_of_copies = int(text)
+                session.no_of_copies = no_of_copies
+
+                Media(name=session.title, type=session.type, authors=session.author,
+                      publisher=session.publisher, cost=session.price, fine=session.fine,
+                      availability=True, bestseller=False)
+                media_id = Media.get(name=session.title).mediaID
+                for i in range(1, no_of_copies + 1):
+                    MediaCopies(mediaID=media_id, copyID="%s-%s" % (str(media_id), str(i)), available=1)
+                session.title = ""
+                session.type = ""
+                session.author = ""
+                session.fine = -1
+                session.price = -1
+                session.no_of_copies = -1
+                session.publisher = ""
+                commit()
+                return "Media and %s its copies had been added" % str(no_of_copies)
+        else:
+            RegistrySession(telegramID=self.telegramID)
+            return "Please, enter type of media:"
+
+    def add_user(self, text):
+        session = RegistrySession.get(telegramID=self.telegramID)
+        if session is not None:
+            if session.name == "":
+                session.name = text
+                commit()
+                return "Please, enter his phone"
+            elif session.phone == "":
+                session.phone = text
+                commit()
+                return "Please, enter new user's address"
+            elif session.address == "":
+                session.address = text
+                commit()
+                return "Choose his/her status"
+            elif session.faculty == 0:
+                return "Choose his/her status"
+        else:
+            RegistrySession(telegramID=self.telegramID)
+            return "Let's add a new User! Please, enter new user's name"
+
 
 class Images(db.Entity):
     mediaID = Required(Media)
@@ -214,8 +331,7 @@ class Log(db.Entity):
 
     def time_expired(self, check_date):
         assert self.is_expired(check_date)
-        return (check_date-self.expiry_date).days
-
+        return (check_date - self.expiry_date).days
 
 
 class MediaCopies(db.Entity):
@@ -254,8 +370,10 @@ class RegistrySession(db.Entity):
     price = Optional(int, default=-1)
     fine = Optional(int, default=-1)
     publisher = Optional(str, default="")
-    no_of_copies = Optional(int)
+    no_of_copies = Optional(int, default=-1)
     debtors_c = Optional(int, default=0)
+
+    search_parameter = Optional(str, default="")
 
 
 class ReturnRequest(db.Entity):
@@ -279,6 +397,21 @@ class MediaQueue(db.Entity):
 
     def is_empty(self):
         return len(list(MediaQueue.select(lambda c: c.mediaID == self.mediaID))) == 0
+
+
+class Actions(db.Entity):
+    implementer = Required(str)  # item who makes action
+    action = Required(str)
+    implementee = Required(str)  # item which action is taken at
+    timestamp = Required(datetime.datetime,
+                         default=datetime.datetime.utcnow)
+
+    def generate_file(self):
+        with open('actions.txt', 'w') as f:
+            list_of_actions = Actions.select()
+            for action in list_of_actions:
+                f.write(action.timestamp.strftime(
+                    "%d %b %Y %H:%M") + " | " + action.implementer + " " + action.action + action.implementee + "\n")
 
 
 db.generate_mapping(create_tables=True)

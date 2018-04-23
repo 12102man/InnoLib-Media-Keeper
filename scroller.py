@@ -37,10 +37,10 @@ class Scroller:
         if len(self.list) == 0:
             message = "Nothing found"
             return message
-        if self.state == 'request':
-            self.__cursor = database.RegistrySession[self.__telegram_id].request_c
-
-            message = """Request #️⃣ %s
+        try:
+            if self.state == 'request':
+                self.__cursor = database.RegistrySession[self.__telegram_id].request_c
+                message = """Request #️⃣ %s
 
 Name: %s
 Telegram alias: @%s
@@ -54,11 +54,14 @@ Faculty member: %s
                        self.list[self.__cursor].address,
                        self.list[self.__cursor].phone,
                        convert_to_emoji(self.list[self.__cursor].faculty))
-            return message
-        elif self.state == 'media':
-            self.__cursor = database.RegistrySession[self.__telegram_id].media_c
-
-            message = """MediaID #️⃣ %s
+                return message
+            elif self.state == 'media':
+                self.__cursor = database.RegistrySession[self.__telegram_id].media_c
+                if self.__cursor >= len(self.list):
+                    self.__cursor = 0
+                    database.RegistrySession[self.__telegram_id].media_c = 0
+                    commit()
+                message = """MediaID #️⃣ %s
 
 Type: %s
 Title: "%s"
@@ -72,45 +75,45 @@ Bestseller: %s
                                self.list[self.__cursor].authors,
                                convert_to_emoji(self.list[self.__cursor].availability),
                                convert_to_emoji(self.list[self.__cursor].bestseller))
-            return message
+                return message
 
-        elif self.state == 'bookingRequest':
-            self.__cursor = database.RegistrySession[self.__telegram_id].book_r_c
-            media_id = database.MediaCopies.get(copyID=self.list[self.__cursor].mediaID).mediaID
+            elif self.state == 'bookingRequest':
+                self.__cursor = database.RegistrySession[self.__telegram_id].book_r_c
+                media_id = database.MediaCopies.get(copyID=self.list[self.__cursor].mediaID).mediaID
 
-            message = """ Media booking request:
+                message = """ Media booking request:
 From: %s
 What: %s
 CopyID: %s
 
-            """ % (database.User[self.list[self.__cursor].libID].name,
-                   media_id.name + " by " + media_id.authors,
-                   self.list[self.__cursor].mediaID)
-            return message
+                """ % (database.User[self.list[self.__cursor].libID].name,
+                       media_id.name + " by " + media_id.authors,
+                       self.list[self.__cursor].mediaID)
+                return message
 
-        elif self.state == 'log':
-            self.__cursor = database.RegistrySession[self.__telegram_id].log_c
-            log = self.list[self.__cursor]
-            user = database.User.get(telegramID=log.libID)
-            message = """ Log:
+            elif self.state == 'log':
+                self.__cursor = database.RegistrySession[self.__telegram_id].log_c
+                log = self.list[self.__cursor]
+                user = database.User.get(telegramID=log.libID)
+                message = """ Log:
 Customer: %s
 What: %s
 Issue date: %s
 Expiry date: %s
 Returned: %s
 Renewed: %s
-            """ % (user.name + " (@" + user.alias + ")",
-                   database.MediaCopies.get(copyID=log.mediaID).mediaID.name + " (" + log.mediaID + ")",
-                   log.issue_date.strftime("%d %h %Y, %H:%M "),
-                   log.expiry_date.strftime("%d %h %Y, %H:%M "),
-                   convert_to_emoji(log.returned),
-                   convert_to_emoji(log.renewed))
+                """ % (user.name + " (@" + user.alias + ")",
+                       database.MediaCopies.get(copyID=log.mediaID).mediaID.name + " (" + log.mediaID + ")",
+                    log.issue_date.strftime("%d %h %Y, %H:%M "),
+                    log.expiry_date.strftime("%d %h %Y, %H:%M "),
+                    convert_to_emoji(log.returned),
+                    convert_to_emoji(log.renewed))
 
-            return message
-        elif self.state == 'user_medias':
-            self.__cursor = database.RegistrySession[self.__telegram_id].my_medias_c
-            log_record = self.list[self.__cursor]
-            message = """ Your media #️⃣%s :
+                return message
+            elif self.state == 'user_medias':
+                self.__cursor = database.RegistrySession[self.__telegram_id].my_medias_c
+                log_record = self.list[self.__cursor]
+                message = """ Your media #️⃣%s :
             
 What: "%s" by %s
 Issue date: %s
@@ -123,32 +126,44 @@ Expiry date: %s
                                log_record.issue_date.strftime("%d %h %Y, %H:%M "),
                                log_record.expiry_date.strftime("%d %h %Y, %H:%M "))
 
-            return message
-        elif self.state == 'return_request':
-            self.__cursor = database.RegistrySession[self.__telegram_id].return_c
-            request = self.list[self.__cursor]
-            patron = database.User[request.telegramID]
-            media = database.MediaCopies.get(copyID=request.copyID).mediaID
-            message = """Request #️⃣ %s 
+                return message
+            elif self.state == 'return_request':
+                self.__cursor = database.RegistrySession[self.__telegram_id].return_c
+                request = self.list[self.__cursor]
+                patron = database.User[request.telegramID]
+                media = database.MediaCopies.get(copyID=request.copyID).mediaID
+                message = """Request #️⃣ %s 
 What: \"%s\" by %s
 CopyID: %s
 From: %s (@%s)""" % (str(request.id), media.name, media.authors, request.copyID, patron.name, patron.alias)
-            return message
-        elif self.state == 'users':
-            self.__cursor = database.RegistrySession[self.__telegram_id].users_c
-            patron = self.list[self.__cursor]
-            message = """ User %s information:
+                return message
+            elif self.state == 'users':
+                self.__cursor = database.RegistrySession[self.__telegram_id].users_c
+                patron = self.list[self.__cursor]
+                message = """ User %s information:
 Address: %s
 Alias: @%s
 Telephone number: %s
 Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patron.balance)
 
-            return message
-        elif self.state == 'debtors': # воть тут
-            self.__cursor = database.RegistrySession[self.__telegram_id].debtors_c
-            debt = self.list[self.__cursor]
-            user = database.User.get(telegramID=debt.libID)
-            message = """ Debtors:
+                return message
+            elif self.state == 'librarians':
+                self.__cursor = database.RegistrySession[self.__telegram_id].users_c
+                lib = self.list[self.__cursor]
+                patron = database.User[lib.telegramID]
+                message = """ Librarian %s information:
+Address: %s
+Alias: @%s
+Telephone number: %s
+Balance: %s
+Privilege level: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patron.balance, lib.priority)
+
+                return message
+            elif self.state == 'debtors':  # воть тут
+                self.__cursor = database.RegistrySession[self.__telegram_id].debtors_c
+                debt = self.list[self.__cursor]
+                user = database.User.get(telegramID=debt.libID)
+                message = """ Debtors:
         Customer: %s
         What: %s
         Issue date: %s
@@ -164,9 +179,9 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
                            convert_to_emoji(debt.returned),
                            convert_to_emoji(debt.renewed))
 
-            return message
-
-
+                return message
+        except IndexError:
+            self.__cursor = 0
 
     def create_keyboard(self):
         """
@@ -202,16 +217,19 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'media'})
             #   Buttons for editing (only for librarian)
 
-            if database.Librarian.get(telegramID=self.__telegram_id) is not None:
+            librarian = database.Librarian.get(telegramID=self.__telegram_id)
+            if librarian is not None:
 
                 mid_row.append(InlineKeyboardButton("Edit", callback_data=json.dumps(
                     {'type': 'media_edit', 'argument': self.list[self.__cursor].mediaID})))
-                mid_row.append(InlineKeyboardButton("Delete", callback_data=json.dumps(
-                    {'type': 'media_delete', 'argument': self.list[self.__cursor].mediaID})))
-                mid_row.append(InlineKeyboardButton("Copy", callback_data=json.dumps(
-                    {'type': 'media_add_copy', 'argument': self.list[self.__cursor].mediaID})))
-                mid_row.append(InlineKeyboardButton("Outstanding request", callback_data=json.dumps(
-                    {'type': 'outstanding_request', 'argument': self.list[self.__cursor].mediaID})))
+                if librarian.priority > 2:
+                    mid_row.append(InlineKeyboardButton("Delete", callback_data=json.dumps(
+                        {'type': 'media_delete', 'argument': self.list[self.__cursor].mediaID})))
+                if librarian.priority > 1:
+                    mid_row.append(InlineKeyboardButton("Copy", callback_data=json.dumps(
+                        {'type': 'media_add_copy', 'argument': self.list[self.__cursor].mediaID})))
+                    mid_row.append(InlineKeyboardButton("Outstanding request", callback_data=json.dumps(
+                        {'type': 'outstanding_request', 'argument': self.list[self.__cursor].mediaID})))
 
             if not self.list[self.__cursor].availability:
                 user = database.User[self.__telegram_id]
@@ -282,11 +300,24 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'return_request'})
 
         elif self.state == 'users':
+            user = database.Librarian.get(telegramID=self.__telegram_id)
             log_record = self.list[self.__cursor].telegramID
-            delete_user = json.dumps({'type': 'accept', 'argument': 'users', 'id': log_record})
-            up_row.append(InlineKeyboardButton("Delete", callback_data=delete_user))
+            if user is not None:
+                if user.priority > 2:
+                    delete_user = json.dumps({'type': 'user_delete', 'argument': log_record})
+                    up_row.append(InlineKeyboardButton("Delete", callback_data=delete_user))
+            edit_user = json.dumps({'type': 'user_edit', 'argument': log_record, 'id': log_record})
+            up_row.append(InlineKeyboardButton("Edit", callback_data=edit_user))
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'users'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'users'})
+        elif self.state == 'librarians':
+            log_record = self.list[self.__cursor].telegramID
+            delete_librarian = json.dumps({'type': 'lib_delete', 'argument': log_record})
+            up_row.append(InlineKeyboardButton("Delete", callback_data=delete_librarian))
+            change_librarian_privilege = json.dumps({'type': 'priv_edit', 'argument': log_record})
+            mid_row.append(InlineKeyboardButton("Change privilege", callback_data=change_librarian_privilege))
+            callback_prev = json.dumps({'type': 'prevItem', 'argument': 'librs'})
+            callback_next = json.dumps({'type': 'nextItem', 'argument': 'librs'})
         elif self.state == 'debtors': # воть тут
             callback_prev = json.dumps({'type': 'prevItem', 'argument': 'debtors'})
             callback_next = json.dumps({'type': 'nextItem', 'argument': 'debtors'})
@@ -296,7 +327,6 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
                     {'type': 'ask_for_return', 'argument': debt.mediaID, 'user': debt.libID})))
 
         """ If cursor is on the edge position (0 or length of list with records),
-
         then don't append one of arrows."""
         if self.__cursor > 0:
             low_row.append(InlineKeyboardButton("⬅", callback_data=callback_prev))

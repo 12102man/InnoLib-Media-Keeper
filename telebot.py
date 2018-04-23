@@ -66,7 +66,6 @@ def callback_query_selector(bot, update):
         reject_request(bot, update)
     elif query_type == 'book':
         book_media(bot, update)
-
     elif query_type == 'get_in_line':
         add_in_line(bot, update)
     elif query_type == 'get_out_of_line':
@@ -75,6 +74,9 @@ def callback_query_selector(bot, update):
         session = database.RegistrySession[telegram_id]
         media = list(database.Media.select())[session.media_c]
         MediaQueue.select(lambda c: c.user == User[telegram_id] and c.mediaID == media).delete()
+        database.Actions(implementer=str(telegram_id),
+                         action="got out of line for media #",
+                         implementee=str(media.mediaID))
         bot.edit_message_text(text="You got out of the line!",
                               chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
@@ -87,10 +89,52 @@ def callback_query_selector(bot, update):
     elif query_type == 'user_delete':
         delete_user(bot, update, argument)
 
+    # Actions with librarians
+    elif query_type == 'lib_delete':
+        yes_json = json.dumps({'type': 'lib_delete_y', 'argument': argument})
+        no_json = json.dumps({'type': 'lib_delete_n', 'argument': argument})
+        keyboard = InlineKeyboardMarkup([[
+            InlineKeyboardButton("Yes", callback_data=yes_json),
+            InlineKeyboardButton("No", callback_data=no_json)
+        ]])
+        bot.edit_message_text(text="Do you really want to remove librarian rights?",
+                              chat_id=update.callback_query.message.chat_id,
+                              message_id=update.callback_query.message.message_id,
+                              reply_markup=keyboard)
+    elif query_type == 'lib_delete_y':
+        admin = Admin.get(telegram_id=update.callback_query.message.chat_id)
+        admin.delete_librarian(argument)
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has deleted rights for librarian #",
+                         implementee=str(argument))
+        bot.edit_message_text(text="Rights was removed!",
+                              chat_id=update.callback_query.message.chat_id,
+                              message_id=update.callback_query.message.message_id)
+    elif query_type == 'lib_delete_n':
+        bot.edit_message_text(text="Process was cancelled.",
+                              chat_id=update.callback_query.message.chat_id,
+                              message_id=update.callback_query.message.message_id)
+    elif query_type == 'priv_edit':
+        admin = Admin.get(telegram_id=update.callback_query.message.chat_id)
+        admin.new_lib_id = argument
+        see_edit = json.dumps({'type': 'adm_s_pr', 'argument': 'edit'})
+        add = json.dumps({'type': 'adm_s_pr', 'argument': 'add'})
+        deletion = json.dumps({'type': 'adm_s_pr', 'argument': 'delete'})
+        keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("See/Edit", callback_data=see_edit),
+                                          InlineKeyboardButton(" + Addition", callback_data=add),
+                                          InlineKeyboardButton(" + Deletion", callback_data=deletion)]])
+        bot.edit_message_text(text="Choose librarian's new privileges:",
+                              message_id=update.callback_query.message.message_id,
+                              chat_id=update.callback_query.from_user.id,
+                              reply_markup=keyboard)
+
     # Confirmed deletes
     elif query_type == 'deleteMedia':
         Media.get(mediaID=argument).delete()
         commit()
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has deleted media #",
+                         implementee=str(argument))
         bot.send_message(text="Media and its copies have been successfully deleted!",
                          chat_id=update.callback_query.from_user.id)
     elif query_type == 'cancelDeleteMedia':
@@ -99,6 +143,9 @@ def callback_query_selector(bot, update):
     elif query_type == 'deleteCopy':
         MediaCopies.get(copyID=argument).delete()
         commit()
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has deleted media copy #",
+                         implementee=str(argument))
         bot.send_message(text="Copy has been successfully deleted!",
                          chat_id=update.callback_query.from_user.id)
     elif query_type == 'cancelDeleteCopy':
@@ -107,6 +154,9 @@ def callback_query_selector(bot, update):
     elif query_type == 'deleteUser':
         User.get(telegramID=argument).delete()
         commit()
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has deleted user #",
+                         implementee=str(argument))
         bot.send_message(text="User has been successfully deleted!",
                          chat_id=update.callback_query.from_user.id)
         session = RegistrySession[update.callback_query.from_user.id]
@@ -123,6 +173,9 @@ def callback_query_selector(bot, update):
         media = Media.get(mediaID=argument)
         last_state = media.bestseller
         media.bestseller = not last_state
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has inversed media bestseller from %s to %s" % (str(last_state), str(not last_state)),
+                         implementee=str(argument))
         bot.edit_message_text(
             text="Media's bestseller state has been changed from %s to %s" % (str(last_state), str(not last_state)),
             message_id=update.callback_query.message.message_id,
@@ -133,16 +186,20 @@ def callback_query_selector(bot, update):
         media.availability = not last_state
         for elem in media.copies:
             elem.available = not last_state
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has inversed media availability from %s to %s" % (
+                             str(last_state), str(not last_state)),
+                         implementee=str(argument))
         bot.edit_message_text(text="Media's availability state has been changed from %s to %s" % (
             str(last_state), str(not last_state)),
                               message_id=update.callback_query.message.message_id,
                               chat_id=update.callback_query.from_user.id)
 
-
     elif query_type == 'priorityEdited':
         user = User.get(telegramID=update.callback_query.from_user.id)
         user.priority = argument
         commit()
+
         bot.edit_message_text(text="Status was successfully changed!",
 
                               message_id=update.callback_query.message.message_id,
@@ -187,6 +244,7 @@ def callback_query_selector(bot, update):
     elif query_type == 'pay':
         pay_for_media(bot, update, argument, parsed_query['media'])
 
+
     # Arrows for switching between cards
     # Selectors for 'next' arrows
     elif query_type == 'nextItem':
@@ -225,7 +283,11 @@ def callback_query_selector(bot, update):
             session.users_c += 1
             commit()
             edit_users_card(bot, update)
-        elif argument == 'debtors': # воть тут
+        elif argument == 'librs':
+            session = RegistrySession[update.callback_query.from_user.id]
+            session.users_c += 1
+            edit_librarians_card(bot, update)
+        elif argument == 'debtors':  # воть тут
             session = RegistrySession[update.callback_query.from_user.id]
             session.debtors_c += 1
             commit()
@@ -263,30 +325,65 @@ def callback_query_selector(bot, update):
             session.users_c -= 1
             commit()
             edit_users_card(bot, update)
-        elif argument == 'debtors': # воть тут
+        elif argument == 'librs':
+            session = RegistrySession[update.callback_query.from_user.id]
+            session.users_c -= 1
+            edit_librarians_card(bot, update)
+        elif argument == 'debtors':  # воть тут
             session = RegistrySession[update.callback_query.from_user.id]
             session.debtors_c -= 1
             commit()
             edit_debt_card(bot, update)
     elif query_type == 'outstanding_request':
-            librarian = Librarian.get(telegramID=update.callback_query.from_user.id)
-            status = librarian.outstanding_request(argument, datetime.datetime.now())
-            if status[0] == 1:
-                bot.edit_message_text(text="Request completed!",
-                                      message_id=update.callback_query.message.message_id,
-                                      chat_id=update.callback_query.message.chat_id)
-                title = Media[argument].name
-                queue = status[1]
-                for element in queue:
-                    bot.send_message(text="Sorry, you have been deleted from "
-                                          "the queue for the following media: "
-                                          "%s because of an outstanding "
-                                          "request" % title,
-                                     chat_id=element.telegramID)
-                holders = status[2]
-                for element in holders:
-                    ask_for_return(bot, update, element[1], element[0])
+        librarian = Librarian.get(telegramID=update.callback_query.from_user.id)
+        status = librarian.outstanding_request(argument, datetime.datetime.now())
+        if status[0] == 1:
+            database.Actions(implementer=str(update.callback_query.message.chat_id),
+                             action="has placed an outstanding request for media #",
+                             implementee=str(argument))
+            bot.edit_message_text(text="Request completed!",
+                                  message_id=update.callback_query.message.message_id,
+                                  chat_id=update.callback_query.message.chat_id)
+            title = Media[argument].name
+            queue = status[1]
+            for element in queue:
+                bot.send_message(text="Sorry, you have been deleted from "
+                                      "the queue for the following media: "
+                                      "%s because of an outstanding "
+                                      "request" % title,
+                                 chat_id=element.telegramID)
+            holders = status[2]
+            for element in holders:
+                ask_for_return(bot, update, element[1], element[0])
 
+    # Features of ADMIN
+    # 'acpt_nl' is 'accept new librarian'
+    # 'adm_s_pr' is 'admin sets privilege'
+    elif query_type == 'acpt_nl':
+        if argument == 'Yes':
+            admin = Admin.get(telegram_id=update.callback_query.message.chat_id)
+            see_edit = json.dumps({'type': 'adm_s_pr', 'argument': 'edit'})
+            add = json.dumps({'type': 'adm_s_pr', 'argument': 'add'})
+            deletion = json.dumps({'type': 'adm_s_pr', 'argument': 'delete'})
+            keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("See/Edit", callback_data=see_edit),
+                                              InlineKeyboardButton(" + Addition", callback_data=add),
+                                              InlineKeyboardButton(" + Deletion", callback_data=deletion)]])
+            admin.add_new_librarian()
+            bot.edit_message_text(text="Choose new librarian's privilege:",
+                                  message_id=update.callback_query.message.message_id,
+                                  chat_id=update.callback_query.from_user.id,
+                                  reply_markup=keyboard)
+        if argument == 'No':
+            bot.edit_message_text(text="Process was cancelled!",
+                                  message_id=update.callback_query.message.message_id,
+                                  chat_id=update.callback_query.from_user.id)
+
+    elif query_type == 'adm_s_pr':
+        admin = Admin[update.callback_query.message.chat_id]
+        action = admin.set_privilege(argument)
+        bot.edit_message_text(text=action,
+                              message_id=update.callback_query.message.message_id,
+                              chat_id=update.callback_query.from_user.id)
 
 
 """  Registration process   """
@@ -312,16 +409,16 @@ def ask_name(bot, update):
     if user is not None:
         bot.send_message(text="🎓 Sorry, you have already been registered", chat_id=message.chat_id)
         return register_conversation.END
-    elif session is not None and message != "/enroll":
-        if session.name is None:
+    elif session is not None:
+        if session.name == "":
             bot.send_message(chat_id=update.message.chat_id, text="""Let's start the enrolling process into Innopolis University Library!
 Please, write your first and last name""")
             return PHONE_NUMBER
-        if session.phone is None:
+        if session.phone == "":
             ask_phone(bot, update)
-        elif session.address is None:
+        elif session.address == "":
             ask_address(bot, update)
-        elif session.faculty is None:
+        elif session.faculty == "":
             ask_priority(bot, update)
     else:
         RegistrySession(telegramID=message.chat_id, alias=message.chat.username)
@@ -335,7 +432,6 @@ Please, write your first and last name""")
         """
 
         return PHONE_NUMBER
-
 
 
 @db_session
@@ -354,7 +450,6 @@ def ask_phone(bot, update):
     bot.send_message(chat_id=update.message.chat_id, text="Please, write your phone number")
     commit()
     return ADDRESS
-
 
 
 @db_session
@@ -377,7 +472,6 @@ def ask_address(bot, update):
         bot.send_message(chat_id=update.message.chat_id, text="Oops, this is not a phone number, try again")
 
 
-
 @db_session
 def ask_priority(bot, update):
     """
@@ -392,8 +486,7 @@ def ask_priority(bot, update):
     session_user.address = update.message.text
     commit()
 
-
-    #   Buttons for answering Yes or No. callback_data is what bot gets as a query (see callback_query_selector())
+    # Buttons for choosing user's status, callback_data is what bot gets as a query (see callback_query_selector())
     reply = InlineKeyboardMarkup(
         [[InlineKeyboardButton("Student", callback_data=json.dumps({'type': 'priority', 'argument': 5})),
           InlineKeyboardButton("Instructor", callback_data=json.dumps({'type': 'priority', 'argument': 4}))],
@@ -403,7 +496,6 @@ def ask_priority(bot, update):
 
     bot.send_message(chat_id=update.message.chat_id, text="Choose your status:", reply_markup=reply)
     return register_conversation.END
-
 
 
 @db_session
@@ -419,23 +511,18 @@ def end_of_registration(bot, update):
     if Request.get(telegramID=session_user.telegramID) is not None:
         bot.send_message(chat_id=update.callback_query.from_user.id, text="You have already applied for enrollment!")
         return register_conversation.END
-    Request(
-        telegramID=session_user.telegramID,
 
-        name=session_user.name,
-        phone=session_user.phone,
-        address=session_user.address,
-        alias=session_user.alias,
-        faculty=session_user.faculty)
-    db.execute(
-        "UPDATE registrysession SET name = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
-    db.execute(
-        "UPDATE registrysession SET phone = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
-    db.execute(
-        "UPDATE registrysession SET address = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
-    db.execute(
-        "UPDATE registrysession SET faculty = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
-    commit()
+    Request(telegramID=session_user.telegramID,
+            name=session_user.name,
+            phone=session_user.phone,
+            address=session_user.address,
+            alias=session_user.alias,
+            faculty=session_user.faculty)
+
+    session_user.name = ""
+    session_user.faculty = 0
+    session_user.address = ""
+    session_user.alias = ""
     commit()
     bot.send_message(chat_id=update.callback_query.from_user.id, text="Application was sent to library!")
     return register_conversation.END
@@ -453,10 +540,8 @@ and allows to perform some actions (add, delete, modify)
 """
 
 
-
 @db_session
 def create_request_card(bot, update):
-
     """
     Creates request menu card
     :param bot: bot object
@@ -475,7 +560,6 @@ def create_request_card(bot, update):
 
 @db_session
 def create_media_card(bot, update):
-
     """
     Creates media menu card
     :param bot: bot object
@@ -490,7 +574,6 @@ def create_media_card(bot, update):
                          reply_markup=media_card.create_keyboard())
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
-
 
 
 @db_session
@@ -531,7 +614,6 @@ def create_booking_request_card(bot, update):
 
 @db_session
 def create_log_card(bot, update):
-
     """
     Creates log menu card
     :param bot: bot object
@@ -547,8 +629,9 @@ def create_log_card(bot, update):
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
+
 @db_session
-def create_debt_card(bot, update): #воть тут
+def create_debt_card(bot, update):  # воть тут
 
     """
     Creates log menu card
@@ -566,11 +649,8 @@ def create_debt_card(bot, update): #воть тут
         bot.send_message(text="Sorry, " + e.args[0] + ". Please, try again", chat_id=update.message.chat_id)
 
 
-
-
 @db_session
 def check_media_balance(bot, job):
-
     """
     checks the penalty for all media in log
     :param bot: bot object
@@ -588,6 +668,77 @@ def check_media_balance(bot, job):
 morning = time(7, 00)
 j = updater.job_queue
 j.run_daily(check_media_balance, morning)
+
+CHOOSE_SEARCH_PARAMETER, CHOOSE_SEARCH_CRITERIA = range(2)
+
+"""SEARCH BE CAREFUL"""
+
+
+@db_session
+def search_keyboard(bot, update):
+    author = InlineKeyboardButton("By author",
+                                  callback_data=json.dumps(
+                                      {'type': 'search', 'argument': 'authors'}))
+    name = InlineKeyboardButton("By name",
+                                callback_data=json.dumps(
+                                    {'type': 'search', 'argument': 'name'}))
+    type = InlineKeyboardButton("By type",
+                                callback_data=json.dumps(
+                                    {'type': 'search', 'argument': 'type'}))
+
+    publisher = InlineKeyboardButton("By publisher",
+                                     callback_data=json.dumps(
+                                         {'type': 'search', 'argument': 'publisher'}))
+    up_row = [author, name, publisher, type]
+
+    keyboard = InlineKeyboardMarkup([up_row])
+
+    bot.send_message(text="What do you want to search by?", chat_id=update.message.chat_id,
+                     reply_markup=keyboard)
+
+    return CHOOSE_SEARCH_PARAMETER
+
+
+@db_session
+def enter_search_criteria(bot, update):
+    query = json.loads(update.callback_query.data)
+    telegram_id = update.callback_query.message.chat_id
+    parameter = query['argument']
+    database.RegistrySession[telegram_id].search_parameter = parameter
+    bot.send_message(text="Enter search criteria:", chat_id=telegram_id)
+    return CHOOSE_SEARCH_CRITERIA
+
+
+@db_session
+def search_media(bot, update):
+    """
+    :param bot: bot object
+    :param update: update object
+    :param parameter: field of search
+    :param criteria: text of search
+    :return: searched media
+    """
+
+    criteria = update.message.text
+    parameter = database.RegistrySession[update.message.chat_id].search_parameter
+    if parameter == 'name':
+        medias = list(Media.select(lambda c: criteria in c.name))
+    elif parameter == 'authors':
+        medias = list(Media.select(lambda c: criteria in c.authors))
+    elif parameter == 'publisher':
+        medias = list(Media.select(lambda c: criteria in c.publisher))
+    elif parameter == 'type':
+        medias = list(Media.select(lambda c: c.type == criteria))
+
+    media_card = Scroller('media', medias, update.message.chat_id)
+
+    try:
+        bot.send_message(text=media_card.create_message(), chat_id=update.message.chat_id,
+                         reply_markup=media_card.create_keyboard())
+        return search_conversation.END
+    except FileNotFoundError as e:
+        bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
+        return search_conversation.END
 
 
 @db_session
@@ -607,6 +758,26 @@ def create_return_media_card(bot, update):
     except FileNotFoundError as e:
         bot.send_message(text="Sorry, " + e.args[0], chat_id=update.message.chat_id)
 
+
+@db_session
+def create_librarian_card(bot, update):
+    """
+    :param bot:
+    :param update:
+    :return: this feature sends message with information about librarians and keyboard with actions
+    """
+
+    libs = list(Librarian.select())
+    admin = Admin.get(telegram_id=update.message.chat_id)
+    if admin is not None:
+        log = Scroller('librarians', libs, update.message.chat_id)
+        if len(libs) == 0:
+            bot.send_message(text="You have no librarians in system!",
+                             chat_id=update.message.chat_id)
+        else:
+            bot.send_message(text=log.create_message(),
+                             chat_id=update.message.chat_id,
+                             reply_markup=log.create_keyboard())
 
 
 """
@@ -633,7 +804,6 @@ def edit_request_card(bot, update):
         logging.error("Error occured: " + e.args[0])
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
-
 
 
 @db_session
@@ -678,6 +848,24 @@ def edit_users_card(bot, update):
 
 
 @db_session
+def edit_librarians_card(bot, update):
+    """
+        Edits librarians' card
+        :param bot: bot object
+        :param update: update object
+        :return: information about librarian and keyboard with actions
+        """
+    query = update.callback_query
+    registry = list(Librarian.select())
+
+    libs_card = Scroller('librarians', registry, update.callback_query.from_user.id)
+    bot.edit_message_text(text=libs_card.create_message(),
+                          message_id=query.message.message_id,
+                          chat_id=query.message.chat_id,
+                          reply_markup=libs_card.create_keyboard())
+
+
+@db_session
 def edit_booking_request_card(bot, update):
     """
     Edits return media menu card
@@ -718,8 +906,9 @@ def edit_log_card(bot, update):
         bot.edit_message_text(text="Error occured: " + e.args[0], chat_id=query.message.chat_id,
                               message_id=query.message.message_id)
 
+
 @db_session
-def edit_debt_card(bot, update): #воть тут
+def edit_debt_card(bot, update):  # воть тут
     """
     Edits log menu card
     :param bot: bot object
@@ -732,8 +921,7 @@ def edit_debt_card(bot, update): #воть тут
     log = Scroller('debtors', registry, query.message.chat_id)
     message = log.create_message()
     bot.edit_message_text(text=message, chat_id=query.message.chat_id,
-                              message_id=query.message.message_id, reply_markup=log.create_keyboard())
-
+                          message_id=query.message.message_id, reply_markup=log.create_keyboard())
 
 
 @db_session
@@ -774,6 +962,10 @@ def edit_my_medias_card(bot, update):
                               message_id=query.message.message_id)
 
 
+"""
+Things to work with medias and users
+"""
+
 
 @db_session
 def librarian_authentication(user_id):
@@ -793,7 +985,6 @@ def librarian_authentication(user_id):
 
 @db_session
 def librarian_interface(bot, update):
-
     """
     Prints out librarian's menu wih all features
     :param bot: bot object
@@ -815,6 +1006,7 @@ Here's a list of useful commands, which are only allowed to librarians:
 /return - return a book
 /users - list of users
 /delete_copy (copy_id) - delete copy
+/actions - get list of all actions happened from the start of ILMK
 """ % librarian.name, chat_id=telegram_id)
 
 
@@ -837,17 +1029,16 @@ def me(bot, update):
     delete_button = InlineKeyboardButton("Delete",
                                          callback_data=json.dumps(
                                              {'type': 'user_delete', 'argument': my_user.telegramID}))
-
     my_medias_button = InlineKeyboardButton("My medias",
                                             callback_data=json.dumps({'type': 'my_medias', 'argument': 0}))
     my_balance_button = InlineKeyboardButton("My balance",
-                                             callback_data=json.dumps({'type': 'my_balance', 'argument': my_user.telegramID}))
+                                             callback_data=json.dumps(
+                                                 {'type': 'my_balance', 'argument': my_user.telegramID}))
     keyboard = [[edit_button, delete_button], [my_medias_button], [my_balance_button]]
     keyboard = InlineKeyboardMarkup(keyboard)
     message = "Hello, %s! \nHere is information about you: \n👨‍🎓: %s (@%s) \n🏠: %s \n☎️: %s \n🎓: %s" % (
         my_user.name, my_user.name, my_user.alias, my_user.address, my_user.phone, convert_to_emoji(my_user.priority))
     bot.send_message(text=message, chat_id=telegram_id, reply_markup=keyboard)
-
 
 
 @db_session
@@ -883,7 +1074,6 @@ def delete_media(bot, update, media_id):
 
 @db_session
 def delete_copy(bot, update, args):
-
     """
     Asks librarian if it still wants to delete a particular copy
     :param bot: bot object
@@ -926,13 +1116,13 @@ def delete_user(bot, update, telegram_id):
     current_telegram_id = update.callback_query.message.chat_id
 
     #   If user is not a librarian, exit
-    if not librarian_authentication(current_telegram_id):
+    if not librarian_authentication(current_telegram_id) or current_telegram_id != telegram_id:
         logging.warning("Patron was trying to delete a user!")
         return 0
 
     deleted_user = User.get(telegramID=telegram_id)
     if deleted_user is None:
-        bot.send_message(text="Sorry, copy with this alias doesn't exist", chat_id=current_telegram_id)
+        bot.send_message(text="Sorry, person with this alias doesn't exist", chat_id=current_telegram_id)
         return 0
     message = "Are you sure you want to delete " + deleted_user.name + " from the ILMK?"
     delete_state = json.dumps({'type': 'deleteUser', 'argument': telegram_id})
@@ -1004,7 +1194,7 @@ def edit_user(bot, update, telegram_id):
     :param telegram_id: user to edit
     :return: print out a menu with options
     """
-    name = InlineKeyboardButton("Name",
+    name = InlineKeyboardButton("Full name",
                                 callback_data=json.dumps(
                                     {'type': 'editUserName', 'argument': telegram_id, 'field': 'name'}))
     address = InlineKeyboardButton("Address",
@@ -1028,10 +1218,8 @@ def edit_user(bot, update, telegram_id):
                           reply_markup=keyboard)
 
 
-
 @db_session
 def edit_field(bot, update):
-
     """
     Function which interacts with a certain field
     :param bot: bot object
@@ -1070,7 +1258,6 @@ def edit_field(bot, update):
     session.edit_media_cursor = media_id
     session.edit_media_state = field
     commit()
-
 
     if field == 'priority':
         keyboard = InlineKeyboardMarkup(
@@ -1146,64 +1333,18 @@ def create_new_media(bot, update):
     :param update: update object
     :return: media added
     """
-    session = RegistrySession.get(telegramID=update.message.chat_id)
-    if session is not None:
-        if session.type == "":
-            if update.message.text == "/add_media":
-                bot.send_message(text="Let's add a new media! What is the type of media?",
-                                 chat_id=update.message.chat_id)
-                return NOT_FINISHED
-            session.type = update.message.text
-            bot.send_message(text="What is the title of media?", chat_id=update.message.chat_id)
+
+    lib = Librarian.get(telegramID=update.message.chat_id)
+
+    if lib is not None and lib.priority > 1:
+        text_to_send = lib.add_media(update.message.text)
+        bot.send_message(text=text_to_send, chat_id=update.message.chat_id)
+        if text_to_send != "Media and %s its copies had been added":
             return NOT_FINISHED
-        elif session.title == "":
-            session.title = update.message.text
-            bot.send_message(text="Who is the author?", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.author == "":
-            session.author = update.message.text
-            bot.send_message(text="What is the publisher?", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.publisher == "":
-            session.publisher = update.message.text
-            bot.send_message(text="What is the price?", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.price == -1:
-            session.price = update.message.text
-            bot.send_message(text="What is the fine?", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.fine == -1:
-            session.fine = update.message.text
-            bot.send_message(text="How many copies do you want to add?", chat_id=update.message.chat_id)
-            commit()
-        elif session.no_of_copies == -1:
-            no_of_copies = int(update.message.text)
-            session.no_of_copies = no_of_copies
-            Media(name=session.title, type=session.type, authors=session.author,
-                  publisher=session.publisher, cost=session.price, fine=session.fine,
-                  availability=True, bestseller=False)
-            media_id = Media.get(name=session.title).mediaID
-            for i in range(1, no_of_copies + 1):
-                MediaCopies(mediaID=media_id, copyID="%s-%s" % (str(media_id), str(i)), available=1)
-            session.title = ""
-            session.type = ""
-            session.author = ""
-            session.fine = -1
-            session.price = -1
-            session.no_of_copies = -1
-            session.publisher = ""
-            commit()
-            bot.send_message(text="Media and %s its copies had been added" % str(no_of_copies),
-                             chat_id=update.message.chat_id)
+        else:
             return new_media_conversation.END
     else:
-        RegistrySession(telegramID=update.message.chat_id)
-        bot.send_message(text="Please, enter Title: ", chat_id=update.message.chat_id)
-        return NOT_FINISHED
+        bot.send_message(text="Sorry, you have no enough permissions!", chat_id=update.message.chat_id)
 
 
 @db_session
@@ -1215,44 +1356,23 @@ def create_new_user(bot, update):
     :return: user added
     """
 
-    session = RegistrySession.get(telegramID=update.message.chat_id)
-    if session is not None:
-        if session.name is None:
-            if update.message.text == "/add_user":
-                bot.send_message(text="Let's add a new User! Please, enter new user's name",
-                                 chat_id=update.message.chat_id)
-                return NOT_FINISHED
-            session.name = update.message.text
-            bot.send_message(text="Please, enter new user's phone", chat_id=update.message.chat_id)
-            commit()
+    lib = Librarian.get(telegramID=update.message.chat_id)
+
+    if lib is not None and lib.priority > 1:
+        text_to_send = lib.add_user(update.message.text)
+        if text_to_send != "Choose his/her status":
+            bot.send_message(text=text_to_send, chat_id=update.message.chat_id)
             return NOT_FINISHED
-        elif session.phone is None:
-            session.phone = update.message.text
-            bot.send_message(text="Please, enter new user's address", chat_id=update.message.chat_id)
-            commit()
-            return NOT_FINISHED
-        elif session.address is None:
-            session.address = update.message.text
-            keyboard = InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Student",
-                                       callback_data=json.dumps({'type': 'setState', 'argument': 5})),
-                  InlineKeyboardButton("Instructor",
-                                       callback_data=json.dumps({'type': 'setState', 'argument': 4}))],
-                 [InlineKeyboardButton("TA",
-                                       callback_data=json.dumps({'type': 'setState', 'argument': 3})),
-                  InlineKeyboardButton("Professor",
-                                       callback_data=json.dumps({'type': 'setState', 'argument': 1}))],
-                 [InlineKeyboardButton("Visiting Professor",
-                                       callback_data=json.dumps({'type': 'setState', 'argument': 2}))]])
-            bot.send_message(text="Choose his/her status", chat_id=update.message.chat_id,
-                             reply_markup=keyboard)
-            commit()
+        else:
+            keyboard = priority_keyboard()
+            bot.send_message(text=text_to_send, chat_id=update.message.chat_id, reply_markup=keyboard)
             return new_user_conversation.END
+    else:
+        bot.send_message(text="Sorry, you have no enough permissions!", chat_id=update.message.chat_id)
 
 
 @db_session
 def create_user_set_status(bot, update):
-
     # To get data from pressed button
     query = update.callback_query.data
     parsed_query = json.loads(query)
@@ -1263,24 +1383,19 @@ def create_user_set_status(bot, update):
     session.faculty = argument
     key = generate_key()
 
-    LibrarianEnrollment(name=session.name, phone=session.phone,address=session.address, faculty=session.faculty, registrykey=key)
+    LibrarianEnrollment(name=session.name, phone=session.phone, address=session.address,
+                        faculty=session.faculty, registrykey=key)
 
-    db.execute(
-        "UPDATE registrysession SET name = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
-    db.execute(
-        "UPDATE registrysession SET phone = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
-    db.execute(
-        "UPDATE registrysession SET address = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
-    db.execute(
-        "UPDATE registrysession SET faculty = NULL WHERE telegramid = %s;" % str(update.callback_query.from_user.id))
+    session.address = ""
+    session.phone = ""
+    session.name = ""
+    session.faculty = 0
+
     commit()
     bot.send_message(text="User was added. Please, ask User to send the following command:",
                      chat_id=update.callback_query.from_user.id)
     bot.send_message(text="/start %s" % key,
                      chat_id=update.callback_query.from_user.id)
-
-    commit()
-
 
 
 def cancel_process(bot, update):
@@ -1299,14 +1414,35 @@ def renew_media(bot, update, argument):
     user = User.get(telegramID=update.callback_query.message.chat_id)
     renewed = user.renew_copy(argument, datetime.datetime.now())
     if renewed and user.priority != 2:
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has renewed media #",
+                         implementee=str(argument))
         bot.edit_message_text(text="You successfully renewed the media!",
                               chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
     else:
+        database.Actions(implementer=str(update.callback_query.message.chat_id),
+                         action="has tried to renew already renewed media #",
+                         implementee=str(argument))
         bot.edit_message_text(text="You have already renewed this media!",
                               chat_id=update.callback_query.message.chat_id,
                               message_id=update.callback_query.message.message_id)
 
+
+@db_session
+def get_actions(bot, update):
+    """
+    Method which generates a textfile with all the actions
+    :param bot:
+    :param update:
+    :return: send textfile with all the actions
+    """
+    if database.Librarian.get(telegramID=update.message.chat_id) is not None:
+        database.Actions(implementer=str(update.message.chat_id),
+                         action="has asked for actions list",
+                         implementee="")
+        database.Actions[1].generate_file()
+        bot.send_document(chat_id=update.message.chat_id, document=open('actions.txt', 'rb'))
 
 @db_session
 def confirm_user(bot, update, args):
@@ -1360,6 +1496,58 @@ def pay_for_media(bot, update, user_id, copy_id):
                           message_id=query.message.message_id)
 
 
+@db_session
+def add_new_librarian(bot, update, args):
+    """
+    :param args: alias or id of new user
+    :param bot: bot object
+    :param update: update object
+    :return: return nothing if user is not Admin, otherwise, ask for tgID and for newcomer's privilege
+    'adm_s_pr' is 'admin sets privilege'
+    'acpt_nl' is 'accept new librarian'
+    """
+
+    # Converts args into string
+    alias_or_id = "".join(args).strip()
+
+    user = Admin.get(telegram_id=update.message.chat_id)
+    if user is None:
+        return 0
+    else:
+        if not alias_or_id:
+            bot.send_message(text="Please, write id or alias after /new_librarian",
+                             chat_id=update.message.chat_id)
+            return 0
+        real_id = 0
+        new_user_by_alias = User.get(alias=str(alias_or_id))
+        new_user_by_id = User.get(telegramID=int(alias_or_id))
+        if new_user_by_alias is None and new_user_by_id is None:
+            bot.send_message(text="Sorry, we have no this user in our library system :(",
+                             chat_id=update.message.chat_id)
+            return 0
+        elif new_user_by_alias is not None and new_user_by_id is not None:
+            bot.send_message(text="Ooops, we have two users who have ones ID as his alias, we chose with such ID.",
+                             chat_id=update.message.chat_id)
+            return 0
+        else:
+            if new_user_by_alias is not None:
+                real_id = new_user_by_alias.telegramID
+            if new_user_by_id is not None:
+                real_id = alias_or_id
+            if Librarian.get(telegramID=real_id) is None:
+                yes_button = InlineKeyboardButton("Yes",
+                                                  callback_data=json.dumps({'type': 'acpt_nl', 'argument': 'Yes'}))
+                no_button = InlineKeyboardButton("No", callback_data=json.dumps({'type': 'acpt_nl', 'argument': 'No'}))
+                keyboard = InlineKeyboardMarkup([[yes_button, no_button]])
+                user_name = User.get(telegramID=real_id).name
+                user.new_lib_id = real_id
+                bot.send_message(text=str("Is " + user_name + " a person you want to add as a new librarian?"),
+                                 chat_id=update.message.chat_id,
+                                 reply_markup=keyboard)
+            else:
+                bot.send_message(text="This user already is librarian!",
+                                 chat_id=update.message.chat_id)
+
 
 """
 This is a conversation handler. It helps smoothly iterating 
@@ -1389,6 +1577,18 @@ new_user_conversation = ConversationHandler(entry_points=[CommandHandler("add_us
 
                                             fallbacks=[CommandHandler('cancel', cancel_process)])
 
+search_conversation = ConversationHandler(entry_points=[CommandHandler("search", search_keyboard)],
+                                          states={
+                                              CHOOSE_SEARCH_PARAMETER: [
+                                                  CallbackQueryHandler(enter_search_criteria,
+                                                                       pattern="^{\"type\": \"search")],
+                                              CHOOSE_SEARCH_CRITERIA:
+                                                  [MessageHandler(Filters.text, search_media)]
+
+                                          },
+
+                                          fallbacks=[CommandHandler('cancel', cancel_process)])
+
 edit_conv = ConversationHandler(entry_points=[CallbackQueryHandler(edit_field, pattern="^{\"type\": \"edit")],
                                 states={
                                     ENTER_VALUE: [MessageHandler(Filters.text, change_value)]
@@ -1398,7 +1598,6 @@ edit_conv = ConversationHandler(entry_points=[CallbackQueryHandler(edit_field, p
 
 end_create_user = CallbackQueryHandler(create_user_set_status, pattern="^{\"type\": \"setState")
 
-
 """
 This part connects commands, queries and any other input information to features
 in code. These are handlers.
@@ -1407,9 +1606,8 @@ dispatcher.add_handler(register_conversation)
 dispatcher.add_handler(new_media_conversation)
 dispatcher.add_handler(new_user_conversation)
 dispatcher.add_handler(edit_conv)
+dispatcher.add_handler(search_conversation)
 dispatcher.add_handler(end_create_user)
-
-
 
 search_query_handler = CallbackQueryHandler(callback_query_selector)
 dispatcher.add_handler(CommandHandler('requests', create_request_card))
@@ -1418,12 +1616,15 @@ dispatcher.add_handler(CommandHandler('return', create_return_media_card))
 dispatcher.add_handler(CommandHandler('medias', create_media_card))
 dispatcher.add_handler(CommandHandler('issue', create_booking_request_card))
 dispatcher.add_handler(CommandHandler('log', create_log_card))
-dispatcher.add_handler(CommandHandler('debtors', create_debt_card)) #воть тут
+dispatcher.add_handler(CommandHandler('debtors', create_debt_card))
 dispatcher.add_handler(CommandHandler('me', me))
+dispatcher.add_handler(CommandHandler('actions', get_actions))
 dispatcher.add_handler(CommandHandler('start', confirm_user, pass_args=True))
 dispatcher.add_handler(CommandHandler('delete_copy', delete_copy, pass_args=True))
 dispatcher.add_handler(CommandHandler('users', create_users_card))
 dispatcher.add_handler(CommandHandler('librarian', librarian_interface))
+dispatcher.add_handler(CommandHandler('new_librarian', add_new_librarian, pass_args=True))
+dispatcher.add_handler(CommandHandler('librarians', create_librarian_card))
 dispatcher.add_handler(search_query_handler)
 
 updater.start_polling()  # Start asking for server about any incoming requests
