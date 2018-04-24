@@ -152,6 +152,8 @@ def callback_query_selector(bot, update):
         bot.send_message(text="Copy hasn't been deleted!",
                          chat_id=update.callback_query.from_user.id)
     elif query_type == 'deleteUser':
+        if parsed_query['lib'] == 'y':
+            Librarian.get(telegramID=argument).delete()
         User.get(telegramID=argument).delete()
         commit()
         database.Actions(implementer=str(update.callback_query.message.chat_id),
@@ -1148,19 +1150,33 @@ def delete_user(bot, update, telegram_id):
     :return: message with confirmation
     """
     current_telegram_id = update.callback_query.message.chat_id
-
-    #   If user is not a librarian, exit
-    if not librarian_authentication(current_telegram_id) or current_telegram_id != telegram_id:
-        logging.warning("Patron was trying to delete a user!")
-        return 0
-
     deleted_user = User.get(telegramID=telegram_id)
-    if deleted_user is None:
-        bot.send_message(text="Sorry, person with this alias doesn't exist", chat_id=current_telegram_id)
-        return 0
-    message = "Are you sure you want to delete " + deleted_user.name + " from the ILMK?"
-    delete_state = json.dumps({'type': 'deleteUser', 'argument': telegram_id})
-    stay_state = json.dumps({'type': 'cancelDeleteUser', 'argument': telegram_id})
+    deleted_user_librarian = Librarian.get(telegramID=telegram_id)
+
+    if deleted_user_librarian is not None:
+        if current_telegram_id != telegram_id:
+            logging.warning("Somebody trying to delete librarian as a user!")
+            bot.edit_message_text(text="You have no permission!",
+                                  chat_id=update.callback_query.message.chat_id,
+                                  message_id=update.callback_query.message.message_id)
+            return 0
+        else:
+            message = "Are you sure you want to delete you from the ILMK?"
+            delete_state = json.dumps({'type': 'deleteUser', 'argument': telegram_id, 'lib': 'y'})
+            stay_state = json.dumps({'type': 'cancelDeleteUser', 'argument': telegram_id})
+    else:
+        # If user is not a librarian, exit
+        if not librarian_authentication(current_telegram_id) or current_telegram_id != telegram_id:
+            logging.warning("Patron was trying to delete a user!")
+            return 0
+
+        if deleted_user is None:
+            bot.send_message(text="Sorry, person with this alias doesn't exist", chat_id=current_telegram_id)
+            return 0
+
+        message = "Are you sure you want to delete " + deleted_user.name + " from the ILMK?"
+        delete_state = json.dumps({'type': 'deleteUser', 'argument': telegram_id, 'lib': 'n'})
+        stay_state = json.dumps({'type': 'cancelDeleteUser', 'argument': telegram_id})
     keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("✅", callback_data=delete_state),
                                       InlineKeyboardButton("🚫", callback_data=stay_state)]])
 

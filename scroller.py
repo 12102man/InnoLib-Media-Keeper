@@ -25,6 +25,9 @@ class Scroller:
         self.__cursor = 0
         self.parameter = parameter
         self.criteria = criteria
+        session = database.RegistrySession.get(telegramID=telegram_id)
+        if session is None:
+            database.RegistrySession(telegramID=telegram_id)
 
     @db_session
     def create_message(self):
