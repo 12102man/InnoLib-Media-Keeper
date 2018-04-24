@@ -28,7 +28,7 @@ class Admin(db.Entity):
         :return: string depends on is the librarian newcomer or he already was him
         """
         new_lib = Librarian.get(telegramID=self.new_lib_id)
-        if new_lib.priority is None:
+        if new_lib.priority == 0:
             action = "New librarian was added!"
         else:
             action = "Librarian privileges was changed!"
@@ -311,7 +311,6 @@ class Librarian(db.Entity):
             elif session.no_of_copies == -1:
                 no_of_copies = int(text)
                 session.no_of_copies = no_of_copies
-
                 Media(name=session.title, type=session.type, authors=session.author,
                       publisher=session.publisher, cost=session.price, fine=session.fine,
                       availability=True, bestseller=False)

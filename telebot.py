@@ -244,7 +244,6 @@ def callback_query_selector(bot, update):
     elif query_type == 'pay':
         pay_for_media(bot, update, argument, parsed_query['media'])
 
-
     # Arrows for switching between cards
     # Selectors for 'next' arrows
     elif query_type == 'nextItem':
@@ -389,7 +388,7 @@ def callback_query_selector(bot, update):
                                   chat_id=update.callback_query.from_user.id)
 
     elif query_type == 'adm_s_pr':
-        admin = Admin[update.callback_query.message.chat_id]
+        admin = Admin.get(telegram_id=update.callback_query.message.chat_id)
         action = admin.set_privilege(argument)
         bot.edit_message_text(text=action,
                               message_id=update.callback_query.message.message_id,
@@ -1601,6 +1600,7 @@ new_media_conversation = ConversationHandler(entry_points=[CommandHandler("add_m
                                                  NOT_FINISHED: [MessageHandler(Filters.text, create_new_media)]
                                              },
                                              fallbacks=[CommandHandler('cancel', cancel_process)])
+
 new_user_conversation = ConversationHandler(entry_points=[CommandHandler("add_user", create_new_user)],
                                             states={
                                                 NOT_FINISHED: [MessageHandler(Filters.text, create_new_user)]
