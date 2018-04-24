@@ -307,13 +307,17 @@ class Librarian(db.Entity):
             elif session.fine == -1:
                 session.fine = text
                 commit()
+                return "What are the keywords?"
+            elif session.keywords == "":
+                session.keywords = text
+                commit()
                 return "How many copies do you want to add?"
             elif session.no_of_copies == -1:
                 no_of_copies = int(text)
                 session.no_of_copies = no_of_copies
                 Media(name=session.title, type=session.type, authors=session.author,
                       publisher=session.publisher, cost=session.price, fine=session.fine,
-                      availability=True, bestseller=False)
+                      availability=True, bestseller=False, keywords=session.keywords)
                 media_id = Media.get(name=session.title).mediaID
                 for i in range(1, no_of_copies + 1):
                     MediaCopies(mediaID=media_id, copyID="%s-%s" % (str(media_id), str(i)), available=1)
@@ -324,6 +328,7 @@ class Librarian(db.Entity):
                 session.price = -1
                 session.no_of_copies = -1
                 session.publisher = ""
+                session.keywords = ""
                 commit()
                 return "Media and %s its copies had been added" % str(no_of_copies)
         else:
@@ -462,6 +467,7 @@ class RegistrySession(db.Entity):
     publisher = Optional(str, default="")
     no_of_copies = Optional(int, default=-1)
     debtors_c = Optional(int, default=0)
+    keywords = Optional(str, default="")
 
     search_parameter = Optional(str, default="")
     search_criteria = Optional(str, default="")
