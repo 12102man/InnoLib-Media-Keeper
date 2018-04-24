@@ -239,8 +239,7 @@ def test5():
     test4()
     lib3 = Librarian[3]
     assert 1 == lib3.delete_copy('3-1')
-    assert 1 == lib3.delete_copy('3-2')
-    assert len(list(Media[3].copies)) == 1
+    assert len(list(Media[3].copies)) == 2
 
 
 @db_session

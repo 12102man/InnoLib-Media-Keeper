@@ -527,7 +527,7 @@ def end_of_registration(bot, update):
             name=session_user.name,
             phone=session_user.phone,
             address=session_user.address,
-            alias=session_user.alias,
+            alias="@@",
             faculty=session_user.faculty)
 
     session_user.name = ""
@@ -1166,7 +1166,7 @@ def delete_user(bot, update, telegram_id):
             stay_state = json.dumps({'type': 'cancelDeleteUser', 'argument': telegram_id})
     else:
         # If user is not a librarian, exit
-        if not librarian_authentication(current_telegram_id) or current_telegram_id != telegram_id:
+        if not (librarian_authentication(current_telegram_id) and Librarian[current_telegram_id].priority in [3] or current_telegram_id != telegram_id):
             logging.warning("Patron was trying to delete a user!")
             return 0
 
@@ -1486,7 +1486,7 @@ def get_actions(bot, update):
     :return: send textfile with all the actions
     """
     if database.Librarian.get(telegramID=update.message.chat_id) is not None:
-        database.Actions[1].generate_file()
+        list(Actions.select())[0].generate_file()
         bot.send_document(chat_id=update.message.chat_id, document=open('actions.txt', 'rb'))
 
 
