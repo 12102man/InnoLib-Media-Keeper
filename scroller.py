@@ -76,13 +76,15 @@ Title: "%s"
 Author(s): %s
 Available: %s
 Bestseller: %s
+Keywords: %s
 
                         """ % (self.list[self.__cursor].mediaID,
                                self.list[self.__cursor].type,
                                self.list[self.__cursor].name,
                                self.list[self.__cursor].authors,
                                convert_to_emoji(self.list[self.__cursor].availability),
-                               convert_to_emoji(self.list[self.__cursor].bestseller))
+                               convert_to_emoji(self.list[self.__cursor].bestseller),
+                               str(self.list[self.__cursor].keywords))
                 return message
 
             elif self.state == 'bookingRequest':

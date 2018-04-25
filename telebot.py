@@ -347,7 +347,7 @@ def callback_query_selector(bot, update):
             edit_debt_card(bot, update)
     elif query_type == 'outstanding_request':
         librarian = Librarian.get(telegramID=update.callback_query.from_user.id)
-        status = librarian.outstanding_request(argument, datetime.datetime.now())
+        status = librarian.outstanding_request(argument, dt.datetime.now())
         if status[0] == 1:
             database.Actions(implementer=str(update.callback_query.message.chat_id),
                              action="has placed an outstanding request for media #",
@@ -596,6 +596,8 @@ def create_users_card(bot, update):
     :return: media card
     """
 
+    if not librarian_authentication(update.message.chat_id):
+        return 0
     registry = list(User.select())
     log = Scroller('users', registry, update.message.chat_id)
     try:
@@ -631,7 +633,8 @@ def create_log_card(bot, update):
     :param update: update object
     :return: log card
     """
-
+    if not librarian_authentication(update.message.chat_id):
+        return 0
     registry = list(Log.select())
     log = Scroller('log', registry, update.message.chat_id)
     try:
@@ -668,7 +671,7 @@ def check_media_balance(bot, job):
     :return: log balance
     """
 
-    log = Log.select(lambda c: c.expiry_date < datetime.datetime.now())
+    log = Log.select(lambda c: c.expiry_date < dt.datetime.now())
     for item in log:
         cost = MediaCopies.get(copyID=item.mediaID).mediaID.cost
         if item.balance + 100 <= cost:
@@ -686,6 +689,9 @@ CHOOSE_SEARCH_PARAMETER, CHOOSE_SEARCH_CRITERIA = range(2)
 
 @db_session
 def search_keyboard(bot, update):
+    if database.RegistrySession.get(telegramID=update.message.chat_id) is None:
+        bot.send_message(text="Please, /enroll first!", chat_id=update.message.chat_id)
+        return 0
     author = InlineKeyboardButton("Author",
                                   callback_data=json.dumps(
                                       {'type': 'search', 'argument': 'authors'}))
@@ -785,7 +791,8 @@ def create_return_media_card(bot, update):
     :param update: update object
     :return: return media card
     """
-
+    if not librarian_authentication(update.message.chat_id):
+        return 0
     registry = list(ReturnRequest.select())
     log = Scroller('return_request', registry, update.message.chat_id)
     try:
@@ -1036,13 +1043,25 @@ def librarian_interface(bot, update):
 
     bot.send_message(text="""Hello, %s!
 Here's a list of useful commands, which are only allowed to librarians:
-/requests - see registry requests    
-
-/log - see log of Library
-/return - return a book
-/users - list of users
-/delete_copy (copy_id) - delete copy
-/actions - get list of all actions happened from the start of ILMK
+1. /requests1
+See registry requests
+2. /log1
+See log of Library
+3. /return1
+See return requests
+4. /users1
+See list of users
+5. /delete_copy (copy_id)
+Delete a copy with specific copy_id
+6. /add_media2 Add a new media
+7. /add_user1
+Add a new user and get enroll key for them
+8. /actions
+Get all actions happened from the start of ILMK
+9. /debtors
+Get a list of all library debtors
+10. /reboot
+Reboot the system
 """ % librarian.name, chat_id=telegram_id)
 
 
@@ -1460,7 +1479,7 @@ def cancel_process(bot, update):
 def renew_media(bot, update, argument):
     # select log and extend expiry date
     user = User.get(telegramID=update.callback_query.message.chat_id)
-    renewed = user.renew_copy(argument, datetime.datetime.now())
+    renewed = user.renew_copy(argument, dt.datetime.now())
     if renewed and user.priority != 2:
         database.Actions(implementer=str(update.callback_query.message.chat_id),
                          action="has renewed media #",
