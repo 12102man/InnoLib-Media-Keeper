@@ -1043,18 +1043,20 @@ def librarian_interface(bot, update):
 
     bot.send_message(text="""Hello, %s!
 Here's a list of useful commands, which are only allowed to librarians:
-1. /requests1
+
+1. /requests
 See registry requests
-2. /log1
+2. /log
 See log of Library
-3. /return1
+3. /return
 See return requests
-4. /users1
+4. /users
 See list of users
 5. /delete_copy (copy_id)
 Delete a copy with specific copy_id
-6. /add_media2 Add a new media
-7. /add_user1
+6. /add_media
+Add a new media
+7. /add_user
 Add a new user and get enroll key for them
 8. /actions
 Get all actions happened from the start of ILMK
