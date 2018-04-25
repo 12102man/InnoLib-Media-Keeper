@@ -272,10 +272,12 @@ class Librarian(db.Entity):
             checked_out_copies[i].renewed = 1
             checked_out_copies[i].expiry_date = date
             holders.append([checked_out_copies[i].libID, checked_out_copies[i].mediaID])
+        holders = sorted(holders, key=lambda holders:holders[0])
         holders_string = ""
         for holder in holders:
             holders_string += str(holder[0]) + " (with media #" + str(holder[1]) + "), "
         queue_string = ""
+        queue = sorted(queue, key=lambda queue: queue.telegramID)
         for elem in queue:
             queue_string += str(elem) + ", "
         Actions(implementer="[OR] Holders " + holders_string,

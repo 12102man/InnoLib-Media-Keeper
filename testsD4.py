@@ -1,4 +1,5 @@
 from database import *
+import time
 from search_engine import *
 
 template_test8 = """DAY MONTH YEAR | Admin 1 has added librarian #1
@@ -56,8 +57,9 @@ DAY MONTH YEAR | User#1110 got in queue for media #3
 DAY MONTH YEAR | User#1100 got in queue for media #3
 DAY MONTH YEAR | Librarian#3 has placed an outstanding request for media #3
 DAY MONTH YEAR | [OR] Queue for media #3 has been deleted
-DAY MONTH YEAR | [OR] Holders 1010 (with media #[1011, '3-2']), 1011 (with media #[1011, '3-2']), 1101 (with media #[1011, '3-2']), have been notified about Outstanding Request
-DAY MONTH YEAR | [OR] Queue participants User[1110], User[1100], have been notified about Outstanding Request"""
+DAY MONTH YEAR | [OR] Holders 1010 (with media #3-1), 1011 (with media #3-2), 1101 (with media #3-3), have been notified about Outstanding Request
+DAY MONTH YEAR | [OR] Queue participants User[1100], User[1110], have been notified about Outstanding Request
+"""
 
 
 @db_session
@@ -308,6 +310,7 @@ def test8():
 
 @db_session
 def test9():
+    flush_db()
     test7()
     today = datetime.datetime.now()
     list(Actions.select())[0].generate_file()
@@ -315,9 +318,15 @@ def test9():
     b = template_test9.strip()
 
     # Replace today date in template
-    b = b.replace("DAY", today.strftime("%d")).replace("MONTH", today.strftime("%b")).replace("YEAR",
-                                                                                              today.strftime("%Y"))
-    assert a == b
+    b = b.replace("DAY", today.strftime("%d"))
+    b = b.replace("MONTH", today.strftime("%b"))
+    b = b.replace("YEAR", today.strftime("%Y")).strip()
+
+    a = a.strip().replace("\n", " ").strip()
+    b = b.strip().replace("\n", " ").strip()
+
+    test = a == b
+    assert test
 
 
 @db_session
@@ -381,9 +390,11 @@ def test14():
 
     flush_db()
     Admin.select().delete()
-    Admin(telegram_id=157723117)    # Alexander's ID
+    Admin(telegram_id=157723117)  # Alexander's ID
+
 
 if __name__ == "__main__":
+
     tests_array = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13,
                    test14]
     print("Starting test suite...")
