@@ -159,6 +159,10 @@ Balance: %s""" % (patron.name, patron.address, patron.alias, patron.phone, patro
                 return message
             elif self.state == 'librarians':
                 self.__cursor = database.RegistrySession[self.__telegram_id].users_c
+                if self.__cursor >= len(self.list):
+                    self.__cursor = 0
+                    database.RegistrySession[self.__telegram_id].users_c = 0
+                    commit()
                 lib = self.list[self.__cursor]
                 patron = database.User[lib.telegramID]
                 message = """ Librarian %s information:

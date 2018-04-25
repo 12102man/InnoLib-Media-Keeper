@@ -20,6 +20,8 @@ class Admin(db.Entity):
         if Admin.get(id=1) is not None:
             raise FileExistsError("Admin already exists")
         super().__init__(**kwargs)
+        if database.RegistrySession.get(telegramID=self.telegram_id) is None:
+            database.RegistrySession(telegramID=self.telegram_id)
 
     def set_privilege(self, level):
         """
@@ -202,6 +204,12 @@ class Librarian(db.Entity):
     name = Required(str)
     priority = Required(int)
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if database.RegistrySession.get(telegramID=self.telegramID) is None:
+            database.RegistrySession(telegramID=self.telegramID)
+
+
     def check_return(self, copy_id):
         record = list(Log.select(lambda c: c.mediaID == copy_id and not c.returned))[0]
         if record.balance != 0:
@@ -266,7 +274,7 @@ class Librarian(db.Entity):
             holders.append([checked_out_copies[i].libID, checked_out_copies[i].mediaID])
         holders_string = ""
         for holder in holders:
-            holders_string += str(holder[0]) + " (with media #" + str(holders[1]) + "), "
+            holders_string += str(holder[0]) + " (with media #" + str(holder[1]) + "), "
         queue_string = ""
         for elem in queue:
             queue_string += str(elem) + ", "

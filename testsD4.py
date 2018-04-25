@@ -379,6 +379,9 @@ def test14():
     assert m2 in search_results
     assert m3 in search_results
 
+    flush_db()
+    Admin.select().delete()
+    Admin(telegram_id=157723117)    # Alexander's ID
 
 if __name__ == "__main__":
     tests_array = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13,

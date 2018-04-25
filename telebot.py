@@ -559,8 +559,10 @@ def create_request_card(bot, update):
     :param update: update object
     :return: request card
     """
+    if database.Admin.get(telegram_id=update.message.chat_id) is None:
+        if not librarian_authentication(update.message.chat_id):
+            return 0
     registry = list(Request.select(lambda c: c.status == 0))
-
     request_card = Scroller('request', registry, update.message.chat_id)
     try:
         bot.send_message(text=request_card.create_message(), chat_id=update.message.chat_id,
@@ -1187,7 +1189,8 @@ def delete_user(bot, update, telegram_id):
             stay_state = json.dumps({'type': 'cancelDeleteUser', 'argument': telegram_id})
     else:
         # If user is not a librarian, exit
-        if not (librarian_authentication(current_telegram_id) and Librarian[current_telegram_id].priority in [3] or current_telegram_id != telegram_id):
+        if not (librarian_authentication(current_telegram_id) and Librarian[current_telegram_id].priority in [
+            3] or current_telegram_id != telegram_id):
             logging.warning("Patron was trying to delete a user!")
             return 0
 
@@ -1564,6 +1567,44 @@ def pay_for_media(bot, update, user_id, copy_id):
 
 
 @db_session
+def reset_system(bot, update, args):
+    if Admin.get(telegram_id=update.message.chat_id) is None:
+        return 0
+    for elem in Media.select():
+        elem.delete()
+    for elem in LibrarianEnrollment.select():
+        elem.delete()
+    for elem in Librarian.select():
+        elem.delete()
+    for elem in Log.select():
+        elem.delete()
+    for elem in MediaCopies.select():
+        elem.delete()
+    for elem in MediaRequest.select():
+        elem.delete()
+    for elem in Request.select():
+        elem.delete()
+    for elem in Admin.select():
+        elem.delete()
+    for elem in Actions.select():
+        elem.delete()
+    for elem in ReturnRequest.select():
+        elem.delete()
+    for elem in User.select():
+        elem.delete()
+    for elem in RegistrySession.select():
+        elem.delete()
+    new_admin = int(''.join(args))
+    Admin(id=1, telegram_id=new_admin, new_lib_id=0)
+    commit()
+
+    bot.send_message(text="System has been reset. Admin now is person with Telegram ID #" + str(new_admin),
+                     chat_id=update.message.chat_id)
+    bot.send_message(text="You are the Admin of ILMK now!",
+                     chat_id=new_admin)
+
+
+@db_session
 def add_new_librarian(bot, update, args):
     """
     :param args: alias or id of new user
@@ -1693,6 +1734,7 @@ dispatcher.add_handler(CommandHandler('users', create_users_card))
 dispatcher.add_handler(CommandHandler('librarian', librarian_interface))
 dispatcher.add_handler(CommandHandler('new_librarian', add_new_librarian, pass_args=True))
 dispatcher.add_handler(CommandHandler('librarians', create_librarian_card))
+dispatcher.add_handler(CommandHandler('reset', reset_system, pass_args=True))
 dispatcher.add_handler(search_query_handler)
 
 updater.start_polling()  # Start asking for server about any incoming requests

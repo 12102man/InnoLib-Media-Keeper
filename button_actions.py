@@ -55,11 +55,13 @@ def approve_request(bot, update):
     database.Request[request.id].status = 1
 
     session.request_c = 0
-    commit()
     # Editing message
-    bot.edit_message_text(text="Request has been successfully approved", chat_id=query.message.chat_id,
+    bot.edit_message_text(text="Request has been successfully approved (Telegram ID: " + str(request.telegramID) + ")", chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
     bot.send_message(text="Your request has been approved!", chat_id=int(enrolled_user.telegramID))
+    request.delete()
+    database.RegistrySession[telegram_id].request_c = 0
+    commit()
 
 
 """
