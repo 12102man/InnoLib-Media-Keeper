@@ -1,63 +1,63 @@
 from database import *
 from search_engine import *
 
-template_test8 = """23 Apr 2018 | Admin 1 has added librarian #1
-23 Apr 2018 | Admin 1 has added librarian #2
-23 Apr 2018 | Admin 1 has added librarian #3
-23 Apr 2018 | Librarian#2 has added media #1
-23 Apr 2018 | Librarian#2 has added copy of media #1
-23 Apr 2018 | Librarian#2 has added copy of media #1
-23 Apr 2018 | Librarian#2 has added copy of media #1
-23 Apr 2018 | Librarian#2 has added media #2
-23 Apr 2018 | Librarian#2 has added copy of media #2
-23 Apr 2018 | Librarian#2 has added copy of media #2
-23 Apr 2018 | Librarian#2 has added copy of media #2
-23 Apr 2018 | Librarian#2 has added media #3
-23 Apr 2018 | Librarian#2 has added copy of media #3
-23 Apr 2018 | Librarian#2 has added copy of media #3
-23 Apr 2018 | Librarian#2 has added copy of media #3
-23 Apr 2018 | Librarian#2 has added user #1010
-23 Apr 2018 | Librarian#2 has added user #1011
-23 Apr 2018 | Librarian#2 has added user #1100
-23 Apr 2018 | Librarian#2 has added user #1101
-23 Apr 2018 | Librarian#2 has added user #1110
-23 Apr 2018 | User#1010 has booked media #3-1
-23 Apr 2018 | User#1011 has booked media #3-2
-23 Apr 2018 | User#1101 has booked media #3-3
-23 Apr 2018 | User#1110 got in queue for media #3
-23 Apr 2018 | User#1100 got in queue for media #3
-23 Apr 2018 | Librarian#1 has placed an outstanding request for media #Media[3]
-23 Apr 2018 | Outstanding Request of Librarian#1 for media #Media[3]has been denied"""
+template_test8 = """DAY MONTH YEAR | Admin 1 has added librarian #1
+DAY MONTH YEAR | Admin 1 has added librarian #2
+DAY MONTH YEAR | Admin 1 has added librarian #3
+DAY MONTH YEAR | Librarian#2 has added media #1
+DAY MONTH YEAR | Librarian#2 has added copy of media #1
+DAY MONTH YEAR | Librarian#2 has added copy of media #1
+DAY MONTH YEAR | Librarian#2 has added copy of media #1
+DAY MONTH YEAR | Librarian#2 has added media #2
+DAY MONTH YEAR | Librarian#2 has added copy of media #2
+DAY MONTH YEAR | Librarian#2 has added copy of media #2
+DAY MONTH YEAR | Librarian#2 has added copy of media #2
+DAY MONTH YEAR | Librarian#2 has added media #3
+DAY MONTH YEAR | Librarian#2 has added copy of media #3
+DAY MONTH YEAR | Librarian#2 has added copy of media #3
+DAY MONTH YEAR | Librarian#2 has added copy of media #3
+DAY MONTH YEAR | Librarian#2 has added user #1010
+DAY MONTH YEAR | Librarian#2 has added user #1011
+DAY MONTH YEAR | Librarian#2 has added user #1100
+DAY MONTH YEAR | Librarian#2 has added user #1101
+DAY MONTH YEAR | Librarian#2 has added user #1110
+DAY MONTH YEAR | User#1010 has booked media #3-1
+DAY MONTH YEAR | User#1011 has booked media #3-2
+DAY MONTH YEAR | User#1101 has booked media #3-3
+DAY MONTH YEAR | User#1110 got in queue for media #3
+DAY MONTH YEAR | User#1100 got in queue for media #3
+DAY MONTH YEAR | Librarian#1 has placed an outstanding request for media #Media[3]
+DAY MONTH YEAR | Outstanding Request of Librarian#1 for media #Media[3]has been denied"""
 
-template_test9 = """23 Apr 2018 | Admin 1 has added librarian #1
-23 Apr 2018 | Admin 1 has added librarian #2
-23 Apr 2018 | Admin 1 has added librarian #3
-23 Apr 2018 | Librarian#2 has added media #1
-23 Apr 2018 | Librarian#2 has added copy of media #1
-23 Apr 2018 | Librarian#2 has added copy of media #1
-23 Apr 2018 | Librarian#2 has added copy of media #1
-23 Apr 2018 | Librarian#2 has added media #2
-23 Apr 2018 | Librarian#2 has added copy of media #2
-23 Apr 2018 | Librarian#2 has added copy of media #2
-23 Apr 2018 | Librarian#2 has added copy of media #2
-23 Apr 2018 | Librarian#2 has added media #3
-23 Apr 2018 | Librarian#2 has added copy of media #3
-23 Apr 2018 | Librarian#2 has added copy of media #3
-23 Apr 2018 | Librarian#2 has added copy of media #3
-23 Apr 2018 | Librarian#2 has added user #1010
-23 Apr 2018 | Librarian#2 has added user #1011
-23 Apr 2018 | Librarian#2 has added user #1100
-23 Apr 2018 | Librarian#2 has added user #1101
-23 Apr 2018 | Librarian#2 has added user #1110
-23 Apr 2018 | User#1010 has booked media #3-1
-23 Apr 2018 | User#1011 has booked media #3-2
-23 Apr 2018 | User#1101 has booked media #3-3
-23 Apr 2018 | User#1110 got in queue for media #3
-23 Apr 2018 | User#1100 got in queue for media #3
-23 Apr 2018 | Librarian#3 has placed an outstanding request for media #3
-23 Apr 2018 | [OR] Queue for media #3 has been deleted
-23 Apr 2018 | [OR] Holders 1010 (with media #[1011, '3-2']), 1011 (with media #[1011, '3-2']), 1101 (with media #[1011, '3-2']), have been notified about Outstanding Request
-23 Apr 2018 | [OR] Queue participants User[1110], User[1100], have been notified about Outstanding Request"""
+template_test9 = """DAY MONTH YEAR | Admin 1 has added librarian #1
+DAY MONTH YEAR | Admin 1 has added librarian #2
+DAY MONTH YEAR | Admin 1 has added librarian #3
+DAY MONTH YEAR | Librarian#2 has added media #1
+DAY MONTH YEAR | Librarian#2 has added copy of media #1
+DAY MONTH YEAR | Librarian#2 has added copy of media #1
+DAY MONTH YEAR | Librarian#2 has added copy of media #1
+DAY MONTH YEAR | Librarian#2 has added media #2
+DAY MONTH YEAR | Librarian#2 has added copy of media #2
+DAY MONTH YEAR | Librarian#2 has added copy of media #2
+DAY MONTH YEAR | Librarian#2 has added copy of media #2
+DAY MONTH YEAR | Librarian#2 has added media #3
+DAY MONTH YEAR | Librarian#2 has added copy of media #3
+DAY MONTH YEAR | Librarian#2 has added copy of media #3
+DAY MONTH YEAR | Librarian#2 has added copy of media #3
+DAY MONTH YEAR | Librarian#2 has added user #1010
+DAY MONTH YEAR | Librarian#2 has added user #1011
+DAY MONTH YEAR | Librarian#2 has added user #1100
+DAY MONTH YEAR | Librarian#2 has added user #1101
+DAY MONTH YEAR | Librarian#2 has added user #1110
+DAY MONTH YEAR | User#1010 has booked media #3-1
+DAY MONTH YEAR | User#1011 has booked media #3-2
+DAY MONTH YEAR | User#1101 has booked media #3-3
+DAY MONTH YEAR | User#1110 got in queue for media #3
+DAY MONTH YEAR | User#1100 got in queue for media #3
+DAY MONTH YEAR | Librarian#3 has placed an outstanding request for media #3
+DAY MONTH YEAR | [OR] Queue for media #3 has been deleted
+DAY MONTH YEAR | [OR] Holders 1010 (with media #[1011, '3-2']), 1011 (with media #[1011, '3-2']), 1101 (with media #[1011, '3-2']), have been notified about Outstanding Request
+DAY MONTH YEAR | [OR] Queue participants User[1110], User[1100], have been notified about Outstanding Request"""
 
 
 @db_session
@@ -296,18 +296,27 @@ def test7():
 def test8():
     test6()
     list(Actions.select())[0].generate_file()
-
+    today = datetime.datetime.now()
     a = open('actions.txt', 'r').read().strip()
     b = template_test8.strip()
+
+    # Replace today date in template
+    b = b.replace("DAY", today.strftime("%d")).replace("MONTH", today.strftime("%b")).replace("YEAR",
+                                                                                              today.strftime("%Y"))
     assert a == b
 
 
 @db_session
 def test9():
     test7()
+    today = datetime.datetime.now()
     list(Actions.select())[0].generate_file()
     a = open('actions.txt', 'r').read().strip()
     b = template_test9.strip()
+
+    # Replace today date in template
+    b = b.replace("DAY", today.strftime("%d")).replace("MONTH", today.strftime("%b")).replace("YEAR",
+                                                                                              today.strftime("%Y"))
     assert a == b
 
 
@@ -381,4 +390,5 @@ if __name__ == "__main__":
             print("Test %d OK" % (i + 1))
         except (AssertionError, TypeError) as e:
             print(("Test %d FAIL \nError: " + str(e)) % (i + 1))
-    print("Test suite is successful!")
+            break
+    print("Test suite is over!")
